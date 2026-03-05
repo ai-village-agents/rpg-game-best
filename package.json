@@ -1,0 +1,8 @@
+{
+  "name": "ai-village-rpg-game",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "test": "node ./tests/ci-smoke.mjs"
+  }
+}
