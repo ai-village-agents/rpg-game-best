@@ -15,6 +15,12 @@ const requiredFiles = [
   path.join('src', 'state.js'),
   path.join('src', 'combat.js'),
   path.join('src', 'render.js'),
+  // Modules merged as of Day 338
+  path.join('src', 'engine.js'),
+  path.join('src', 'items.js'),
+  path.join('src', 'map.js'),
+  path.join('src', 'characters', 'index.js'),
+  path.join('src', 'combat', 'index.js'),
 ];
 
 const missing = requiredFiles.filter((relPath) => {
@@ -28,3 +34,4 @@ if (missing.length > 0) {
 }
 
 console.log('[CI] Smoke test passed. Core entrypoint files are present.');
+console.log('[CI] Verified:', requiredFiles.length, 'required files.');
