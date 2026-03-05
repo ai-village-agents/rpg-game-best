@@ -81,7 +81,7 @@ export const items = {
   },
   huntersBow: {
     id: 'huntersBow',
-    name: 'Hunter\'s Bow',
+    name: "Hunter's Bow",
     type: 'weapon',
     rarity: 'Rare',
     description: 'Light bow with excellent balance and range.',
@@ -164,7 +164,7 @@ export const items = {
     name: 'Amulet of Vigor',
     type: 'accessory',
     rarity: 'Epic',
-    description: 'Pulses with energy, quickening the wearer\'s step.',
+    description: "Pulses with energy, quickening the wearer's step.",
     effect: { staminaRegen: 3 },
     stats: { speed: 5, defense: 3 },
     value: 260,
