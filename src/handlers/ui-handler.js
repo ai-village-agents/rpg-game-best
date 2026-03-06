@@ -23,16 +23,40 @@ export function handleUIAction(state, action) {
 
   // Settings
   if (type === 'VIEW_SETTINGS') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase === 'class-select') return null;
     return { ...state, phase: 'settings', previousPhase: state.phase, settings: loadSettings() };
   }
 
   if (type === 'CLOSE_SETTINGS') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'settings') return null;
     return { ...state, phase: state.previousPhase || 'exploration' };
   }
 
   if (type === 'UPDATE_SETTING') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'settings') return null;
     const newSettings = updateSetting(state.settings || {}, action.path, action.value);
     saveSettings(newSettings);
@@ -41,6 +65,14 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'RESET_SETTINGS') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'settings') return null;
     const newSettings = resetSettings();
     updateAudioSettings(newSettings);
@@ -50,6 +82,14 @@ export function handleUIAction(state, action) {
 
   // Inventory
   if (type === 'VIEW_INVENTORY') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase === 'class-select') return null;
     return { ...state, phase: 'inventory', inventoryState: createInventoryState(state.phase) };
   }
@@ -61,21 +101,53 @@ export function handleUIAction(state, action) {
 
   // Quests / Quest Log
   if (type === 'VIEW_QUESTS' || type === 'VIEW_QUEST_LOG') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase === 'class-select') return null;
     return { ...state, phase: 'quests', previousPhase: state.phase };
   }
 
   if (type === 'VIEW_STATS') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase === 'class-select') return null;
     return { ...state, phase: 'stats', previousPhase: state.phase };
   }
 
   if (type === 'CLOSE_QUESTS' || type === 'CLOSE_QUEST_LOG') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'quests') return null;
     return { ...state, phase: state.previousPhase || 'exploration' };
   }
 
   if (type === 'CLOSE_STATS') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'stats') return null;
     return { ...state, phase: state.previousPhase || 'exploration' };
   }
@@ -89,12 +161,28 @@ export function handleUIAction(state, action) {
 
   // Level Up
   if (type === 'VIEW_LEVEL_UPS') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (!state.pendingLevelUps || state.pendingLevelUps.length === 0) return null;
     const luState = createLevelUpState(state.pendingLevelUps, 'victory');
     return { ...state, phase: 'level-up', levelUpState: luState };
   }
 
   if (type === 'LEVEL_UP_CONTINUE') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'level-up' || !state.levelUpState) return null;
     const { levelUpState: nextLuState, done } = advanceLevelUp(state.levelUpState);
     if (done) {
@@ -120,6 +208,14 @@ export function handleUIAction(state, action) {
 
   // Battle Summary & Continuation
   if (type === 'CONTINUE_AFTER_BATTLE') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'battle-summary') return null;
     
     // Pending Level Ups Check
@@ -150,6 +246,14 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'CONTINUE_EXPLORING') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'victory' && state.phase !== 'post-victory' && state.phase !== 'battle-summary-done') return null;
     const exits = getRoomExits(state.world);
     let next = {
@@ -170,6 +274,14 @@ export function handleUIAction(state, action) {
   
   // Dialog Actions
   if (type === 'DIALOG_NEXT') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'dialog' || !state.dialogState) return null;
     const next = advanceDialog(state.dialogState);
     if (next.done) {
@@ -181,6 +293,14 @@ export function handleUIAction(state, action) {
   }
   
   if (type === 'DIALOG_CLOSE') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'dialog') return null;
     const returnPhase = state.preDialogPhase || 'exploration';
     const { dialogState: _ds, preDialogPhase: _pdp, ...rest } = state;
@@ -188,6 +308,14 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'CLAIM_QUEST_REWARDS') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'quest-reward') return null;
     const pendingRewards = state.pendingQuestRewards || [];
     const { playerState, messages } = claimAllQuestRewards(state.player, pendingRewards);
@@ -207,6 +335,14 @@ export function handleUIAction(state, action) {
 
   // Shop Actions
   if (type === 'VIEW_SHOP') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (!action.npcId) return null;
     const shopState = createShopState(action.npcId, state.preDialogPhase || state.phase);
     if (!shopState) return pushLog(state, 'This person has nothing to sell.');
@@ -214,23 +350,55 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'BUY_ITEM') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'shop' || !state.shopState) return null;
     const result = buyItem(state.player, state.shopState, action.itemId, action.quantity || 1);
     return { ...state, player: result.player, shopState: result.shopState };
   }
 
   if (type === 'SELL_ITEM') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'shop' || !state.shopState) return null;
     const result = sellItem(state.player, state.shopState, action.itemId, action.quantity || 1);
     return { ...state, player: result.player, shopState: result.shopState };
   }
 
   if (type === 'SHOP_SWITCH_TAB') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'shop' || !state.shopState) return null;
     return { ...state, shopState: { ...state.shopState, tab: action.tab || 'buy', message: null } };
   }
 
   if (type === 'CLOSE_SHOP') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'shop') return null;
     const returnPhase = state.shopState?.previousPhase || 'exploration';
     const { shopState: _ss, ...rest } = state;
@@ -240,6 +408,14 @@ export function handleUIAction(state, action) {
 
   // Crafting Actions
   if (type === 'VIEW_CRAFTING') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase === 'class-select') return null;
     if (!state.crafting) {
       state = { ...state, crafting: createCraftingState() };
@@ -253,12 +429,28 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'CLOSE_CRAFTING') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'crafting') return null;
     const returnPhase = state.previousPhase || 'exploration';
     return { ...state, phase: returnPhase, craftingUI: undefined };
   }
 
   if (type === 'CRAFTING_SET_CATEGORY') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'crafting') return null;
     return {
       ...state,
@@ -267,6 +459,14 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'CRAFTING_SELECT_RECIPE') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'crafting') return null;
     return {
       ...state,
@@ -275,6 +475,14 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'CRAFT_ITEM') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'crafting' || !action.recipeId) return null;
     const result = craftItem(state, action.recipeId);
     return {
@@ -285,6 +493,14 @@ export function handleUIAction(state, action) {
 
   // Talents
   if (type === 'VIEW_TALENTS') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase === 'class-select') return null;
     if (!state.talentState) {
       state = { ...state, talentState: createTalentState() };
@@ -293,6 +509,14 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'ALLOCATE_TALENT') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'talents' || !action.talentId || !state.talentState) return null;
     const result = allocateTalent(state.talentState, action.talentId);
     if (result.success) {
@@ -302,6 +526,14 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'DEALLOCATE_TALENT') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'talents' || !action.talentId || !state.talentState) return null;
     const result = deallocateTalent(state.talentState, action.talentId);
     if (result.success) {
@@ -311,15 +543,39 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'RESET_TALENTS') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'talents' || !state.talentState) return null;
     const talentState = resetAllTalents(state.talentState);
     return pushLog({ ...state, talentState }, 'All talents have been reset.');
   }
 
   if (type === 'CLOSE_TALENTS') {
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
     if (state.phase !== 'talents') return null;
     const returnPhase = state.previousPhase || 'exploration';
     return { ...state, phase: returnPhase };
+  }
+
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
   }
 
   return null;
