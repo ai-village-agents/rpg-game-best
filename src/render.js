@@ -18,6 +18,7 @@ import { renderShopPanel, getShopStyles, attachShopHandlers } from './shop-ui.js
 import { renderCraftingPanel, getCraftingStyles, attachCraftingHandlers } from './crafting-ui.js';
 import { renderTalentTree, getTalentTreeStyles, attachTalentHandlers } from './talents-ui.js';
 import { renderHelpModal, getHelpStyles, attachHelpHandlers } from './help-ui.js';
+import { renderWorldEventBanner } from './world-events-ui.js';
 import { hasShop } from './shop.js';
 
 function hpLine(entity) {
@@ -194,6 +195,7 @@ export function render(state, dispatch) {
       ? exploreNpcs.map(n => `<button class="npc-talk-btn" data-npcid="${esc(n.id)}">${esc(n.name)}</button>`).join('')
       : '<em>No one is here.</em>';
     hud.innerHTML = `
+      ${renderWorldEventBanner(state.worldEvent || null)}
       <div class="row">
         <div class="card">
           <h2>${esc(state.player.name)}</h2>
@@ -242,6 +244,8 @@ export function render(state, dispatch) {
         <button id="btnSettings">Settings ⚙️</button>
         <button id="btnCrafting">Crafting 🔨</button>
         <button id="btnHelp">Help ❓</button>
+        <button id="btnTalents">Talents ⭐</button>
+        <button id="btnHelp">Help ❓</button>
       </div>
     `;
 
@@ -256,6 +260,7 @@ export function render(state, dispatch) {
     document.getElementById('btnSaveSlots').onclick = () => dispatch({ type: 'SAVE_SLOTS' });
     document.getElementById('btnSettings').onclick = () => dispatch({ type: 'VIEW_SETTINGS' });
     document.getElementById('btnCrafting').onclick = () => dispatch({ type: 'VIEW_CRAFTING' });
+    document.getElementById('btnTalents').onclick = () => dispatch({ type: 'VIEW_TALENTS' });
     document.getElementById('btnHelp').onclick = () => dispatch({ type: 'TOGGLE_HELP' });
 
     hud.querySelectorAll('.npc-talk-btn').forEach((btn) => {
@@ -861,7 +866,11 @@ export function render(state, dispatch) {
   }
 
   if (state.phase === 'talents') {
-    const talentHtml = renderTalentTree(state);
+    const talentRenderState = {
+      ...state,
+      player: { ...(state.player || {}), talents: state.talentState }
+    };
+    const talentHtml = renderTalentTree(talentRenderState);
     hud.innerHTML = talentHtml;
     actions.innerHTML = '<div class="buttons"><button id="btnCloseTalents">Close Talents</button></div>';
     attachTalentHandlers(hud, dispatch);
