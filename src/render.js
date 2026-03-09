@@ -24,6 +24,7 @@ import { renderWorldEventBanner } from './world-events-ui.js';
 import { isMinimapHidden } from './world-events.js';
 import { hasShop } from './shop.js';
 import { renderBestiaryPanel } from './bestiary-ui.js';
+import { renderJournalPanel, renderJournalBadge } from './journal-ui.js';
 
 function hpLine(entity) {
   const pct = Math.round((entity.hp / entity.maxHp) * 100);
@@ -252,6 +253,7 @@ export function render(state, dispatch) {
         <button id="btnHelp">Help ❓</button>
         <button id="btnTalents">Talents ⭐</button>
         <button id="btnTavern">Tavern 🍺</button>
+        <button id="btnJournal">Journal 📔${renderJournalBadge(state)}</button>
       </div>
     `;
 
@@ -269,6 +271,7 @@ export function render(state, dispatch) {
     document.getElementById('btnTalents').onclick = () => dispatch({ type: 'VIEW_TALENTS' });
     document.getElementById('btnHelp').onclick = () => dispatch({ type: 'TOGGLE_HELP' });
     document.getElementById('btnTavern').onclick = () => dispatch({ type: 'VIEW_TAVERN' });
+    document.getElementById('btnJournal').onclick = () => dispatch({ type: 'OPEN_JOURNAL' });
 
     hud.querySelectorAll('.npc-talk-btn').forEach((btn) => {
       btn.onclick = () => dispatch({ type: 'TALK_TO_NPC', npcId: btn.dataset.npcid });
@@ -575,7 +578,7 @@ export function render(state, dispatch) {
     return;
   }
 
-  if (state.phase === 'achievements') {
+if (state.phase === 'achievements') {
     hud.innerHTML = renderAchievementsPanel(state);
     attachAchievementsHandlers(hud, dispatch);
     actions.innerHTML = '';
@@ -584,7 +587,15 @@ export function render(state, dispatch) {
     return;
   }
 
-  // --- Save Slots Phase ---
+  // --- Journal Phase ---
+  if (state.phase === 'journal') {
+    hud.innerHTML = renderJournalPanel(state);
+    actions.innerHTML = '<div class="buttons"><button id="btnCloseJournal">Close 📔</button></div>';
+    document.getElementById('btnCloseJournal').onclick = () => dispatch({ type: 'CLOSE_JOURNAL' });
+    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    finalizeRender();
+    return;
+  }
 
   // --- Quest Reward Phase ---
   if (state.phase === 'quest-reward') {
