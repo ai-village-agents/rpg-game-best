@@ -251,6 +251,7 @@ export function render(state, dispatch) {
         <button id="btnCrafting">Crafting 🔨</button>
         <button id="btnHelp">Help ❓</button>
         <button id="btnTalents">Talents ⭐</button>
+        <button id="btnTavern">Tavern 🍺</button>
       </div>
     `;
 
@@ -267,6 +268,7 @@ export function render(state, dispatch) {
     document.getElementById('btnCrafting').onclick = () => dispatch({ type: 'VIEW_CRAFTING' });
     document.getElementById('btnTalents').onclick = () => dispatch({ type: 'VIEW_TALENTS' });
     document.getElementById('btnHelp').onclick = () => dispatch({ type: 'TOGGLE_HELP' });
+    document.getElementById('btnTavern').onclick = () => dispatch({ type: 'VIEW_TAVERN' });
 
     hud.querySelectorAll('.npc-talk-btn').forEach((btn) => {
       btn.onclick = () => dispatch({ type: 'TALK_TO_NPC', npcId: btn.dataset.npcid });

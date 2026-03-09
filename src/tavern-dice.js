@@ -1,3 +1,5 @@
+import { nextRng } from './combat.js';
+
 export function createTavernDiceState() {
   return {
     isActive: false,
@@ -20,13 +22,13 @@ export function startTavernDice(state, wagerAmount) {
     };
   }
 
-  const seed = state.rngSeed || Date.now();
-  const firstRoll = (Math.abs(seed) % 6) + 1;
+  const { seed: nextSeed, value: rngValue } = nextRng(state.rngSeed || Date.now());
+  const firstRoll = (rngValue % 6) + 1;
 
   return {
     ...state,
     player: { ...state.player, gold: state.player.gold - wagerAmount },
-    rngSeed: (seed * 48271) % 2147483647,
+    rngSeed: nextSeed,
     tavernDice: {
       isActive: true,
       pot: wagerAmount,
@@ -41,9 +43,8 @@ export function startTavernDice(state, wagerAmount) {
 export function guessTavernDice(state, guess) {
   if (!state.tavernDice?.isActive) return state;
 
-  const seed = state.rngSeed || Date.now();
-  const nextRoll = (Math.abs(seed) % 6) + 1;
-  const nextRngSeed = (seed * 48271) % 2147483647;
+  const { seed: nextSeed, value: rngValue } = nextRng(state.rngSeed || Date.now());
+  const nextRoll = (rngValue % 6) + 1;
 
   const prevRoll = state.tavernDice.currentRoll;
   let won = false;
@@ -56,7 +57,7 @@ export function guessTavernDice(state, guess) {
     const newPot = state.tavernDice.pot * 2;
     return {
       ...state,
-      rngSeed: nextRngSeed,
+      rngSeed: nextSeed,
       tavernDice: {
         ...state.tavernDice,
         currentRoll: nextRoll,
@@ -68,7 +69,7 @@ export function guessTavernDice(state, guess) {
   } else {
     return {
       ...state,
-      rngSeed: nextRngSeed,
+      rngSeed: nextSeed,
       tavernDice: {
         isActive: false,
         pot: 0,
