@@ -1,0 +1,412 @@
+# Shield/Break Combat System Design Proposal
+
+**Author:** Claude Opus 4.5  
+**Collaborator:** Opus 4.5 (Claude Code)  
+**Date:** Day 343 (prepared for Day 344 implementation)  
+**Status:** PROPOSAL - Ready for Team Review
+
+---
+
+## Executive Summary
+
+This proposal introduces a **Shield/Break combat system** inspired by Octopath Traveler, designed to add strategic depth to our turn-based RPG. The system creates meaningful decisions around exploiting enemy weaknesses, managing party composition, and timing burst damage windows.
+
+### Key Benefits
+- Adds tactical layer beyond basic attack/defend
+- Integrates naturally with existing class specialization system (PR #183)
+- Creates distinct party roles and synergies
+- Enables more engaging boss encounters (complements PR #200 dungeon floors)
+
+---
+
+## Core Mechanics
+
+### 1. Shield Count
+
+Every enemy gains a `shieldCount` property representing their defensive barrier.
+
+```javascript
+// Enemy schema extension
+{
+  id: 'goblin_warrior',
+  name: 'Goblin Warrior',
+  hp: 45,
+  shieldCount: 3,        // NEW: Number of hits needed to Break
+  weaknesses: ['fire', 'holy'],  // NEW: Elements that reduce shields
+  // ... existing properties
+}
+```
+
+**Shield Tier Guidelines:**
+| Enemy Type | Shield Count | Example |
+|------------|--------------|---------|
+| Basic | 2-3 | Goblin, Slime |
+| Elite | 4-5 | Orc Captain, Dark Mage |
+| Mini-Boss | 6-8 | Goblin Chief, Ice Spirit |
+| Boss | 8-12 | Dragon, Abyss Overlord |
+
+### 2. Weakness System
+
+Each enemy has 2-4 elemental/physical weaknesses.
+
+**Valid Weakness Types:** (matches existing element system)
+- `physical`, `fire`, `ice`, `lightning`, `shadow`, `nature`, `holy`
+
+```javascript
+// Example enemy weaknesses
+{
+  id: 'ice_elemental',
+  weaknesses: ['fire', 'lightning'],  // Weak to heat and electricity
+  immunities: ['ice'],                 // Immune to own element
+  shieldCount: 5
+}
+```
+
+### 3. Break State
+
+When `shieldCount` reaches 0, the enemy enters **Break State**:
+
+```javascript
+const BREAK_STATE = {
+  duration: 2,              // Turns enemy remains Broken
+  damageMultiplier: 1.5,    // 50% increased damage taken
+  skipsTurn: true,          // Enemy cannot act while Broken
+  recoveryShields: 'base'   // Shields reset to base value after recovery
+};
+```
+
+**Break State Flow:**
+```
+Normal → (shields reduced to 0) → BROKEN (2 turns) → Shields Recover → Normal
+                                    ↓
+                          - Cannot act
+                          - Takes +50% damage
+                          - Shields show as "BREAK!"
+```
+
+### 4. Shield Damage Rules
+
+| Action | Shield Damage | Condition |
+|--------|---------------|-----------|
+| Attack with weakness element | -1 shield | Must match enemy weakness |
+| Attack with neutral element | 0 shields | No shield reduction |
+| Attack with resisted element | 0 shields | Reduced damage, no shield effect |
+| Multi-hit attacks | -1 per hit | Each hit that matches weakness |
+| Critical hits | -1 (normal) | Crits don't grant extra shield damage |
+
+---
+
+## Class Specialization Integration
+
+Integrates with the existing specialization system (PR #183) to create distinct Break-focused builds.
+
+### Warrior - Breaker Path
+
+**Theme:** Overwhelming force to shatter enemy defenses
+
+| Ability | Level | Effect |
+|---------|-------|--------|
+| **Shield Crush** | 1 | Physical attack that deals -2 shield damage (instead of -1) |
+| **Armor Breaker** | 3 | Heavy attack: -3 shield damage, 1.2x physical damage |
+| **Relentless Assault** | 5 | Passive: All physical attacks deal +1 shield damage |
+| **Shatter** | 7 | Ultimate: -5 shield damage + guaranteed Break if shields ≤ 5 |
+
+**Passive Bonus:** +1 shield damage on all attacks that hit weakness
+
+### Mage - Elementalist Path
+
+**Theme:** Weakness identification and elemental exploitation
+
+| Ability | Level | Effect |
+|---------|-------|--------|
+| **Analyze** | 1 | Reveal all enemy weaknesses (no damage) |
+| **Elemental Surge** | 3 | Attack with 2 random elements simultaneously |
+| **Weakness Sense** | 5 | Passive: Auto-reveal 1 random weakness at combat start |
+| **Prismatic Blast** | 7 | Ultimate: Hit with ALL elements, -1 shield per weakness match |
+
+**Passive Bonus:** Elemental spells that hit weakness deal +20% damage
+
+### Rogue - Exploit Path
+
+**Theme:** Maximizing damage during Break windows
+
+| Ability | Level | Effect |
+|---------|-------|--------|
+| **Opportunist Strike** | 1 | +50% damage vs Broken enemies (stacks with base 50%) |
+| **Exploit Weakness** | 3 | First hit on Broken enemy is auto-critical |
+| **Chain Breaker** | 5 | Passive: Multi-hit attacks gain +1 hit vs Broken enemies |
+| **Assassinate** | 7 | Ultimate: 3x damage vs Broken enemies, ignores defense |
+
+**Passive Bonus:** +25% damage against Broken enemies (multiplicative)
+
+### Cleric - Sustain Path
+
+**Theme:** Extending Break windows and party support
+
+| Ability | Level | Effect |
+|---------|-------|--------|
+| **Blessed Judgment** | 1 | Holy damage + extends Break duration by 1 turn |
+| **Judgment Aura** | 3 | Party buff (scales with party size, see below) |
+| **Sanctify** | 5 | Passive: Holy attacks always hit weakness vs Undead/Shadow |
+| **Divine Condemnation** | 7 | Ultimate: All Broken enemies take holy damage + extended Break |
+
+**Judgment Aura Scaling:**
+| Party Size | Shield Damage Bonus | Break Damage Bonus |
+|------------|--------------------|--------------------|
+| 2 members | +1 shield damage | - |
+| 3 members | +1 shield damage | +5% |
+| 4 members | +2 shield damage | +10% |
+
+---
+
+## Party Synergy Design
+
+The system encourages diverse party composition:
+
+```
+OPTIMAL BREAK LOOP:
+┌─────────────────────────────────────────────────────────────┐
+│  Mage (Analyze) → Reveals weaknesses                        │
+│       ↓                                                      │
+│  Warrior (Breaker) → Rapidly depletes shields               │
+│       ↓                                                      │
+│  ENEMY BROKEN!                                               │
+│       ↓                                                      │
+│  Cleric (Judgment Aura) → Extends Break + buffs party       │
+│       ↓                                                      │
+│  Rogue (Exploit) → Massive burst damage during Break window │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Solo Play Consideration:** System remains viable for solo by:
+- Lower shield counts on enemies when party size = 1
+- Items that reveal weaknesses (alternative to Mage Analyze)
+- Break duration unchanged (still rewards timing)
+
+---
+
+## Boss Integration
+
+### HP Threshold Phase Shifts (Complements PR #200)
+
+Bosses gain new phases that interact with the Shield/Break system:
+
+```javascript
+// Abyss Overlord example (Floor 10 boss)
+{
+  id: 'abyss_overlord',
+  hp: 500,
+  shieldCount: 10,
+  weaknesses: ['holy', 'lightning'],
+  phases: [
+    {
+      trigger: 'hp_below_75',
+      event: 'summon_minions',
+      shieldRegen: 3  // Regains 3 shields
+    },
+    {
+      trigger: 'hp_below_50',
+      event: 'shield_shift',
+      newWeaknesses: ['fire', 'ice'],  // Weaknesses change!
+      shieldCount: 8
+    },
+    {
+      trigger: 'hp_below_25',
+      event: 'telegraph_ultimate',
+      message: 'The Abyss Overlord begins channeling Void Annihilation!',
+      turnsUntilAttack: 2,
+      shieldCount: 12  // Must break to interrupt!
+    }
+  ]
+}
+```
+
+### Telegraphed Attack Interaction
+
+Breaking a boss during a telegraphed attack **interrupts** the attack:
+
+```javascript
+// Combat logic
+if (boss.isChanneling && boss.shieldCount <= 0) {
+  boss.isChanneling = false;
+  boss.channeledAttack = null;
+  displayMessage(`${boss.name}'s ${attackName} was interrupted!`);
+  // Boss enters Break state, losing their powerful attack
+}
+```
+
+---
+
+## UI/UX Design
+
+### Shield Display
+
+```
+┌─────────────────────────────────────┐
+│  Goblin Warrior                     │
+│  HP: ████████░░ 45/60               │
+│  Shields: 🛡️🛡️🛡️ (3)                │
+│  Weak: 🔥 ✨                        │
+└─────────────────────────────────────┘
+```
+
+**Break State Display:**
+```
+┌─────────────────────────────────────┐
+│  Goblin Warrior                     │
+│  HP: ████░░░░░░ 24/60               │
+│  ⚡ BREAK! ⚡ (2 turns)              │
+│  +50% damage taken                   │
+└─────────────────────────────────────┘
+```
+
+### Weakness Icons
+| Element | Icon | Display |
+|---------|------|---------|
+| Physical | ⚔️ | Sword |
+| Fire | 🔥 | Flame |
+| Ice | ❄️ | Snowflake |
+| Lightning | ⚡ | Bolt |
+| Shadow | 🌑 | Dark moon |
+| Nature | 🌿 | Leaf |
+| Holy | ✨ | Sparkle |
+
+### Combat Log Messages
+
+```javascript
+const BREAK_MESSAGES = {
+  shieldHit: '{attacker} hits {enemy}\'s weakness! Shields: {shields} → {newShields}',
+  broken: '{enemy}\'s defenses shatter! BREAK!',
+  brokeWhileChanneling: '{enemy}\'s {attack} was interrupted by the Break!',
+  breakRecovery: '{enemy} recovers from Break state. Shields restored to {shields}.',
+  noWeakness: '{attacker}\'s {element} attack doesn\'t hit any weakness.'
+};
+```
+
+---
+
+## Implementation Notes
+
+### File Structure
+
+```
+src/
+├── shield-break.js          # Core Shield/Break logic
+├── enemy-weaknesses.js      # Weakness definitions for all enemies
+└── combat.js                # Existing file - integrate Break checks
+
+tests/
+├── shield-break-test.mjs    # Core mechanic tests
+├── break-specialization-test.mjs  # Class ability tests
+└── boss-break-phases-test.mjs     # Boss integration tests
+```
+
+### State Shape Extension
+
+```javascript
+// Enemy combat state
+{
+  ...existingEnemyState,
+  shieldCount: number,        // Current shields
+  baseShieldCount: number,    // Original shield count (for recovery)
+  weaknesses: string[],       // Array of weakness elements
+  immunities: string[],       // Array of immune elements
+  isBroken: boolean,          // Currently in Break state
+  breakTurnsRemaining: number // Turns until Break ends
+}
+```
+
+### Combat Integration Points
+
+1. **Attack Resolution:** Check if attack element matches weakness
+2. **Shield Reduction:** Apply shield damage before HP damage
+3. **Break Check:** If shields ≤ 0, trigger Break state
+4. **Turn Order:** Skip Broken enemies in turn queue
+5. **Damage Calculation:** Apply Break multiplier
+6. **Recovery:** Check Break duration at end of enemy's skipped turn
+
+---
+
+## Test Coverage Requirements
+
+**Minimum: 50+ tests** covering:
+
+### Core Mechanics (15+ tests)
+- Shield damage from weakness attacks
+- No shield damage from neutral/resisted attacks
+- Multi-hit attack shield interactions
+- Break state trigger at 0 shields
+- Break duration countdown
+- Shield recovery after Break ends
+- Damage multiplier during Break
+
+### Class Abilities (20+ tests)
+- Warrior Breaker path abilities
+- Mage Elementalist abilities (including Analyze reveal)
+- Rogue Exploit damage bonuses
+- Cleric Sustain abilities (Break extension)
+- Judgment Aura party scaling
+- Passive ability stacking
+
+### Boss Integration (10+ tests)
+- HP threshold phase shifts
+- Weakness changes during phases
+- Shield regeneration on phase change
+- Telegraphed attack interruption via Break
+- Multi-phase boss full fight simulation
+
+### Edge Cases (5+ tests)
+- Solo player shield scaling
+- Multiple Broken enemies simultaneously
+- Break during status effects (stun, etc.)
+- Immunity to Break (for certain bosses?)
+- Shield damage overflow (attack deals -3 on enemy with 1 shield)
+
+---
+
+## Security Considerations
+
+*(Section reserved for Opus 4.5 (Claude Code) scanner integration)*
+
+**Egg-scan patterns to watch for:**
+- No references to: egg, nest, hatch, shell, yolk, cockatrice, basilisk
+- Enemy names should be reviewed (avoid "Hen", "Rooster", "Nest Guardian", etc.)
+- Item/ability names should avoid food items that contain eggs
+
+---
+
+## Estimated Implementation Effort
+
+| Component | Lines | Tests | Priority |
+|-----------|-------|-------|----------|
+| Core shield-break.js | ~300 | 15 | HIGH |
+| Enemy weakness data | ~200 | 5 | HIGH |
+| Combat.js integration | ~150 | 10 | HIGH |
+| Class specialization updates | ~250 | 20 | MEDIUM |
+| Boss phase integration | ~200 | 10 | MEDIUM |
+| UI components | ~150 | 5 | LOW |
+| **TOTAL** | **~1,250** | **65** | - |
+
+---
+
+## Open Questions for Team Discussion
+
+1. **Should Break interrupt ALL channeled attacks, or only specific ones?**
+2. **Do we want items that can restore enemy shields (strategic complexity)?**
+3. **Should there be a "Guard" action that grants shield to players?**
+4. **Multi-target attacks: reduce shields on ALL enemies or just primary?**
+
+---
+
+## Appendix: Research References
+
+This design draws inspiration from:
+- **Octopath Traveler** (Square Enix) - Original Shield/Break system
+- **Persona 5** - "One More" system for weakness exploitation
+- **Chained Echoes** - Overdrive gauge for action variety
+- **Bravely Default** - Brave/Default for turn management
+
+---
+
+*Proposal prepared during #voted-out research phase, Day 343*
+*Ready for implementation starting Day 344*
