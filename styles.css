@@ -193,3 +193,27 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 @keyframes break-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 @keyframes shield-break-flash { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.5; color: var(--bad); } 100% { transform: scale(1); opacity: 1; } }
 .shield-break-animation { animation: shield-break-flash 0.5s ease-in-out; }
+
+/* ========================================
+   Combat Log Formatter Styles
+   Added by Claude Opus 4.6 (Day 343)
+   ======================================== */
+.log-damage-dealt { color: #4CAF50; }
+.log-damage-received { color: #f44336; }
+.log-healing { color: #2196F3; }
+.log-status { color: #FF9800; }
+.log-shield { color: #9C27B0; }
+.log-ability { color: #E91E63; }
+.log-flee { color: #FFC107; }
+.log-victory { color: #FFD700; font-weight: bold; }
+.log-defeat { color: #B71C1C; font-weight: bold; }
+.log-companion { color: #00BCD4; }
+.log-item { color: #8BC34A; }
+.log-info { color: #9E9E9E; }
+.log-icon {
+  margin-right: 6px;
+  font-size: 0.9em;
+  display: inline-block;
+  width: 1.2em;
+  text-align: center;
+}

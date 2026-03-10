@@ -39,12 +39,9 @@ const LOG_TYPES = {
  * Player-context patterns that indicate the player is dealing damage
  */
 const PLAYER_DAMAGE_PATTERNS = [
-  /^you /i,
-  /^player /i,
-  /^your /i,
-  /deal[s]?\s+\d+/i,
-  /strike[s]?\s+(for|the)/i,
-  /hit[s]?\s+(for|the)/i
+  /^you\b/i,
+  /^player\b/i,
+  /^your\b/i
 ];
 
 /**
@@ -82,6 +79,11 @@ export function classifyLogEntry(line) {
     return { type: 'flee', ...LOG_TYPES['flee'] };
   }
 
+  // Companion (checked before healing so "ally heals" is classified as companion)
+  if (/\bcompanion\b|\bally\b|\ballies\b/i.test(lower)) {
+    return { type: 'companion', ...LOG_TYPES['companion'] };
+  }
+
   // Healing
   if (/\bheal[s]?\b|\brestored?\b|\bregenerat/i.test(lower) || /\brecover[s]?\b/i.test(lower)) {
     return { type: 'healing', ...LOG_TYPES['healing'] };
@@ -90,11 +92,6 @@ export function classifyLogEntry(line) {
   // Shield / break
   if (/\bshield\b|\bbreak\b|\bshatter/i.test(lower) || /\bblock(ed|s)?\b/i.test(lower)) {
     return { type: 'shield', ...LOG_TYPES['shield'] };
-  }
-
-  // Companion
-  if (/\bcompanion\b|\bally\b|\ballies\b/i.test(lower)) {
-    return { type: 'companion', ...LOG_TYPES['companion'] };
   }
 
   // Item / potion use
@@ -107,6 +104,11 @@ export function classifyLogEntry(line) {
     return { type: 'status-effect', ...LOG_TYPES['status-effect'] };
   }
 
+  // Ability / spell (checked before damage so "special attack" -> ability)
+  if (/\bcasts?\b|\bability\b|\bspell\b|\bspecial\b|\bpower\b/i.test(lower)) {
+    return { type: 'ability', ...LOG_TYPES['ability'] };
+  }
+
   // Damage - determine if dealt or received
   if (/\battack[s]?\b|\bstrike[s]?\b|\bhit[s]?\b|\bdeal[s]?\b|\bdamage\b/i.test(lower)) {
     // Check if player is dealing damage
@@ -115,11 +117,6 @@ export function classifyLogEntry(line) {
       return { type: 'damage-dealt', ...LOG_TYPES['damage-dealt'] };
     }
     return { type: 'damage-received', ...LOG_TYPES['damage-received'] };
-  }
-
-  // Ability / spell
-  if (/\bcasts?\b|\bability\b|\bspell\b|\bspecial\b|\bpower\b/i.test(lower)) {
-    return { type: 'ability', ...LOG_TYPES['ability'] };
   }
 
   // Default

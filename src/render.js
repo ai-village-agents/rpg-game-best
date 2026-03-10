@@ -31,6 +31,7 @@ import { renderDungeonPanel, renderDungeonActions, attachDungeonHandlers, getDun
 import { renderProvisionsPanel, renderProvisionBuffs, attachProvisionsHandlers, getProvisionsStyles } from './provisions-ui.js';
 import { renderShieldBreakHUD } from './shield-break-ui.js';
 import { renderCombatStatsHtml } from './battle-summary.js';
+import { formatLogEntryHtml, getLogStyles } from './combat-log-formatter.js';
 
 function hpLine(entity) {
   const pct = Math.round((entity.hp / entity.maxHp) * 100);
@@ -211,7 +212,7 @@ export function render(state, dispatch) {
     log.innerHTML = state.log
       .slice()
       .reverse()
-      .map((line) => `<div class="logLine">${esc(line)}</div>`)
+      .map((line) => formatLogEntryHtml(line))
       .join('');
     finalizeRender();
     return;
@@ -313,7 +314,7 @@ export function render(state, dispatch) {
     log.innerHTML = state.log
       .slice()
       .reverse()
-      .map((line) => `<div class="logLine">${esc(line)}</div>`)
+      .map((line) => formatLogEntryHtml(line))
       .join('');
     finalizeRender();
     return;
@@ -414,7 +415,7 @@ export function render(state, dispatch) {
     log.innerHTML = state.log
       .slice()
       .reverse()
-      .map((line) => `<div class="logLine">${esc(line)}</div>`)
+      .map((line) => formatLogEntryHtml(line))
       .join('');
     finalizeRender();
     return;
@@ -471,7 +472,7 @@ export function render(state, dispatch) {
       }
     });
 
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -520,7 +521,7 @@ export function render(state, dispatch) {
       log.innerHTML = state.log
         .slice()
         .reverse()
-        .map(line => '<div class="logLine">' + esc(line) + '</div>')
+        .map(line => formatLogEntryHtml(line))
         .join('');
       finalizeRender();
       return;
@@ -585,7 +586,7 @@ export function render(state, dispatch) {
     `;
     actions.innerHTML = '<div class="buttons"><button id="btnContinueAfterBattle">Continue →</button></div>';
     document.getElementById('btnContinueAfterBattle').onclick = () => dispatch({ type: 'CONTINUE_AFTER_BATTLE' });
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -640,7 +641,7 @@ export function render(state, dispatch) {
     log.innerHTML = state.log
       .slice()
       .reverse()
-      .map((line) => `<div class="logLine">${esc(line)}</div>`)
+      .map((line) => formatLogEntryHtml(line))
       .join('');
     finalizeRender();
     return;
@@ -674,7 +675,7 @@ export function render(state, dispatch) {
     log.innerHTML = state.log
       .slice()
       .reverse()
-      .map((line) => `<div class="logLine">${esc(line)}</div>`)
+      .map((line) => formatLogEntryHtml(line))
       .join('');
     finalizeRender();
     return;
@@ -689,7 +690,7 @@ export function render(state, dispatch) {
     `;
     actions.innerHTML = '<div class="buttons"><button id="btnCloseStats">Close 📊</button></div>';
     document.getElementById('btnCloseStats').onclick = () => dispatch({ type: 'CLOSE_STATS' });
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -698,7 +699,7 @@ if (state.phase === 'achievements') {
     hud.innerHTML = renderAchievementsPanel(state);
     attachAchievementsHandlers(hud, dispatch);
     actions.innerHTML = '';
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -708,7 +709,7 @@ if (state.phase === 'achievements') {
     hud.innerHTML = renderJournalPanel(state);
     actions.innerHTML = '<div class="buttons"><button id="btnCloseJournal">Close 📔</button></div>';
     document.getElementById('btnCloseJournal').onclick = () => dispatch({ type: 'CLOSE_JOURNAL' });
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -728,7 +729,7 @@ if (state.phase === 'achievements') {
     }
 
     attachQuestRewardHandlers(dispatch);
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -758,7 +759,7 @@ if (state.phase === 'achievements') {
     const btnClose = document.getElementById('btnCloseSettings');
     if (btnClose) btnClose.onclick = () => dispatch({ type: 'CLOSE_SETTINGS' });
     
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -799,7 +800,7 @@ if (state.phase === 'achievements') {
       btn.onclick = () => dispatch({ type: 'DELETE_SAVE_SLOT', slotIndex: parseInt(btn.dataset.slotIndex, 10) });
     });
 
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -869,7 +870,7 @@ if (state.phase === 'achievements') {
       btn.onclick = () => dispatch({ type: 'ACCEPT_QUEST', questId });
     });
 
-    log.innerHTML = state.log.slice().reverse().map(line => `<div class="logLine">${esc(line)}</div>`).join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -1038,7 +1039,7 @@ if (state.phase === 'achievements') {
       };
     });
 
-    log.innerHTML = state.log.slice().reverse().map(line => `<div class="logLine">${esc(line)}</div>`).join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -1053,7 +1054,7 @@ if (state.phase === 'achievements') {
     actions.innerHTML = '<div class="buttons"><button id="btnCloseTalents">Close Talents</button></div>';
     attachTalentHandlers(hud, dispatch);
     document.getElementById('btnCloseTalents').onclick = () => dispatch({ type: 'CLOSE_TALENTS' });
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -1075,7 +1076,7 @@ if (state.phase === 'achievements') {
     log.innerHTML = state.log
       .slice()
       .reverse()
-      .map((line) => `<div class="logLine">${esc(line)}</div>`)
+      .map((line) => formatLogEntryHtml(line))
       .join('');
     finalizeRender();
     return;
@@ -1098,7 +1099,7 @@ if (state.phase === 'achievements') {
     log.innerHTML = state.log
       .slice()
       .reverse()
-      .map((line) => `<div class="logLine">${esc(line)}</div>`)
+      .map((line) => formatLogEntryHtml(line))
       .join('');
     finalizeRender();
     return;
@@ -1141,7 +1142,7 @@ if (state.phase === 'achievements') {
     log.innerHTML = state.log
       .slice()
       .reverse()
-      .map((line) => `<div class="logLine">${esc(line)}</div>`)
+      .map((line) => formatLogEntryHtml(line))
       .join('');
     finalizeRender();
     return;
@@ -1158,7 +1159,7 @@ if (state.phase === 'achievements') {
     `;
     actions.innerHTML = '<div class="buttons"><button id="btnContinueAfterFlee">Continue Exploring</button></div>';
     document.getElementById('btnContinueAfterFlee').onclick = () => dispatch({ type: 'CONTINUE_AFTER_FLEE' });
-    log.innerHTML = state.log.slice().reverse().map((line) => `<div class="logLine">${esc(line)}</div>`).join('');
+    log.innerHTML = state.log.slice().reverse().map((line) => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -1176,7 +1177,7 @@ if (state.phase === 'achievements') {
     hud.querySelectorAll('[data-action="DISMISS_COMPANION"]').forEach(btn => {
       btn.onclick = () => dispatch({ type: 'DISMISS_COMPANION', companionId: btn.dataset.companionId });
     });
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -1190,7 +1191,7 @@ if (state.phase === 'achievements') {
     // Also wire data-action close button from bestiary-ui
     const dataCloseBtn = hud.querySelector('[data-action="close-bestiary"]');
     if (dataCloseBtn) dataCloseBtn.onclick = () => dispatch({ type: 'CLOSE_BESTIARY' });
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -1213,7 +1214,7 @@ if (state.phase === 'achievements') {
     `;
     actions.innerHTML = renderDungeonActions(state);
     attachDungeonHandlers(dispatch);
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -1234,7 +1235,7 @@ if (state.phase === 'achievements') {
     log.innerHTML = state.log
       .slice()
       .reverse()
-      .map((line) => `<div class="logLine">${esc(line)}</div>`)
+      .map((line) => formatLogEntryHtml(line))
       .join('');
     finalizeRender();
     return;
@@ -1257,7 +1258,7 @@ if (state.phase === 'achievements') {
         });
       };
     }
-    log.innerHTML = state.log.slice().reverse().map(line => '<div class="logLine">' + esc(line) + '</div>').join('');
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
   }
@@ -1276,7 +1277,7 @@ if (state.phase === 'achievements') {
   log.innerHTML = state.log
     .slice()
     .reverse()
-    .map((line) => `<div class="logLine">${esc(line)}</div>`)
+    .map((line) => formatLogEntryHtml(line))
     .join('');
   finalizeRender();
 }
