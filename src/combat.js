@@ -112,8 +112,8 @@ function processTurnStart(state, actorKey) {
   if (!actor) return state;
 
   let nextState = state;
-  const actorName = actorKey === 'player' ? 'You' : state.enemy.name;
-  const actorPossessive = actorKey === 'player' ? 'Your' : `${state.enemy.name}'s`;
+  const actorName = actorKey === 'player' ? 'You' : (state.enemy.displayName ?? state.enemy.name);
+  const actorPossessive = actorKey === 'player' ? 'Your' : `${(state.enemy.displayName ?? state.enemy.name)}'s`;
   let hp = actor.hp;
   const remainingEffects = [];
 
@@ -121,7 +121,7 @@ function processTurnStart(state, actorKey) {
     const duration = effect.duration ?? 0;
     if (duration <= 0) {
       nextState = pushLog(nextState, `${actorPossessive} ${effect.type} wears off.`);
-      logStatusExpired(effect.type, actorKey === 'player' ? 'Player' : state.enemy.name);
+      logStatusExpired(effect.type, actorKey === 'player' ? 'Player' : (state.enemy.displayName ?? state.enemy.name));
       continue;
     }
 
@@ -194,12 +194,12 @@ function applyVictoryDefeat(state) {
         state = pushLog(state, `Loot: ${loot.name} (${loot.rarity})`);
       }
     }
-    logVictory(state.enemy.name, xpGained, goldGained);
-    state = pushLog(state, `Victory! The ${state.enemy.name} dissolves.`);
+    logVictory((state.enemy.displayName ?? state.enemy.name), xpGained, goldGained);
+    state = pushLog(state, `Victory! The ${(state.enemy.displayName ?? state.enemy.name)} dissolves.`);
     // Log to journal
-    state = logCombatVictory(state, state.enemy.name, goldGained, xpGained);
+    state = logCombatVictory(state, (state.enemy.displayName ?? state.enemy.name), goldGained, xpGained);
     if (state.enemy.isBoss) {
-      state = logBossDefeat(state, state.enemy.name);
+      state = logBossDefeat(state, (state.enemy.displayName ?? state.enemy.name));
     }
     // Companion combat rewards: loyalty adjustments + auto-revive
     state = processCompanionCombatRewards(state);
@@ -243,7 +243,7 @@ export function startNewEncounter(state, zoneLevel = 1) {
   }
   next = { ...next, currentEnemyId: enemyId, bestiary: recordEncounter(next.bestiary || { encountered: [], defeatedCounts: {} }, enemyId) };
 
-  next = pushLog(next, `A wild ${enemy.name} appears.`);
+  next = pushLog(next, `A wild ${enemy.displayName ?? enemy.name} appears.`);
   initCombatBattleLog();
   next = pushLog(next, `Your turn.`);
   return next;
@@ -303,7 +303,7 @@ export function playerAttack(state) {
   };
 
   state = pushLog(state, `You strike for ${damage} damage.`);
-  logPlayerAttack(damage, state.enemy.name);
+  logPlayerAttack(damage, (state.enemy.displayName ?? state.enemy.name));
 
   // Apply weapon on-hit status effect (e.g., freeze, bleed, blind)
   if (state.enemy.hp > 0) {
@@ -474,17 +474,17 @@ export function playerUseAbility(state, abilityId) {
         ...state,
         enemy: { ...state.enemy, hp: enemyHp },
       };
-      let msg = `${state.enemy.name} takes ${damage} ${abilityElement} damage!`;
+      let msg = `${(state.enemy.displayName ?? state.enemy.name)} takes ${damage} ${abilityElement} damage!`;
       if (critical) msg += ' Critical hit!';
       state = pushLog(state, msg);
-      logPlayerAbility(ability.name, damage, abilityElement, state.enemy.name);
+      logPlayerAbility(ability.name, damage, abilityElement, (state.enemy.displayName ?? state.enemy.name));
     }
 
     // Apply status effect to enemy
     if (ability.statusEffect) {
       state = addStatusEffect(state, 'enemy', ability.statusEffect);
-      state = pushLog(state, `${state.enemy.name} is afflicted with ${ability.statusEffect.name}!`);
-      logStatusApplied(ability.statusEffect.name, state.enemy.name, ability.statusEffect.duration ?? 3);
+      state = pushLog(state, `${(state.enemy.displayName ?? state.enemy.name)} is afflicted with ${ability.statusEffect.name}!`);
+      logStatusApplied(ability.statusEffect.name, (state.enemy.displayName ?? state.enemy.name), ability.statusEffect.duration ?? 3);
     }
   } else if (ability.targetType === 'single-ally' || ability.targetType === 'all-allies' || ability.targetType === 'self') {
     // Healing ability targeting player
@@ -601,7 +601,7 @@ export function playerUseItem(state, itemId) {
       enemy: { ...state.enemy, hp: enemyHp },
     };
     state = pushLog(state, `You throw ${item.name} for ${damage} ${element} damage!`);
-    logItemUsed(item.name, `Dealt ${damage} ${element} damage to ${state.enemy.name}`);
+    logItemUsed(item.name, `Dealt ${damage} ${element} damage to ${(state.enemy.displayName ?? state.enemy.name)}`);
     state = applyVictoryDefeat(state);
     if (state.phase === 'victory' || state.phase === 'defeat') return state;
   }
@@ -643,7 +643,7 @@ export function enemyAct(state) {
 
   if (wasEnemyStunned || wasEnemyFrozen) {
     const reason = wasEnemyFrozen ? 'frozen' : 'stunned';
-    state = pushLog(state, `${state.enemy.name} is ${reason} and cannot act!`);
+    state = pushLog(state, `${(state.enemy.displayName ?? state.enemy.name)} is ${reason} and cannot act!`);
     state = processTurnStart(state, 'player');
     if (state.phase === 'victory' || state.phase === 'defeat') return state;
     state = pushLog(state, `Your turn.`);
@@ -653,7 +653,7 @@ export function enemyAct(state) {
   if (state.enemy.isBroken && state.enemy.breakTurnsRemaining > 0) {
     const breakResult = processBreakState(state.enemy);
     state = { ...state, enemy: { ...state.enemy, ...breakResult } };
-    state = pushLog(state, `${state.enemy.name} is recovering from the break and cannot act!`);
+    state = pushLog(state, `${(state.enemy.displayName ?? state.enemy.name)} is recovering from the break and cannot act!`);
     state = processTurnStart(state, 'player');
     if (state.phase === 'victory' || state.phase === 'defeat') return state;
     state = pushLog(state, 'Your turn.');
@@ -666,7 +666,7 @@ export function enemyAct(state) {
   // Silenced enemies cannot use abilities — forced to basic attack
   if (result.action === 'ability' && isSilenced(state.enemy)) {
     result = { ...result, action: 'attack' };
-    state = pushLog(state, `${state.enemy.name} is silenced and cannot use abilities!`);
+    state = pushLog(state, `${(state.enemy.displayName ?? state.enemy.name)} is silenced and cannot use abilities!`);
   }
 
   if (result.action === 'defend') {
@@ -676,7 +676,7 @@ export function enemyAct(state) {
       player: { ...state.player, defending: false },
       turn: state.turn + 1,
     };
-    state = pushLog(state, `${state.enemy.name} takes a defensive stance.`);
+    state = pushLog(state, `${(state.enemy.displayName ?? state.enemy.name)} takes a defensive stance.`);
   } else if (result.action === 'ability') {
     state = executeEnemyAbility(state, result.abilityId);
     state = { ...state, turn: state.turn + 1 };
@@ -700,7 +700,7 @@ export function enemyAct(state) {
         const { seed: blindSeed, value: blindRoll } = nextRng(state.rngSeed ?? 1);
         state = { ...state, rngSeed: blindSeed };
         if (blindRoll < 0.5) {
-          state = pushLog(state, `${state.enemy.name}'s attack misses! (Blinded)`);
+          state = pushLog(state, `${(state.enemy.displayName ?? state.enemy.name)}'s attack misses! (Blinded)`);
           state = {
             ...state,
             enemy: { ...state.enemy, defending: false },
@@ -731,8 +731,8 @@ export function enemyAct(state) {
         turn: state.turn + 1,
       };
 
-      state = pushLog(state, `${state.enemy.name} slams you for ${damage} damage.`);
-      logDamageReceived(damage, state.enemy.name);
+      state = pushLog(state, `${(state.enemy.displayName ?? state.enemy.name)} slams you for ${damage} damage.`);
+      logDamageReceived(damage, (state.enemy.displayName ?? state.enemy.name));
     }
     state = applyVictoryDefeat(state);
   }

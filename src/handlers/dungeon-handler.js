@@ -89,7 +89,7 @@ export function handleDungeonAction(state, action) {
           },
           'You search the floor...'
         ),
-        `A ${enemy.name} attacks! (Floor ${state.dungeonState.currentFloor})`
+        `A ${(enemy.displayName ?? enemy.name)} attacks! (Floor ${state.dungeonState.currentFloor})`
       );
     }
 
@@ -188,7 +188,7 @@ export function handleDungeonAction(state, action) {
         },
         'You challenge the floor boss!'
       ),
-      `A mighty ${enemy.name} appears!`
+      `A mighty ${(enemy.displayName ?? enemy.name)} appears!`
     );
   }
 
