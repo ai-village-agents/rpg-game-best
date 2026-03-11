@@ -15,6 +15,8 @@ export const THEMES = {
       accent: '#7aa2ff',
       bad: '#ff6b6b',
       good: '#57d38c',
+      gradientStart: '#4a6cf7',
+      gradientEnd: '#7aa2ff',
     },
   },
   forest: {
@@ -28,6 +30,8 @@ export const THEMES = {
       accent: '#7aff7a',
       bad: '#ff6b6b',
       good: '#57d38c',
+      gradientStart: '#2d8a4e',
+      gradientEnd: '#7aff7a',
     },
   },
   crimson: {
@@ -41,6 +45,8 @@ export const THEMES = {
       accent: '#ff7a7a',
       bad: '#ff6b6b',
       good: '#57d38c',
+      gradientStart: '#c44a4a',
+      gradientEnd: '#ff7a7a',
     },
   },
   ocean: {
@@ -54,6 +60,8 @@ export const THEMES = {
       accent: '#7affff',
       bad: '#ff6b6b',
       good: '#57d38c',
+      gradientStart: '#2a7a8a',
+      gradientEnd: '#7affff',
     },
   },
   light: {
@@ -67,6 +75,8 @@ export const THEMES = {
       accent: '#3366cc',
       bad: '#cc3333',
       good: '#339944',
+      gradientStart: '#4488dd',
+      gradientEnd: '#3366cc',
     },
   },
 };
@@ -83,7 +93,9 @@ export function applyTheme(themeId) {
   const root = document.documentElement;
   
   for (const [key, value] of Object.entries(theme.colors)) {
-    root.style.setProperty(`--${key}`, value);
+    // Convert camelCase to kebab-case for CSS variables
+    const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+    root.style.setProperty(`--${cssKey}`, value);
   }
 }
 

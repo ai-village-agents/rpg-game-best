@@ -217,3 +217,57 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   width: 1.2em;
   text-align: center;
 }
+
+/* Gradient Button Styles */
+button.gradient,
+.btn-gradient {
+  appearance: none;
+  background: linear-gradient(135deg, var(--gradient-start, var(--accent)), var(--gradient-end, var(--panel)));
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+button.gradient:hover,
+.btn-gradient:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transform: translateY(-1px);
+}
+
+button.gradient:active,
+.btn-gradient:active {
+  filter: brightness(0.95);
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+button.gradient:disabled,
+.btn-gradient:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: saturate(0.5);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Gradient button variants */
+button.gradient-success,
+.btn-gradient-success {
+  background: linear-gradient(135deg, #2d8a4e, var(--good, #57d38c));
+}
+
+button.gradient-danger,
+.btn-gradient-danger {
+  background: linear-gradient(135deg, #c44a4a, var(--bad, #ff6b6b));
+}
+
+button.gradient-primary,
+.btn-gradient-primary {
+  background: linear-gradient(135deg, var(--gradient-start, #4a6cf7), var(--gradient-end, var(--accent)));
+}
