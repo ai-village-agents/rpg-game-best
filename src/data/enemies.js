@@ -34,10 +34,12 @@ export function generateRandomName(baseName) {
   return `${adjective} ${name} ${title}`;
 }
 
+export const generateProceduralName = generateRandomName;
+
 export const ENEMIES = {
   slime: {
     id: 'slime',
-    name: generateRandomName('Slime'),
+    name: 'Slime',
     hp: 18,
     maxHp: 18,
     mp: 0,
@@ -53,7 +55,7 @@ export const ENEMIES = {
   },
   goblin: {
     id: 'goblin',
-    name: generateRandomName('Goblin'),
+    name: 'Goblin',
     hp: 22,
     maxHp: 22,
     mp: 5,
@@ -69,7 +71,7 @@ export const ENEMIES = {
   },
   goblin_chief: {
     id: 'goblin_chief',
-    name: generateRandomName('Goblin Chief'),
+    name: 'Goblin Chief',
     hp: 45,
     maxHp: 45,
     mp: 10,
@@ -85,7 +87,7 @@ export const ENEMIES = {
   },
   cave_bat: {
     id: 'cave_bat',
-    name: generateRandomName('Cave Bat'),
+    name: 'Cave Bat',
     hp: 12,
     maxHp: 12,
     mp: 0,
@@ -101,7 +103,7 @@ export const ENEMIES = {
   },
   giant_spider: {
     id: 'giant_spider',
-    name: generateRandomName('Giant Spider'),
+    name: 'Giant Spider',
     hp: 24,
     maxHp: 24,
     mp: 0,
@@ -117,7 +119,7 @@ export const ENEMIES = {
   },
   training_dummy: {
     id: 'training_dummy',
-    name: generateRandomName('Training Dummy'),
+    name: 'Training Dummy',
     hp: 15,
     maxHp: 15,
     mp: 0,
@@ -133,7 +135,7 @@ export const ENEMIES = {
   },
   wolf: {
     id: 'wolf',
-    name: generateRandomName('Wolf'),
+    name: 'Wolf',
     hp: 20,
     maxHp: 20,
     mp: 0,
@@ -149,7 +151,7 @@ export const ENEMIES = {
   },
   skeleton: {
     id: 'skeleton',
-    name: generateRandomName('Skeleton'),
+    name: 'Skeleton',
     hp: 28,
     maxHp: 28,
     mp: 6,
@@ -165,7 +167,7 @@ export const ENEMIES = {
   },
   orc: {
     id: 'orc',
-    name: generateRandomName('Orc'),
+    name: 'Orc',
     hp: 40,
     maxHp: 40,
     mp: 6,
@@ -181,7 +183,7 @@ export const ENEMIES = {
   },
   'fire-spirit': {
     id: 'fire-spirit',
-    name: generateRandomName('Fire Spirit'),
+    name: 'Fire Spirit',
     hp: 26,
     maxHp: 26,
     mp: 16,
@@ -197,7 +199,7 @@ export const ENEMIES = {
   },
   'ice-spirit': {
     id: 'ice-spirit',
-    name: generateRandomName('Ice Spirit'),
+    name: 'Ice Spirit',
     hp: 28,
     maxHp: 28,
     mp: 18,
@@ -213,7 +215,7 @@ export const ENEMIES = {
   },
   'dark-cultist': {
     id: 'dark-cultist',
-    name: generateRandomName('Dark Cultist'),
+    name: 'Dark Cultist',
     hp: 32,
     maxHp: 32,
     mp: 20,
@@ -229,7 +231,7 @@ export const ENEMIES = {
   },
   'giant-spider': {
     id: 'giant-spider',
-    name: generateRandomName('Giant Spider'),
+    name: 'Giant Spider',
     hp: 24,
     maxHp: 24,
     mp: 0,
@@ -245,7 +247,7 @@ export const ENEMIES = {
   },
   bandit: {
     id: 'bandit',
-    name: generateRandomName('Bandit'),
+    name: 'Bandit',
     hp: 30,
     maxHp: 30,
     mp: 4,
@@ -261,7 +263,7 @@ export const ENEMIES = {
   },
   wraith: {
     id: 'wraith',
-    name: generateRandomName('Wraith'),
+    name: 'Wraith',
     hp: 35,
     maxHp: 35,
     mp: 25,
@@ -277,7 +279,7 @@ export const ENEMIES = {
   },
   'stone-golem': {
     id: 'stone-golem',
-    name: generateRandomName('Stone Golem'),
+    name: 'Stone Golem',
     hp: 60,
     maxHp: 60,
     mp: 0,
@@ -293,7 +295,7 @@ export const ENEMIES = {
   },
   'thunder-hawk': {
     id: 'thunder-hawk',
-    name: generateRandomName('Thunder Hawk'),
+    name: 'Thunder Hawk',
     hp: 22,
     maxHp: 22,
     mp: 12,
@@ -309,7 +311,7 @@ export const ENEMIES = {
   },
   dragon: {
     id: 'dragon',
-    name: generateRandomName('Dragon'),
+    name: 'Dragon',
     hp: 120,
     maxHp: 120,
     mp: 50,
@@ -325,7 +327,7 @@ export const ENEMIES = {
   },
   'frost-revenant': {
     id: 'frost-revenant',
-    name: generateRandomName('Frost Revenant'),
+    name: 'Frost Revenant',
     hp: 65,
     maxHp: 65,
     mp: 20,
@@ -341,7 +343,7 @@ export const ENEMIES = {
   },
   'blood-fiend': {
     id: 'blood-fiend',
-    name: generateRandomName('Blood Fiend'),
+    name: 'Blood Fiend',
     hp: 55,
     maxHp: 55,
     mp: 15,
@@ -357,7 +359,7 @@ export const ENEMIES = {
   },
   'shadow-weaver': {
     id: 'shadow-weaver',
-    name: generateRandomName('Shadow Weaver'),
+    name: 'Shadow Weaver',
     hp: 45,
     maxHp: 45,
     mp: 30,
@@ -373,7 +375,7 @@ export const ENEMIES = {
   },
   'storm-elemental': {
     id: 'storm-elemental',
-    name: generateRandomName('Storm Elemental'),
+    name: 'Storm Elemental',
     hp: 70,
     maxHp: 70,
     mp: 25,
@@ -389,7 +391,7 @@ export const ENEMIES = {
   },
   'plague-bearer': {
     id: 'plague-bearer',
-    name: generateRandomName('Plague Bearer'),
+    name: 'Plague Bearer',
     hp: 80,
     maxHp: 80,
     mp: 18,
@@ -405,7 +407,7 @@ export const ENEMIES = {
   },
   'infernal-knight': {
     id: 'infernal-knight',
-    name: generateRandomName('Infernal Knight'),
+    name: 'Infernal Knight',
     hp: 95,
     maxHp: 95,
     mp: 20,
@@ -421,7 +423,7 @@ export const ENEMIES = {
   },
   'glacial-wyrm': {
     id: 'glacial-wyrm',
-    name: generateRandomName('Glacial Wyrm'),
+    name: 'Glacial Wyrm',
     hp: 110,
     maxHp: 110,
     mp: 30,
@@ -437,7 +439,7 @@ export const ENEMIES = {
   },
   'void-stalker': {
     id: 'void-stalker',
-    name: generateRandomName('Void Stalker'),
+    name: 'Void Stalker',
     hp: 75,
     maxHp: 75,
     mp: 25,
@@ -480,7 +482,11 @@ const ENCOUNTER_TABLE = {
 export function getEnemy(id) {
   const enemy = ENEMIES[id];
   if (!enemy) return null;
-  return JSON.parse(JSON.stringify(enemy));
+  const copy = JSON.parse(JSON.stringify(enemy));
+  return {
+    ...copy,
+    displayName: generateProceduralName(copy.name),
+  };
 }
 
 /**
