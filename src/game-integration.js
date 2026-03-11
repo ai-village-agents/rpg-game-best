@@ -191,7 +191,7 @@ export function handleExplore(gameState, direction) {
     let combatState = createCombatState(partyCombatants, enemies, updated.rngSeed);
     combatState = calculateTurnOrder(combatState);
     const gamePhase = setGameState(GameState.COMBAT);
-    messages.push(`Encountered ${enemies.map((enemy) => enemy.name).join(', ')}.`);
+    messages.push(`Encountered ${enemies.map((enemy) => (enemy.displayName ?? enemy.name)).join(', ')}.`);
     emit('combat:start', { combatState });
     return { ...updated, gamePhase, combatState, messages };
   }

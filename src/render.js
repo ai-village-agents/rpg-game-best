@@ -569,7 +569,7 @@ export function render(state, dispatch) {
         <div class="card">
           <h2>Enemy</h2>
           <div class="kv">
-            <div>Name</div><div><b>${esc(state.enemy.name)}</b></div>
+            <div>Name</div><div><b>${esc((state.enemy.displayName ?? state.enemy.name))}</b></div>
             <div>HP</div><div><b>${hpLine(state.enemy)}</b></div>
             <div>ATK / DEF</div><div><b>${state.enemy.atk}</b> / <b>${state.enemy.def}</b></div>
             <div>Defending</div><div><b>${state.enemy.defending ? 'Yes' : 'No'}</b></div>

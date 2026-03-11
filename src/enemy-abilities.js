@@ -158,7 +158,7 @@ export function executeEnemyAbility(state, abilityId) {
     const suffix = extras.length > 0 ? ` (${extras.join(') (')})` : '';
     nextState = pushLog(
       nextState,
-      `${nextState.enemy.name} uses ${ability.name} for ${damage} damage!${suffix}`
+      `${(nextState.enemy.displayName ?? nextState.enemy.name)} uses ${ability.name} for ${damage} damage!${suffix}`
     );
   } else if (ability.targetType === 'self') {
     if (effect) {
@@ -176,7 +176,7 @@ export function executeEnemyAbility(state, abilityId) {
     const suffix = extras.length > 0 ? ` (${extras.join(') (')})` : '';
     nextState = pushLog(
       nextState,
-      `${nextState.enemy.name} uses ${ability.name}!${suffix}`
+      `${(nextState.enemy.displayName ?? nextState.enemy.name)} uses ${ability.name}!${suffix}`
     );
   }
 
