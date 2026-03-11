@@ -5,8 +5,8 @@ import { DUNGEON_FLOORS, getFloorData } from '../src/dungeon-floors.js';
 import { getFlavorText } from '../src/dungeon-ui.js';
 
 describe('DUNGEON_FLOORS flavor text fields', () => {
-  test('all 10 floors have entryText string', () => {
-    assert.equal(DUNGEON_FLOORS.length, 10);
+test('all 15 floors have entryText string', () => {
+  assert.equal(DUNGEON_FLOORS.length, 15);
 
     for (const floor of DUNGEON_FLOORS) {
       assert.equal(typeof floor.entryText, 'string');
@@ -14,8 +14,8 @@ describe('DUNGEON_FLOORS flavor text fields', () => {
     }
   });
 
-  test('all 10 floors have ambientMessages array of 3 strings', () => {
-    assert.equal(DUNGEON_FLOORS.length, 10);
+test('all 15 floors have ambientMessages array of 3 strings', () => {
+  assert.equal(DUNGEON_FLOORS.length, 15);
 
     for (const floor of DUNGEON_FLOORS) {
       assert.ok(Array.isArray(floor.ambientMessages));
@@ -28,8 +28,8 @@ describe('DUNGEON_FLOORS flavor text fields', () => {
     }
   });
 
-  test('all 10 floors have clearText string', () => {
-    assert.equal(DUNGEON_FLOORS.length, 10);
+test('all 15 floors have clearText string', () => {
+  assert.equal(DUNGEON_FLOORS.length, 15);
 
     for (const floor of DUNGEON_FLOORS) {
       assert.equal(typeof floor.clearText, 'string');
