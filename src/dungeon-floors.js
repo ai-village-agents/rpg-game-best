@@ -234,9 +234,154 @@ export const DUNGEON_FLOORS = [
     bossId: "abyss_overlord",
     minLevel: 12,
   },
+  {
+    id: 11,
+    name: "Twilight Sanctum",
+    theme: "twilight",
+    description:
+      "An ancient sanctuary caught between light and shadow, where crystal formations pulse with fading luminescence.",
+    entryText:
+      "You step into a vast hall bathed in perpetual twilight. Crystal pillars refract dying light into spectral rainbows that fade before reaching the floor.",
+    ambientMessages: [
+      "The crystals hum with a resonance that sets your teeth on edge.",
+      "Shadows shift between the pillars, watching.",
+      "A cold breeze carries whispers in a language long forgotten.",
+    ],
+    clearText:
+      "The twilight dims further as the sanctum's guardians fall. Only silence remains in the fading light.",
+    enemyPool: [
+      "crystal-sentinel",
+      "ember-drake",
+      "phantom-assassin",
+      "void-stalker",
+      "infernal-knight",
+      "glacial-wyrm",
+    ],
+    difficultyMultiplier: 2.5,
+    encounterRate: 0.67,
+    bossFloor: false,
+    bossId: null,
+    minLevel: 13,
+  },
+  {
+    id: 12,
+    name: "Arcane Labyrinth",
+    theme: "arcane",
+    description:
+      "A maze of shifting magical walls where the laws of reality bend to the will of ancient enchantments.",
+    entryText:
+      "The air crackles with raw magical energy. The walls pulse with glyphs that rearrange themselves as you watch, forming new pathways through the labyrinth.",
+    ambientMessages: [
+      "Arcane sigils flare briefly in the corners of your vision.",
+      "The floor hums with channeled energy, making each step uncertain.",
+      "Echoes of old incantations drift through the corridors like smoke.",
+    ],
+    clearText:
+      "The labyrinth's enchantments unravel as its guardians are defeated. The shifting walls grow still at last.",
+    enemyPool: [
+      "arcane-guardian",
+      "crimson-berserker",
+      "frost-archon",
+      "crystal-sentinel",
+      "phantom-assassin",
+      "ember-drake",
+    ],
+    difficultyMultiplier: 2.65,
+    encounterRate: 0.69,
+    bossFloor: false,
+    bossId: null,
+    minLevel: 14,
+  },
+  {
+    id: 13,
+    name: "Void Threshold",
+    theme: "void",
+    description:
+      "The boundary between existence and the void, where reality grows thin and creatures of nothingness cross freely.",
+    entryText:
+      "You cross into a space where the ground seems optional. Patches of absolute darkness hang suspended in the air, and from them come sounds that defy description.",
+    ambientMessages: [
+      "The void between the stars watches you with patient hunger.",
+      "Your footsteps make no sound here — the void absorbs them.",
+      "Something vast and formless stirs just beyond the edge of sight.",
+    ],
+    clearText:
+      "The threshold trembles as the void's champions fall. For now, the rift holds — but the void does not forget.",
+    enemyPool: [
+      "void-knight",
+      "thunder-titan",
+      "infernal-sorcerer",
+      "arcane-guardian",
+      "crimson-berserker",
+      "frost-archon",
+    ],
+    difficultyMultiplier: 2.8,
+    encounterRate: 0.71,
+    bossFloor: false,
+    bossId: null,
+    minLevel: 15,
+  },
+  {
+    id: 14,
+    name: "Celestial Ruins",
+    theme: "celestial",
+    description:
+      "The shattered remains of a celestial fortress, its divine architecture crumbling under the corruption of chaos.",
+    entryText:
+      "Broken columns of white marble jut from the darkness at impossible angles. The ceiling is open to a sky that should not exist here — filled with stars that wheel too fast.",
+    ambientMessages: [
+      "Divine energy crackles in the ruins like lightning seeking ground.",
+      "The stars above pulse in patterns that almost form words.",
+      "Chaos has seeped into every crack, warping the once-holy stone.",
+    ],
+    clearText:
+      "The ruins grow quiet as their twisted guardians are vanquished. The broken fortress will remain, a monument to what was lost.",
+    enemyPool: [
+      "abyssal-warden",
+      "celestial-wyrm",
+      "chaos-spawn",
+      "void-knight",
+      "thunder-titan",
+      "infernal-sorcerer",
+    ],
+    difficultyMultiplier: 2.95,
+    encounterRate: 0.73,
+    bossFloor: false,
+    bossId: null,
+    minLevel: 16,
+  },
+  {
+    id: 15,
+    name: "Oblivion Throne",
+    theme: "oblivion",
+    description:
+      "The seat of absolute annihilation — where the Oblivion Lord marshals the forces of total erasure.",
+    entryText:
+      "The final chamber stretches beyond comprehension. At its center, upon a throne of compressed nothingness, sits the Oblivion Lord — and at its approach, you feel your very name beginning to fade.",
+    ambientMessages: [
+      "Existence itself recoils from the power gathered here.",
+      "Every victory, every memory — this place would consume them all.",
+      "The Oblivion Lord stirs. It has been waiting.",
+    ],
+    clearText:
+      "The Oblivion Lord shatters and its throne crumbles into dust. Oblivion blinks out — and light, impossibly, returns.",
+    enemyPool: [
+      "oblivion-lord",
+      "eternal-guardian",
+      "primordial-phoenix",
+      "abyssal-warden",
+      "celestial-wyrm",
+      "chaos-spawn",
+    ],
+    difficultyMultiplier: 3.2,
+    encounterRate: 0.75,
+    bossFloor: true,
+    bossId: "oblivion-lord",
+    minLevel: 17,
+  },
 ];
 
-const TOTAL_FLOORS = 10;
+const TOTAL_FLOORS = 15;
 
 export function createDungeonState() {
   return {

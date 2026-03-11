@@ -96,9 +96,9 @@ describe('renderDungeonPanel', () => {
       'description text is rendered',
     );
 
-    // Progress text: 2 of 10 floors cleared => 20%.
+    // Progress text: 2 of 15 floors cleared => 13%.
     assert.ok(
-      html.includes('2/10 floors cleared (20%)'),
+      html.includes('2/15 floors cleared (13%)'),
       'progress text reflects cleared floors and percentage',
     );
 
@@ -108,8 +108,8 @@ describe('renderDungeonPanel', () => {
       'progress fill element present',
     );
     assert.ok(
-      html.includes('width:20%'),
-      'progress fill uses 20% width for two floors cleared',
+      html.includes('width:13%'),
+      'progress fill uses 13% width for two floors cleared',
     );
   });
 
@@ -149,7 +149,7 @@ describe('renderDungeonPanel', () => {
     );
   });
 
-  test('renders floor list markers for all 10 floors', () => {
+  test('renders floor list markers for all 15 floors', () => {
     const state = makeBaseState({
       phase: 'dungeon',
       dungeonState: makeDungeonStateForFloor(5, {
@@ -163,7 +163,7 @@ describe('renderDungeonPanel', () => {
 
     // There should be one marker per floor.
     const markerMatches = html.match(/class=\"dungeon-floor-marker/g) || [];
-    assert.equal(markerMatches.length, 10, 'one marker per floor');
+    assert.equal(markerMatches.length, 15, 'one marker per floor');
 
     // Current floor should be marked as current.
     assert.ok(
@@ -238,7 +238,7 @@ describe('renderDungeonActions', () => {
 
   test('does not show descend button on last floor even if canAdvance', () => {
     const lastFloor = DUNGEON_FLOORS[DUNGEON_FLOORS.length - 1];
-    assert.equal(lastFloor.id, 10, 'expected floor 10 to be last floor');
+    assert.equal(lastFloor.id, 15, 'expected floor 15 to be last floor');
 
     const state = makeBaseState({
       phase: 'dungeon',
@@ -320,4 +320,3 @@ describe('getDungeonStyles', () => {
     }
   });
 });
-

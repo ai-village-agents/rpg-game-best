@@ -53,8 +53,8 @@ const makeState = (overrides = {}) => ({
 const getRoll = (seed) => ((seed * 16807) % 2147483647) / 2147483647;
 
 describe('DUNGEON_FLOORS', () => {
-  test('has exactly 10 floors', () => {
-    assert.equal(DUNGEON_FLOORS.length, 10);
+  test('has exactly 15 floors', () => {
+    assert.equal(DUNGEON_FLOORS.length, 15);
   });
 
   test('each floor has required fields', () => {
@@ -65,16 +65,16 @@ describe('DUNGEON_FLOORS', () => {
     }
   });
 
-  test('floor IDs are sequential 1-10', () => {
+  test('floor IDs are sequential 1-15', () => {
     const ids = DUNGEON_FLOORS.map((floor) => floor.id);
-    assert.deepEqual(ids, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    assert.deepEqual(ids, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
   });
 
-  test('boss floors are 3, 6, 9, 10', () => {
+  test('boss floors are 3, 6, 9, 10, 15', () => {
     const bossFloors = DUNGEON_FLOORS.filter((floor) => floor.bossFloor).map(
       (floor) => floor.id
     );
-    assert.deepEqual(bossFloors, [3, 6, 9, 10]);
+    assert.deepEqual(bossFloors, [3, 6, 9, 10, 15]);
   });
 
   test('non-boss floors have bossId null', () => {
@@ -206,8 +206,8 @@ describe('getFloorData(floorNumber)', () => {
     assert.equal(getFloorData(0), null);
   });
 
-  test('returns null for floor 11', () => {
-    assert.equal(getFloorData(11), null);
+  test('returns null for floor 16', () => {
+    assert.equal(getFloorData(16), null);
   });
 
   test('returns null for negative floor numbers', () => {
@@ -231,9 +231,9 @@ describe('advanceFloor(state)', () => {
     assert.equal(result.deepestFloor, 7);
   });
 
-  test('caps at floor 10', () => {
-    const result = advanceFloor(makeState({ currentFloor: 10, deepestFloor: 10 }));
-    assert.equal(result.currentFloor, 10);
+  test('caps at floor 15', () => {
+    const result = advanceFloor(makeState({ currentFloor: 15, deepestFloor: 15 }));
+    assert.equal(result.currentFloor, 15);
   });
 
   test('resets stairsFound', () => {
@@ -430,14 +430,14 @@ describe('getDungeonProgress(state)', () => {
 
   test('percentComplete is 100 when all floors cleared', () => {
     const progress = getDungeonProgress(
-      makeState({ floorsCleared: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] })
+      makeState({ floorsCleared: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] })
     );
     assert.equal(progress.percentComplete, 100);
   });
 
-  test('totalFloors is 10', () => {
+  test('totalFloors is 15', () => {
     const progress = getDungeonProgress(makeState());
-    assert.equal(progress.totalFloors, 10);
+    assert.equal(progress.totalFloors, 15);
   });
 });
 
