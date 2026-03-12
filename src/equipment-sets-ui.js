@@ -1,342 +1,527 @@
 /**
- * Equipment Sets UI — AI Village RPG
- * Owner: Claude Opus 4.5
- *
- * Provides visual display of active equipment sets and their bonuses.
- * Shows which sets the player has completed and the stat bonuses they grant.
+ * Equipment Set UI Components
+ * Renders set bonuses, progress, and equipment displays
  */
 
-import { equipmentSets, getActiveEquipmentSetIds, getEquipmentSetBonuses } from './equipment-sets.js';
-import { items } from './data/items.js';
+import {
+  EQUIPMENT_SETS,
+  EQUIPMENT_SLOTS,
+  getSetData,
+  getActiveSetBonuses,
+  getSetProgress,
+  getSetPieceStatus,
+  checkSetAdvancement,
+  getEquipmentSetSummary,
+} from './equipment-sets.js';
 
 /**
- * Get detailed information about all equipment sets with active status.
- * @param {object|null} equipment - Player's equipped items { weapon, armor, accessory }
- * @returns {Array<{ set: object, isActive: boolean, equippedCount: number, totalRequired: number, missingItems: string[] }>}
+ * Get CSS styles for equipment set UI
+ * @returns {string} CSS styles
  */
-export function getEquipmentSetsStatus(equipment) {
-  const equippedIds = equipment ? new Set(Object.values(equipment).filter(Boolean)) : new Set();
-  
-  return equipmentSets.map(set => {
-    const equippedFromSet = set.requiredItems.filter(id => equippedIds.has(id));
-    const missingItems = set.requiredItems.filter(id => !equippedIds.has(id));
-    
-    return {
-      set,
-      isActive: equippedFromSet.length === set.requiredItems.length,
-      equippedCount: equippedFromSet.length,
-      totalRequired: set.requiredItems.length,
-      missingItems,
-    };
-  });
+export function getEquipmentSetStyles() {
+  return `
+.set-bonus-container {
+  padding: 10px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 1px solid #0f3460;
+  margin-bottom: 10px;
+}
+
+.set-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.set-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.set-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #e8e8e8;
+}
+
+.set-piece-count {
+  font-size: 12px;
+  color: #888;
+  margin-left: auto;
+}
+
+.set-piece-count.complete {
+  color: #8f8;
+}
+
+.set-description {
+  font-size: 11px;
+  color: #aaa;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.set-bonus-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.set-bonus-item {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.set-bonus-item.active {
+  background: rgba(100, 200, 100, 0.2);
+  color: #8f8;
+  border-left: 2px solid #8f8;
+}
+
+.set-bonus-item.inactive {
+  background: rgba(100, 100, 100, 0.15);
+  color: #666;
+}
+
+.set-bonus-item.next {
+  background: rgba(200, 200, 100, 0.15);
+  color: #aa8;
+  border-left: 2px dashed #aa8;
+}
+
+.set-bonus-threshold {
+  font-weight: bold;
+  min-width: 20px;
+}
+
+.set-bonus-description {
+  flex: 1;
+}
+
+/* Set progress bar */
+.set-progress-bar {
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.set-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4a8 0%, #8f8 100%);
+  transition: width 0.3s ease;
+}
+
+/* Set pieces display */
+.set-pieces-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.set-piece {
+  font-size: 10px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.set-piece.equipped {
+  background: rgba(100, 200, 100, 0.2);
+  color: #8f8;
+  border: 1px solid #4a8;
+}
+
+.set-piece.missing {
+  background: rgba(100, 100, 100, 0.1);
+  color: #555;
+  border: 1px dashed #444;
+}
+
+/* Active sets summary */
+.active-sets-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.active-set-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(100, 200, 100, 0.15);
+  border: 1px solid rgba(100, 200, 100, 0.3);
+  font-size: 11px;
+}
+
+.active-set-badge .badge-icon {
+  font-size: 14px;
+}
+
+.active-set-badge .badge-name {
+  color: #8f8;
+  font-weight: bold;
+}
+
+.active-set-badge .badge-pieces {
+  color: #888;
+}
+
+/* Set advancement notification */
+.set-advancement-notice {
+  padding: 10px;
+  background: linear-gradient(135deg, #1a2a1a 0%, #0a1a0a 100%);
+  border: 1px solid #4a8;
+  border-radius: 6px;
+  text-align: center;
+  animation: set-unlock 0.5s ease-out;
+}
+
+@keyframes set-unlock {
+  0% { transform: scale(0.9); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.set-advancement-notice .unlock-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.set-advancement-notice .unlock-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #8f8;
+  margin-bottom: 4px;
+}
+
+.set-advancement-notice .unlock-bonus {
+  font-size: 11px;
+  color: #aaa;
+}
+
+/* Equipment slot indicator */
+.slot-set-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(100, 200, 100, 0.3);
+}
+
+/* Total bonus stats */
+.total-set-bonuses {
+  padding: 8px;
+  background: rgba(50, 100, 50, 0.1);
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.total-set-bonuses-title {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.total-bonus-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.total-bonus-stat {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(100, 200, 100, 0.2);
+  color: #8f8;
+}
+`;
 }
 
 /**
- * Format a stat name for display.
- * @param {string} stat - Raw stat key (e.g., 'critChance')
- * @returns {string} Formatted stat name (e.g., 'Crit Chance')
- */
-function formatStatName(stat) {
-  const statNames = {
-    attack: 'ATK',
-    defense: 'DEF',
-    speed: 'SPD',
-    magic: 'MAG',
-    critChance: 'Crit%',
-  };
-  return statNames[stat] || stat;
-}
-
-/**
- * Render HTML for the equipment set bonuses panel.
- * Shows active sets prominently and inactive sets with progress.
- * @param {object|null} equipment - Player's equipped items
- * @param {object} options - Display options
- * @param {boolean} [options.showInactive=true] - Whether to show inactive sets
- * @param {boolean} [options.compact=false] - Use compact display mode
+ * Render active set bonuses display
+ * @param {Object} equipment - Equipped items by slot
  * @returns {string} HTML string
  */
-export function renderEquipmentSetsPanel(equipment, options = {}) {
-  const { showInactive = true, compact = false } = options;
-  const setsStatus = getEquipmentSetsStatus(equipment);
-  const activeSets = setsStatus.filter(s => s.isActive);
-  const inactiveSets = setsStatus.filter(s => !s.isActive);
-  
-  let html = '<div class="equipment-sets-panel">';
-  html += '<h3 class="sets-header">⚔️ Equipment Sets</h3>';
-  
-  // Active sets section
-  if (activeSets.length > 0) {
-    html += '<div class="active-sets">';
-    for (const { set } of activeSets) {
-      html += renderSetCard(set, true, compact);
-    }
-    html += '</div>';
-  } else {
-    html += '<p class="no-active-sets">No complete sets equipped</p>';
-  }
-  
-  // Inactive sets section (collapsible/optional)
-  if (showInactive && inactiveSets.length > 0) {
-    html += '<div class="inactive-sets">';
-    html += '<h4 class="inactive-header">Available Sets</h4>';
-    for (const { set, equippedCount, totalRequired, missingItems } of inactiveSets) {
-      html += renderSetProgress(set, equippedCount, totalRequired, missingItems, compact);
-    }
-    html += '</div>';
-  }
-  
-  html += '</div>';
-  return html;
-}
+export function renderActiveSetBonuses(equipment) {
+  const summary = getEquipmentSetSummary(equipment);
 
-/**
- * Render an active set card with full bonus display.
- * @param {object} set - Equipment set definition
- * @param {boolean} isActive - Whether the set is active
- * @param {boolean} compact - Use compact mode
- * @returns {string} HTML string
- */
-function renderSetCard(set, isActive, compact) {
-  const bonusEntries = Object.entries(set.bonuses).filter(([_, v]) => v > 0);
-  const bonusText = bonusEntries.map(([stat, val]) => `+${val} ${formatStatName(stat)}`).join(', ');
-  
-  if (compact) {
+  if (summary.setCount === 0) {
     return `
-      <div class="set-card set-card--active set-card--compact">
-        <span class="set-name">✨ ${escapeHtml(set.name)}</span>
-        <span class="set-bonuses">${bonusText}</span>
+      <div class="set-bonus-container">
+        <div class="set-header">
+          <span class="set-icon">\u2728</span>
+          <span class="set-name">No Active Set Bonuses</span>
+        </div>
+        <div class="set-description">Equip matching gear pieces to unlock set bonuses.</div>
+      </div>
+    `.trim();
+  }
+
+  const setBonusHtml = summary.activeSets.map(activeSet => {
+    const setData = getSetData(activeSet.setId);
+    const progress = getSetProgress(equipment, activeSet.setId);
+    const progressPercent = (activeSet.pieces / activeSet.totalPieces) * 100;
+
+    return `
+      <div class="set-bonus-container">
+        <div class="set-header">
+          <span class="set-icon">${escapeHtml(activeSet.icon)}</span>
+          <span class="set-name">${escapeHtml(activeSet.setName)}</span>
+          <span class="set-piece-count ${activeSet.pieces === activeSet.totalPieces ? 'complete' : ''}">${activeSet.pieces}/${activeSet.totalPieces}</span>
+        </div>
+        <div class="set-bonus-list">
+          ${renderSetBonusTiers(setData, activeSet.pieces)}
+        </div>
+        <div class="set-progress-bar">
+          <div class="set-progress-fill" style="width: ${progressPercent}%"></div>
+        </div>
       </div>
     `;
-  }
-  
-  return `
-    <div class="set-card set-card--active">
-      <div class="set-header">
-        <span class="set-icon">✨</span>
-        <span class="set-name">${escapeHtml(set.name)}</span>
-      </div>
-      <p class="set-flavor">${escapeHtml(set.flavor)}</p>
-      <div class="set-bonuses">
-        ${bonusEntries.map(([stat, val]) => 
-          `<span class="bonus-item bonus-item--${stat}">+${val} ${formatStatName(stat)}</span>`
-        ).join('')}
-      </div>
-      <div class="set-items">
-        ${set.requiredItems.map(id => {
-          const item = items[id];
-          return `<span class="set-item set-item--equipped">✓ ${escapeHtml(item?.name || id)}</span>`;
-        }).join('')}
-      </div>
-    </div>
-  `;
+  }).join('');
+
+  return setBonusHtml;
 }
 
 /**
- * Render an inactive set with progress indicator.
- * @param {object} set - Equipment set definition
- * @param {number} equippedCount - Number of set items currently equipped
- * @param {number} totalRequired - Total items needed for set
- * @param {string[]} missingItems - IDs of items not yet equipped
- * @param {boolean} compact - Use compact mode
+ * Render set bonus tiers
+ * @param {Object} setData - Set data
+ * @param {number} equippedPieces - Number of equipped pieces
  * @returns {string} HTML string
  */
-function renderSetProgress(set, equippedCount, totalRequired, missingItems, compact) {
-  const progressPct = Math.round((equippedCount / totalRequired) * 100);
-  const bonusEntries = Object.entries(set.bonuses).filter(([_, v]) => v > 0);
-  const bonusText = bonusEntries.map(([stat, val]) => `+${val} ${formatStatName(stat)}`).join(', ');
-  
-  if (compact) {
+function renderSetBonusTiers(setData, equippedPieces) {
+  const thresholds = Object.keys(setData.bonuses).map(Number).sort((a, b) => a - b);
+
+  return thresholds.map(threshold => {
+    const bonus = setData.bonuses[threshold];
+    const isActive = equippedPieces >= threshold;
+    const isNext = !isActive && equippedPieces === threshold - 1;
+    const statusClass = isActive ? 'active' : (isNext ? 'next' : 'inactive');
+
     return `
-      <div class="set-card set-card--inactive set-card--compact">
-        <span class="set-name">${escapeHtml(set.name)}</span>
-        <span class="set-progress">${equippedCount}/${totalRequired}</span>
+      <div class="set-bonus-item ${statusClass}">
+        <span class="set-bonus-threshold">(${threshold})</span>
+        <span class="set-bonus-description">${escapeHtml(bonus.description)}</span>
       </div>
     `;
+  }).join('');
+}
+
+/**
+ * Render set progress display
+ * @param {Object} equipment - Equipped items
+ * @param {string} setId - Set ID to display
+ * @returns {string} HTML string
+ */
+export function renderSetProgress(equipment, setId) {
+  const progress = getSetProgress(equipment, setId);
+
+  if (!progress.found) {
+    return `<div class="set-bonus-container">Set not found</div>`;
   }
-  
+
+  const pieceStatus = getSetPieceStatus(equipment, setId);
+  const progressPercent = (progress.equippedPieces / progress.totalPieces) * 100;
+
   return `
-    <div class="set-card set-card--inactive">
+    <div class="set-bonus-container">
       <div class="set-header">
-        <span class="set-name">${escapeHtml(set.name)}</span>
-        <span class="set-progress-badge">${equippedCount}/${totalRequired}</span>
+        <span class="set-icon">${escapeHtml(progress.icon)}</span>
+        <span class="set-name">${escapeHtml(progress.setName)}</span>
+        <span class="set-piece-count ${progress.equippedPieces === progress.totalPieces ? 'complete' : ''}">${progress.equippedPieces}/${progress.totalPieces}</span>
+      </div>
+      <div class="set-description">${escapeHtml(progress.description)}</div>
+      <div class="set-pieces-grid">
+        ${pieceStatus.map(piece => `
+          <div class="set-piece ${piece.equipped ? 'equipped' : 'missing'}">
+            ${escapeHtml(piece.slot)}
+          </div>
+        `).join('')}
       </div>
       <div class="set-progress-bar">
-        <div class="set-progress-fill" style="width: ${progressPct}%"></div>
+        <div class="set-progress-fill" style="width: ${progressPercent}%"></div>
       </div>
-      <div class="set-bonuses set-bonuses--preview">
-        ${bonusText}
-      </div>
-      <div class="set-items">
-        ${set.requiredItems.map(id => {
-          const item = items[id];
-          const isEquipped = !missingItems.includes(id);
-          const cls = isEquipped ? 'set-item--equipped' : 'set-item--missing';
-          const icon = isEquipped ? '✓' : '○';
-          return `<span class="set-item ${cls}">${icon} ${escapeHtml(item?.name || id)}</span>`;
-        }).join('')}
-      </div>
+      ${progress.nextBonus ? `
+        <div class="set-bonus-item next" style="margin-top: 8px;">
+          <span class="set-bonus-threshold">Next (${progress.nextThreshold}):</span>
+          <span class="set-bonus-description">${escapeHtml(progress.nextBonus.description)}</span>
+        </div>
+      ` : ''}
     </div>
-  `;
+  `.trim();
 }
 
 /**
- * Get CSS styles for the equipment sets panel.
- * @returns {string} CSS string
+ * Render compact active sets badges
+ * @param {Object} equipment - Equipped items
+ * @returns {string} HTML string
  */
-export function getEquipmentSetsPanelStyles() {
-  return `
-    .equipment-sets-panel {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      border: 1px solid #3a3a5a;
-      border-radius: 8px;
-      padding: 12px;
-      margin: 8px 0;
-    }
-    
-    .sets-header {
-      color: #ffd700;
-      font-size: 1.1em;
-      margin: 0 0 10px 0;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #3a3a5a;
-    }
-    
-    .no-active-sets {
-      color: #888;
-      font-style: italic;
-      margin: 8px 0;
-    }
-    
-    .inactive-header {
-      color: #aaa;
-      font-size: 0.9em;
-      margin: 12px 0 6px 0;
-    }
-    
-    .set-card {
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 6px;
-      padding: 10px;
-      margin: 6px 0;
-    }
-    
-    .set-card--active {
-      border: 1px solid #4a9;
-      box-shadow: 0 0 8px rgba(68, 170, 153, 0.3);
-    }
-    
-    .set-card--inactive {
-      border: 1px solid #444;
-      opacity: 0.85;
-    }
-    
-    .set-card--compact {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 10px;
-    }
-    
-    .set-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
-    }
-    
-    .set-icon {
-      font-size: 1.2em;
-    }
-    
-    .set-name {
-      color: #fff;
-      font-weight: bold;
-    }
-    
-    .set-card--active .set-name {
-      color: #4a9;
-    }
-    
-    .set-flavor {
-      color: #999;
-      font-size: 0.85em;
-      font-style: italic;
-      margin: 4px 0;
-    }
-    
-    .set-progress-badge {
-      background: #333;
-      color: #aaa;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.85em;
-      margin-left: auto;
-    }
-    
-    .set-progress-bar {
-      height: 4px;
-      background: #333;
-      border-radius: 2px;
-      margin: 6px 0;
-      overflow: hidden;
-    }
-    
-    .set-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #4a9 0%, #6cb 100%);
-      transition: width 0.3s ease;
-    }
-    
-    .set-bonuses {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 6px 0;
-    }
-    
-    .set-bonuses--preview {
-      color: #888;
-      font-size: 0.85em;
-    }
-    
-    .bonus-item {
-      background: rgba(68, 170, 153, 0.2);
-      color: #4a9;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.9em;
-    }
-    
-    .set-items {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 6px;
-    }
-    
-    .set-item {
-      font-size: 0.85em;
-      padding: 2px 6px;
-      border-radius: 3px;
-    }
-    
-    .set-item--equipped {
-      color: #4a9;
-      background: rgba(68, 170, 153, 0.15);
-    }
-    
-    .set-item--missing {
-      color: #888;
-      background: rgba(136, 136, 136, 0.15);
-    }
-  `;
+export function renderActiveSetBadges(equipment) {
+  const summary = getEquipmentSetSummary(equipment);
+
+  if (summary.setCount === 0) {
+    return '';
+  }
+
+  const badges = summary.activeSets.map(activeSet => `
+    <div class="active-set-badge">
+      <span class="badge-icon">${escapeHtml(activeSet.icon)}</span>
+      <span class="badge-name">${escapeHtml(activeSet.setName)}</span>
+      <span class="badge-pieces">(${activeSet.pieces})</span>
+    </div>
+  `).join('');
+
+  return `<div class="active-sets-container">${badges}</div>`;
 }
 
 /**
- * Escape HTML special characters to prevent XSS.
- * @param {string} str
- * @returns {string}
+ * Render set advancement notification
+ * @param {Object} advancement - Advancement info from checkSetAdvancement
+ * @returns {string} HTML string
+ */
+export function renderSetAdvancementNotice(advancement) {
+  if (!advancement) return '';
+
+  const bonusText = advancement.newBonusUnlocked
+    ? advancement.newBonusUnlocked.bonus.description
+    : `${advancement.newPieces} pieces equipped`;
+
+  return `
+    <div class="set-advancement-notice">
+      <div class="unlock-icon">${escapeHtml(advancement.icon)}</div>
+      <div class="unlock-title">${escapeHtml(advancement.setName)} ${advancement.newBonusUnlocked ? 'Bonus Unlocked!' : 'Progress!'}</div>
+      <div class="unlock-bonus">${escapeHtml(bonusText)}</div>
+    </div>
+  `.trim();
+}
+
+/**
+ * Render total set bonus stats
+ * @param {Object} equipment - Equipped items
+ * @returns {string} HTML string
+ */
+export function renderTotalSetBonusStats(equipment) {
+  const summary = getEquipmentSetSummary(equipment);
+  const stats = summary.totalBonusStats;
+
+  if (Object.keys(stats).length === 0) {
+    return '';
+  }
+
+  const statDisplay = Object.entries(stats).map(([stat, value]) => {
+    const displayValue = typeof value === 'number' && value < 1
+      ? `+${Math.round(value * 100)}%`
+      : `+${value}`;
+    return `<span class="total-bonus-stat">${formatStatName(stat)} ${displayValue}</span>`;
+  }).join('');
+
+  return `
+    <div class="total-set-bonuses">
+      <div class="total-set-bonuses-title">Total Set Bonuses</div>
+      <div class="total-bonus-grid">${statDisplay}</div>
+    </div>
+  `.trim();
+}
+
+/**
+ * Render all available sets catalog
+ * @param {Object} equipment - Equipped items (optional, to show progress)
+ * @returns {string} HTML string
+ */
+export function renderSetsCatalog(equipment = null) {
+  const setIds = Object.keys(EQUIPMENT_SETS);
+
+  const catalog = setIds.map(setId => {
+    const setData = EQUIPMENT_SETS[setId];
+    const progress = equipment ? getSetProgress(equipment, setId) : null;
+    const equippedCount = progress ? progress.equippedPieces : 0;
+    const totalPieces = Object.keys(setData.pieces).length;
+
+    return `
+      <div class="set-bonus-container">
+        <div class="set-header">
+          <span class="set-icon">${escapeHtml(setData.icon)}</span>
+          <span class="set-name">${escapeHtml(setData.name)}</span>
+          <span class="set-piece-count">${equippedCount}/${totalPieces}</span>
+        </div>
+        <div class="set-description">${escapeHtml(setData.description)}</div>
+        <div class="set-bonus-list">
+          ${renderSetBonusTiers(setData, equippedCount)}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `<div class="sets-catalog">${catalog}</div>`;
+}
+
+/**
+ * Render slot indicator showing set membership
+ * @param {string} itemId - Item ID
+ * @param {string} setId - Set ID the item belongs to
+ * @returns {string} HTML string
+ */
+export function renderSlotSetIndicator(itemId, setId) {
+  const setData = getSetData(setId);
+  if (!setData) return '';
+
+  return `<span class="slot-set-indicator" title="${escapeHtml(setData.name)}">${escapeHtml(setData.icon)}</span>`;
+}
+
+/**
+ * Format stat name for display
+ * @param {string} stat - Stat key
+ * @returns {string} Formatted name
+ */
+function formatStatName(stat) {
+  const names = {
+    hp: 'HP',
+    mp: 'MP',
+    attack: 'ATK',
+    defense: 'DEF',
+    magic: 'MAG',
+    speed: 'SPD',
+    attackPercent: 'ATK',
+    mpRegen: 'MP Regen',
+    critChance: 'Crit',
+    critDamage: 'Crit DMG',
+    healingBonus: 'Healing',
+    statusResist: 'Status Res',
+    lowHpBonus: 'Low HP DMG',
+    lifesteal: 'Lifesteal',
+    evasion: 'Evasion',
+    iceBonus: 'Ice DMG',
+    fireBonus: 'Fire DMG',
+    shadowBonus: 'Shadow DMG',
+    freezeChance: 'Freeze',
+    burnChance: 'Burn',
+    iceResist: 'Ice Res',
+    fireResist: 'Fire Res',
+    shadowResist: 'Shadow Res',
+  };
+  return names[stat] || stat;
+}
+
+/**
+ * Escape HTML special characters
+ * @param {string} str - String to escape
+ * @returns {string} Escaped string
  */
 function escapeHtml(str) {
   if (typeof str !== 'string') return '';
