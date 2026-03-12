@@ -30,6 +30,7 @@ import {
 } from './companion-combat.js';
 import { getEnemyShieldData, checkWeakness, applyShieldDamage, processBreakState, BREAK_DAMAGE_MULTIPLIER } from './shield-break.js';
 import { initCombatBattleLog, logPlayerAttack, logPlayerAbility, logDamageDealt, logDamageReceived, logHealing, logItemUsed, logStatusApplied, logStatusExpired, logTurnStart, logTurnEnd, logVictory, logDefeat } from './combat-battle-log-integration.js';
+import { applyDifficultyToEnemyHp, applyDifficultyToEnemyDamage, applyDifficultyToXpReward, applyDifficultyToGoldReward, DEFAULT_DIFFICULTY } from './difficulty.js';
 
 // Minimal deterministic RNG (Park-Miller LCG)
 export function nextRng(seed) {
@@ -164,8 +165,9 @@ function processTurnStart(state, actorKey) {
 
 function applyVictoryDefeat(state) {
   if (state.enemy.hp <= 0) {
-    const xpGained = state.enemy.xpReward ?? 0;
-    const baseGold = state.enemy.goldReward ?? 0;
+    const difficulty = state.difficulty ?? DEFAULT_DIFFICULTY;
+    const xpGained = applyDifficultyToXpReward(state.enemy.xpReward ?? 0, difficulty);
+    const baseGold = applyDifficultyToGoldReward(state.enemy.goldReward ?? 0, difficulty);
     const goldGained = Math.floor(baseGold * getGoldMultiplier(state.worldEvent));
     state = {
       ...state,
@@ -219,10 +221,13 @@ export function startNewEncounter(state, zoneLevel = 1) {
   const encounter = getEncounter(zoneLevel);
   const enemyId = encounter[0];
   const enemyBase = getEnemy(enemyId);
+  const difficulty = state?.difficulty ?? DEFAULT_DIFFICULTY;
+  const baseEnemyHp = enemyBase.maxHp ?? enemyBase.hp;
+  const adjustedEnemyHp = applyDifficultyToEnemyHp(baseEnemyHp, difficulty);
   const enemy = {
     ...enemyBase,
-    hp: enemyBase.maxHp ?? enemyBase.hp,
-    maxHp: enemyBase.maxHp ?? enemyBase.hp,
+    hp: adjustedEnemyHp,
+    maxHp: adjustedEnemyHp,
     defending: false,
     statusEffects: [],
     ...getEnemyShieldData(enemyId),
@@ -715,13 +720,15 @@ export function enemyAct(state) {
 
       // Apply equipment bonuses to player's defense stat
       const defenderStats = getEffectiveCombatStats(state.player);
-      const damage = computeDamage({
+      const baseDamage = computeDamage({
         attackerAtk: state.enemy.atk,
         targetDef: defenderStats.def,
         targetDefending: state.player.defending,
         worldEvent: state.worldEvent || null,
         targetIsCursed: isCursed(state.player),
       });
+      const difficulty = state.difficulty ?? DEFAULT_DIFFICULTY;
+      const damage = applyDifficultyToEnemyDamage(baseDamage, difficulty);
 
       const playerHp = clamp(state.player.hp - damage, 0, state.player.maxHp);
       state = {

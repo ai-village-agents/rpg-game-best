@@ -9,13 +9,17 @@ import { createBestiaryState } from './bestiary.js';
 import { createCompanionState } from './companions.js';
 import { createNPCRelationshipManager } from './npc-relationships.js';
 import { createTutorialState } from './tutorial.js';
+import { DEFAULT_DIFFICULTY, applyDifficultyToEnemyHp } from './difficulty.js';
 
 export function initialState() {
   const playerBase = characters.player;
   const enemyBase = characters.slime;
+  const difficulty = DEFAULT_DIFFICULTY;
+  const adjustedEnemyHp = applyDifficultyToEnemyHp(enemyBase.maxHp ?? enemyBase.hp, difficulty);
 
   return {
     version: 1,
+    difficulty: DEFAULT_DIFFICULTY,
     rngSeed: Date.now() % 2147483647,
     phase: 'player-turn', // player-turn | enemy-turn | victory | defeat
     turn: 1,
@@ -30,8 +34,8 @@ export function initialState() {
     },
     enemy: {
       name: enemyBase.name,
-      hp: enemyBase.maxHp,
-      maxHp: enemyBase.maxHp,
+      hp: adjustedEnemyHp,
+      maxHp: adjustedEnemyHp,
       atk: enemyBase.atk,
       def: enemyBase.def,
       defending: false,
@@ -65,9 +69,12 @@ export function initialStateWithClass(classId, characterName = '') {
   const encounter = getEncounter(1);
   const enemyId = encounter[0];
   const enemyBase = getEnemy(enemyId);
+  const difficulty = DEFAULT_DIFFICULTY;
+  const adjustedEnemyHp = applyDifficultyToEnemyHp(enemyBase.maxHp ?? enemyBase.hp, difficulty);
 
   return {
     version: 1,
+    difficulty: DEFAULT_DIFFICULTY,
     rngSeed: Date.now() % 2147483647,
     phase: 'player-turn', // player-turn | enemy-turn | victory | defeat
     turn: 1,
@@ -89,8 +96,8 @@ export function initialStateWithClass(classId, characterName = '') {
     },
     enemy: {
       ...enemyBase,
-      hp: enemyBase.maxHp ?? enemyBase.hp,
-      maxHp: enemyBase.maxHp ?? enemyBase.hp,
+      hp: adjustedEnemyHp,
+      maxHp: adjustedEnemyHp,
       defending: false,
     },
     log: [
