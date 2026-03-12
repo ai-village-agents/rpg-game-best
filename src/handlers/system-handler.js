@@ -7,6 +7,7 @@ import { initVisitedRooms } from '../minimap.js';
 import { getCurrentRoom } from '../map.js';
 import { saveToSlot, loadFromSlot, getSaveSlots, deleteSaveSlot } from '../engine.js';
 import { consumeAchievementNotifications } from '../achievements.js';
+import { DIFFICULTY_LEVELS } from '../difficulty.js';
 
 function getRoomDescription(worldState) {
   const room = getCurrentRoom(worldState);
@@ -23,9 +24,12 @@ export function handleSystemAction(state, action) {
     }
 
     const selectedName = typeof action.name === 'string' ? action.name.trim() : '';
+    const difficulty = Object.values(DIFFICULTY_LEVELS).includes(action.difficulty)
+      ? action.difficulty
+      : DIFFICULTY_LEVELS.NORMAL;
 
     // Initialize state with selected class
-    const baseState = initialStateWithClass(action.classId, selectedName);
+    const baseState = initialStateWithClass(action.classId, selectedName, difficulty);
     const className = action.classId[0].toUpperCase() + action.classId.slice(1);
 
     return {

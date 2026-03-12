@@ -45,6 +45,7 @@ import { getTutorialHint } from './tutorial.js';
 import { renderEquipmentSetsPanel, getEquipmentSetsPanelStyles } from './equipment-sets-ui.js';
 import { BACKGROUND_ORDER, BACKGROUNDS } from './data/backgrounds.js';
 import { renderVictoryScreen, renderVictoryActions, getVictoryScreenStyles } from './victory-screen.js';
+import { DIFFICULTY_LEVELS, DIFFICULTY_NAMES, DIFFICULTY_DESCRIPTIONS } from './difficulty.js';
 
 /** Track previous log for floating text diff */
 let _previousLog = [];
@@ -379,6 +380,9 @@ export function render(state, dispatch) {
   // --- Class Select Phase ---
   if (state.phase === 'class-select') {
     const order = ['warrior', 'mage', 'rogue', 'cleric'];
+    const difficultyOptions = Object.values(DIFFICULTY_LEVELS)
+      .map((level) => `<option value="${esc(level)}" title="${esc(DIFFICULTY_DESCRIPTIONS[level] || '')}">${esc(DIFFICULTY_NAMES[level] || level)}</option>`)
+      .join('');
     const cards = order.map((classId) => {
       const def = CLASS_DEFINITIONS[classId];
       if (!def) return '';
@@ -398,7 +402,16 @@ export function render(state, dispatch) {
       `;
     }).join('');
 
-    hud.innerHTML = `<div class="card"><h2>Choose Your Name</h2><input id="class-select-name" type="text" maxlength="24" placeholder="Enter your character name" autocomplete="off" /></div><div class="row">${cards}</div>`;
+    hud.innerHTML = `
+      <div class="card">
+        <h2>Choose Your Name</h2>
+        <input id="class-select-name" type="text" maxlength="24" placeholder="Enter your character name" autocomplete="off" />
+        <label for="difficulty-select">Select Difficulty</label>
+        <select id="difficulty-select">
+          ${difficultyOptions}
+        </select>
+      </div>
+      <div class="row">${cards}</div>`;
     actions.innerHTML = '';
 
     const nameInput = hud.querySelector('#class-select-name');
@@ -411,6 +424,7 @@ export function render(state, dispatch) {
         type: 'SELECT_CLASS',
         classId: button.dataset.class,
         name: nameInput?.value ?? '',
+        difficulty: document.getElementById('difficulty-select')?.value || 'normal',
       });
     });
 

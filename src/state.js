@@ -55,7 +55,7 @@ export function initialState() {
   };
 }
 
-export function initialStateWithClass(classId, characterName = '') {
+export function initialStateWithClass(classId, characterName = '', difficulty = DEFAULT_DIFFICULTY) {
   if (!CLASS_DEFINITIONS[classId]) {
     throw new Error(`Unknown classId: ${classId}`);
   }
@@ -69,12 +69,11 @@ export function initialStateWithClass(classId, characterName = '') {
   const encounter = getEncounter(1);
   const enemyId = encounter[0];
   const enemyBase = getEnemy(enemyId);
-  const difficulty = DEFAULT_DIFFICULTY;
   const adjustedEnemyHp = applyDifficultyToEnemyHp(enemyBase.maxHp ?? enemyBase.hp, difficulty);
 
   return {
     version: 1,
-    difficulty: DEFAULT_DIFFICULTY,
+    difficulty,
     rngSeed: Date.now() % 2147483647,
     phase: 'player-turn', // player-turn | enemy-turn | victory | defeat
     turn: 1,
