@@ -12,6 +12,25 @@ import {
   getEncounterStats,
   LOCATION_TYPE,
 } from '../random-encounter-system.js';
+import { getEnemy } from '../data/enemies.js';
+import { applyDifficultyToEnemyHp } from '../difficulty.js';
+
+// Map from (row, col) to room ID
+const ROOM_GRID = [
+  ['nw', 'n', 'ne'],
+  ['w', 'center', 'e'],
+  ['sw', 's', 'se'],
+];
+
+/**
+ * Get room ID from row/col coordinates
+ */
+function getRoomIdFromCoords(roomRow, roomCol) {
+  if (roomRow >= 0 && roomRow < 3 && roomCol >= 0 && roomCol < 3) {
+    return ROOM_GRID[roomRow][roomCol];
+  }
+  return 'center';
+}
 
 /**
  * Map world room IDs to encounter location types
@@ -32,6 +51,15 @@ function mapRoomToLocationType(roomId) {
 }
 
 /**
+ * Get current room ID from state
+ */
+function getCurrentRoomId(state) {
+  const roomRow = state.world?.roomRow ?? 1;
+  const roomCol = state.world?.roomCol ?? 1;
+  return getRoomIdFromCoords(roomRow, roomCol);
+}
+
+/**
  * Handle encounter-related actions
  * @param {Object} state - Game state
  * @param {Object} action - Action to handle
@@ -42,7 +70,7 @@ export function handleEncounterAction(state, action) {
 
   switch (type) {
     case 'TRIGGER_RANDOM_ENCOUNTER': {
-      const roomId = state.world?.currentRoom || 'center';
+      const roomId = getCurrentRoomId(state);
       const locationType = mapRoomToLocationType(roomId);
       const playerLevel = state.player?.level || 1;
       
@@ -85,32 +113,35 @@ export function handleEncounterAction(state, action) {
 
     case 'RESOLVE_ENCOUNTER': {
       const { outcome, details } = payload || {};
-      const updatedState = resolveEncounter(
+      const result = resolveEncounter(
         state.encounterState,
         state.currentEncounter,
         outcome,
         details
       );
 
+      // Extract state from result object
       return {
         ...state,
-        encounterState: updatedState,
+        encounterState: result.state,
         currentEncounter: null,
         phase: state.previousPhase || 'exploration',
       };
     }
 
     case 'FLEE_ENCOUNTER': {
-      const updatedState = resolveEncounter(
+      // Use 'flee' to match the outcome string expected by resolveEncounter
+      const result = resolveEncounter(
         state.encounterState,
         state.currentEncounter,
-        'fled',
+        'flee',
         {}
       );
 
+      // Extract state from result object
       return {
         ...state,
-        encounterState: updatedState,
+        encounterState: result.state,
         currentEncounter: null,
         phase: state.previousPhase || 'exploration',
       };
@@ -118,12 +149,27 @@ export function handleEncounterAction(state, action) {
 
     case 'ENGAGE_ENCOUNTER': {
       // Start combat with the encounter enemies
-      if (state.currentEncounter?.enemies) {
-        return {
-          ...state,
-          phase: 'player-turn',
-          encounterCombatActive: true,
-        };
+      if (state.currentEncounter?.enemies && state.currentEncounter.enemies.length > 0) {
+        const enemyId = state.currentEncounter.enemies[0];
+        const enemyBase = getEnemy(enemyId);
+        
+        if (enemyBase) {
+          const difficulty = state.difficulty || 'normal';
+          const adjustedHp = applyDifficultyToEnemyHp(enemyBase.maxHp ?? enemyBase.hp, difficulty);
+          
+          return {
+            ...state,
+            enemy: {
+              ...enemyBase,
+              hp: adjustedHp,
+              maxHp: adjustedHp,
+              defending: false,
+            },
+            phase: 'player-turn',
+            encounterCombatActive: true,
+            log: [...(state.log || []), `A wild ${enemyBase.name} appears!`].slice(-200),
+          };
+        }
       }
       return state;
     }
@@ -171,7 +217,8 @@ export function handleEncounterAction(state, action) {
 export function shouldCheckForEncounter(state) {
   // Don't check in town or during combat
   if (state.phase !== 'exploration') return false;
-  if (state.world?.currentRoom === 'center') return false; // Town is safe
+  const roomId = getCurrentRoomId(state);
+  if (roomId === 'center') return false; // Town is safe
   if (state.encounterState?.encounterCooldown > 0) return false;
   
   return true;
@@ -183,6 +230,6 @@ export function shouldCheckForEncounter(state) {
  * @returns {string} Location type
  */
 export function getCurrentLocationType(state) {
-  const roomId = state.world?.currentRoom || 'center';
+  const roomId = getCurrentRoomId(state);
   return mapRoomToLocationType(roomId);
 }
