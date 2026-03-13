@@ -30,6 +30,7 @@ import { renderReputationPanel } from '../faction-reputation-system-ui.js';
 import { createGuild, addMember, removeMember, changeMemberRank, depositGold, withdrawGold, unlockPerk, disbandGuild, getGuildStats } from '../guild-system.js';
 import { renderGuildPanel, renderCreateGuildForm, renderGuildBrowser, renderGuildHud } from '../guild-system-ui.js';
 import { processMatchResult, createTournament, recordTournamentMatchResult, getTournamentRewards, resetSeason, generateOpponent } from '../arena-tournament-system.js';
+import { dismissSporeling } from '../sporeling-integration.js';
 
 function getRoomDescription(worldState) {
   const room = getCurrentRoom(worldState);
@@ -478,6 +479,21 @@ export function handleUIAction(state, action) {
     if (state.phase !== 'talents') return null;
     const returnPhase = state.previousPhase || 'exploration';
     return { ...state, phase: returnPhase };
+  }
+
+  // Sporeling Evolution
+  if (type === 'OPEN_SPORELING') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'sporeling', previousPhase: state.phase };
+  }
+
+  if (type === 'CLOSE_SPORELING') {
+    if (state.phase !== 'sporeling') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  if (type === 'DISMISS_SPORELING') {
+    return dismissSporeling(state);
   }
 
   // Companions

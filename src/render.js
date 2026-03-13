@@ -31,6 +31,7 @@ import { hasShop } from './shop.js';
 import { renderBestiaryPanel } from './bestiary-ui.js';
 import { renderJournalPanel, renderJournalBadge } from './journal-ui.js';
 import { renderCompanionPanel, renderCompanionHUD, renderCompanionBadge } from './companions-ui.js';
+import { renderSporelingEvolutionPanel, getSporelingEvolutionStyles } from './sporeling-evolution-ui.js';
 import { renderDungeonPanel, renderDungeonActions, attachDungeonHandlers, getDungeonStyles, shouldShowDungeonEntrance } from './dungeon-ui.js';
 import { renderProvisionsPanel, renderProvisionBuffs, attachProvisionsHandlers, getProvisionsStyles } from './provisions-ui.js';
 import { renderShieldBreakHUD } from './shield-break-ui.js';
@@ -57,6 +58,25 @@ import { renderAtmospherePanel } from './location-atmosphere.js';
 
 /** Track previous log for floating text diff */
 let _previousLog = [];
+
+export function getStyles() {
+  return [
+    getStatusEffectStyles(),
+    getMinimapStyles(),
+    getStatsPanelStyles(),
+    getCraftingStyles(),
+    getProvisionsStyles(),
+    getTalentTreeStyles(),
+    getHelpStyles(),
+    getBattleLogStyles(),
+    getBossTelegraphStyles(),
+    getTutorialStyles(),
+    getTutorialProgressStyles(),
+    getFastTravelStyles(),
+    getMomentumStyles(),
+    getSporelingEvolutionStyles(),
+  ];
+}
 
 function hpLine(entity) {
   const pct = Math.round((entity.hp / entity.maxHp) * 100);
@@ -333,6 +353,12 @@ export function render(state, dispatch) {
     momentumStyleEl.textContent = getMomentumStyles();
     document.head.appendChild(momentumStyleEl);
   }
+  if (!document.getElementById('sporeling-evolution-styles')) {
+    const styleEl = document.createElement('style');
+    styleEl.id = 'sporeling-evolution-styles';
+    styleEl.textContent = getSporelingEvolutionStyles();
+    document.head.appendChild(styleEl);
+  }
 
   const finalizeRender = () => {
     if (state.fastTravelModalOpen) {
@@ -552,6 +578,7 @@ export function render(state, dispatch) {
         <button id="btnFactions">Factions 👑</button>
         <button id="btnArena">Arena ⚔️</button>
         <button id="btnCompanions">Companions 🤝${renderCompanionBadge(state)}</button>
+        <button id="btnSporeling">\uD83E\uDDA0 Sporeling</button>
         <button id="btnProvisions">Provisions 🍖</button>
         <button id="btnFastTravel">🗺️ Fast Travel</button>
         <button id="btnDailyChallenges">Daily 📅</button>
@@ -579,6 +606,8 @@ export function render(state, dispatch) {
     document.getElementById('btnFactions').onclick = () => dispatch({ type: 'OPEN_FACTIONS' });
     document.getElementById('btnArena').onclick = () => dispatch({ type: 'OPEN_ARENA' });
     document.getElementById('btnCompanions').onclick = () => dispatch({ type: 'OPEN_COMPANIONS' });
+    const btnSporeling = document.getElementById('btnSporeling');
+    if (btnSporeling) btnSporeling.onclick = () => dispatch({ type: 'OPEN_SPORELING' });
     document.getElementById('btnProvisions').onclick = () => dispatch({ type: 'OPEN_PROVISIONS' });
     document.getElementById('btnFastTravel').onclick = () => dispatch({ type: 'OPEN_FAST_TRAVEL' });
     document.getElementById('btnDailyChallenges').onclick = () => dispatch({ type: 'OPEN_DAILY_CHALLENGES' });
@@ -1630,6 +1659,24 @@ if (state.phase === 'achievements') {
     hud.querySelectorAll('[data-action="DISMISS_COMPANION"]').forEach(btn => {
       btn.onclick = () => dispatch({ type: 'DISMISS_COMPANION', companionId: btn.dataset.companionId });
     });
+    log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
+    finalizeRender();
+    return;
+  }
+
+  if (state.phase === 'sporeling') {
+    hud.innerHTML = renderSporelingEvolutionPanel(state);
+    actions.innerHTML = '<div class="buttons"><button id="btnCloseSporeling">Close</button></div>';
+
+    const closeBtn = document.getElementById('btnCloseSporeling');
+    if (closeBtn) closeBtn.onclick = () => dispatch({ type: 'CLOSE_SPORELING' });
+
+    hud.querySelectorAll('[data-action="EVOLVE_SPORELING"]').forEach(btn => {
+      btn.onclick = () => dispatch({ type: 'EVOLVE_SPORELING', traitId: btn.dataset.traitId });
+    });
+    const dismissBtn = hud.querySelector('[data-action="DISMISS_SPORELING"]');
+    if (dismissBtn) dismissBtn.onclick = () => dispatch({ type: 'DISMISS_SPORELING' });
+
     log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
