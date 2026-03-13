@@ -14,6 +14,13 @@ import {
 } from '../random-encounter-system.js';
 import { getEnemy } from '../data/enemies.js';
 import { applyDifficultyToEnemyHp } from '../difficulty.js';
+import { getEnemyShieldData } from '../shield-break.js';
+import { initIntentState } from '../enemy-intent.js';
+import { createMomentumState } from '../momentum.js';
+import { recordEncounter } from '../bestiary.js';
+import { initCombatBattleLog } from '../combat-battle-log-integration.js';
+import { isEnemyAttacksFirst } from '../data/world-events.js';
+import { pushLog } from '../state.js';
 
 // Map from (row, col) to room ID
 const ROOM_GRID = [
@@ -153,7 +160,6 @@ export function handleEncounterAction(state, action) {
     }
 
     case 'ENGAGE_ENCOUNTER': {
-      // Start combat with the encounter enemies
       if (state.currentEncounter?.enemies && state.currentEncounter.enemies.length > 0) {
         const enemyId = state.currentEncounter.enemies[0];
         const enemyBase = getEnemy(enemyId);
@@ -162,18 +168,37 @@ export function handleEncounterAction(state, action) {
           const difficulty = state.difficulty || 'normal';
           const adjustedHp = applyDifficultyToEnemyHp(enemyBase.maxHp ?? enemyBase.hp, difficulty);
           
-          return {
+          let next = {
             ...state,
             enemy: {
               ...enemyBase,
               hp: adjustedHp,
               maxHp: adjustedHp,
               defending: false,
+              statusEffects: [],
+              ...getEnemyShieldData(enemyId),
+              isBroken: false,
+              breakTurnsRemaining: 0,
             },
             phase: 'player-turn',
+            turn: 1,
+            player: { ...state.player, defending: false, statusEffects: [] },
+            momentumState: state.momentumState ? createMomentumState() : undefined,
+            intentState: initIntentState(),
             encounterCombatActive: true,
-            log: [...(state.log || []), `A wild ${enemyBase.name} appears!`].slice(-200),
+            currentEnemyId: enemyId,
+            bestiary: recordEncounter(state.bestiary || { encountered: [], defeatedCounts: {} }, enemyId),
           };
+
+          if (isEnemyAttacksFirst(next.worldEvent || state.worldEvent)) {
+            next = { ...next, phase: 'enemy-turn' };
+            next = pushLog(next, 'The enemy strikes first!');
+          }
+
+          next = pushLog(next, 'A wild ' + (enemyBase.displayName || enemyBase.name) + ' appears!');
+          initCombatBattleLog();
+          next = pushLog(next, 'Your turn.');
+          return next;
         }
       }
       return state;

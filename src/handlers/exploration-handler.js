@@ -5,6 +5,8 @@ import { onRoomEnter, onNPCTalk, onNPCDeliver } from '../quest-integration.js';
 import { buildPendingRewards, hasPendingRewards } from '../quest-rewards.js';
 import { getNPCsInRoom, createDialogState } from '../npc-dialog.js';
 import { pushLog } from '../state.js';
+import { handleEncounterAction } from './encounter-handler.js';
+import { createEncounterState } from '../random-encounter-system.js';
 import { advanceTime, tryChangeWeather, hasWeatherSystem } from '../weather.js';
 import { logLocationDiscovery } from '../journal.js';
 import { createNPCRelationshipManager, ReputationEvent, RelationshipLevel } from '../npc-relationships.js';
@@ -271,8 +273,18 @@ export function handleExplorationAction(state, action) {
   }
   
   if (type === 'SEEK_ENCOUNTER') {
-     let next = pushLog(state, 'You search the area for monsters...');
-     return startNewEncounter(next, 1);
+    let next = pushLog(state, 'You search the area for monsters...');
+    // Ensure encounterState exists
+    if (!next.encounterState) {
+      next = { ...next, encounterState: createEncounterState() };
+    }
+    // Try random encounter system first
+    const encounterResult = handleEncounterAction(next, { type: 'TRIGGER_RANDOM_ENCOUNTER' });
+    if (encounterResult && encounterResult.currentEncounter) {
+      return encounterResult;
+    }
+    // Fallback to direct combat if no encounter generated
+    return startNewEncounter(next, 1);
   }
   
   if (type === 'TALK_TO_NPC') {

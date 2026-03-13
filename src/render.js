@@ -60,6 +60,7 @@ import { renderCombatHpSection, getCombatHpBarStyles } from './combat-hp-bars.js
 import { renderNotificationToasts, getNotificationToastStyles } from './notification-toast.js';
 import { createRewardsState, renderRewardsHtml, getRewardsStyles } from './combat-rewards-animator.js';
 import { renderStatsDashboardPhase, renderStatsDashboardActions, attachStatsDashboardHandlers, initStatsDashboard, getStatsDashboardIntegrationStyles } from './statistics-dashboard-integration.js';
+import { renderEncounterPopup, getEncounterStyles } from './random-encounter-system-ui.js';
 let _victoryAnimStartTime = 0;
 
 /** Track previous log for floating text diff */
@@ -2077,6 +2078,46 @@ if (state.phase === 'achievements') {
     if (titleBtn) titleBtn.onclick = () => dispatch({ type: 'RETURN_TO_TITLE' });
 
     finalizeRender();
+    return;
+  }
+
+  if (state.phase === 'random-encounter' && state.currentEncounter) {
+    const encounter = state.currentEncounter;
+    const popupHtml = renderEncounterPopup(encounter);
+    const encounterStyles = getEncounterStyles();
+    
+    const root = document.getElementById('game-content') || document.getElementById('hud');
+    if (!root) return;
+    root.innerHTML = '<style>' + encounterStyles + '</style>' + popupHtml;
+    
+    // Wire up action buttons
+    const fightBtn = root.querySelector('[data-action="fight"]');
+    const fleeBtn = root.querySelector('[data-action="flee"]');
+    const collectBtn = root.querySelector('[data-action="collect"]');
+    const acceptBtn = root.querySelector('[data-action="accept"]');
+    const declineBtn = root.querySelector('[data-action="decline"]');
+    const restBtn = root.querySelector('[data-action="rest"]');
+    const continueBtn = root.querySelector('[data-action="continue"]');
+    const shopBtn = root.querySelector('[data-action="shop"]');
+    const leaveBtn = root.querySelector('[data-action="leave"]');
+    const disarmBtn = root.querySelector('[data-action="disarm"]');
+    const avoidBtn = root.querySelector('[data-action="avoid"]');
+    const talkBtn = root.querySelector('[data-action="talk"]');
+    const ignoreBtn = root.querySelector('[data-action="ignore"]');
+    
+    if (fightBtn) fightBtn.onclick = () => dispatch({ type: 'ENGAGE_ENCOUNTER' });
+    if (fleeBtn) fleeBtn.onclick = () => dispatch({ type: 'FLEE_ENCOUNTER' });
+    if (collectBtn) collectBtn.onclick = () => dispatch({ type: 'RESOLVE_ENCOUNTER', payload: { outcome: 'collect' } });
+    if (leaveBtn) leaveBtn.onclick = () => dispatch({ type: 'RESOLVE_ENCOUNTER', payload: { outcome: 'leave' } });
+    if (acceptBtn) acceptBtn.onclick = () => dispatch({ type: 'RESOLVE_ENCOUNTER', payload: { outcome: 'accept' } });
+    if (declineBtn) declineBtn.onclick = () => dispatch({ type: 'RESOLVE_ENCOUNTER', payload: { outcome: 'decline' } });
+    if (restBtn) restBtn.onclick = () => dispatch({ type: 'RESOLVE_ENCOUNTER', payload: { outcome: 'rest' } });
+    if (continueBtn) continueBtn.onclick = () => dispatch({ type: 'RESOLVE_ENCOUNTER', payload: { outcome: 'continue' } });
+    if (shopBtn) shopBtn.onclick = () => dispatch({ type: 'RESOLVE_ENCOUNTER', payload: { outcome: 'shop' } });
+    if (disarmBtn) disarmBtn.onclick = () => dispatch({ type: 'RESOLVE_ENCOUNTER', payload: { outcome: 'disarm' } });
+    if (avoidBtn) avoidBtn.onclick = () => dispatch({ type: 'RESOLVE_ENCOUNTER', payload: { outcome: 'avoid' } });
+    if (talkBtn) talkBtn.onclick = () => dispatch({ type: 'RESOLVE_ENCOUNTER', payload: { outcome: 'talk' } });
+    if (ignoreBtn) ignoreBtn.onclick = () => dispatch({ type: 'RESOLVE_ENCOUNTER', payload: { outcome: 'ignore' } });
     return;
   }
 

@@ -8,12 +8,14 @@ import { keyToCardinalDirection } from './input.js';
 import { loadKeybindings, getActionForKey } from './keybindings.js';
 import { handleCombatAction, handleEnemyTurnLogic } from './handlers/combat-handler.js';
 import { handleExplorationAction, handleFastTravelAction } from './handlers/exploration-handler.js';
+import { handleEncounterAction } from './handlers/encounter-handler.js';
 import { handleSystemAction } from './handlers/system-handler.js';
 import { handleUIAction } from './handlers/ui-handler.js';
 import { handleDungeonAction } from './handlers/dungeon-handler.js';
 import { handleStateTransitions } from './state-transitions.js';
 import { initAudio } from './audio-system.js';
 import { createTutorialState } from './tutorial.js';
+import { createEncounterState } from './random-encounter-system.js';
 import {
   createDailyChallengeState,
   initializeDailyChallenges,
@@ -35,6 +37,7 @@ if (IS_BROWSER) {
     tutorialState: createTutorialState(),
     dailyChallengeState: initializeDailyChallenges(createDailyChallengeState()),
     showDailyChallenges: false,
+    encounterState: createEncounterState(),
   };
 
   function appendLogLine(nextState, line) {
@@ -188,6 +191,7 @@ if (IS_BROWSER) {
     // Try each handler in order
     const next = handleCombatAction(state, action) ||
                  handleDungeonAction(state, action) ||
+                 handleEncounterAction(state, action) ||
                  handleExplorationAction(state, action) ||
                  handleFastTravelAction(state, action) ||
                  handleSystemAction(state, action) ||
