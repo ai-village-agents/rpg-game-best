@@ -10,7 +10,7 @@ describe('Encounter Handler', () => {
     baseState = {
       phase: 'exploration',
       player: { level: 5 },
-      world: { currentRoom: 'nw' },
+      world: { roomRow: 0, roomCol: 0 },
       encounterState: createEncounterState(),
     };
   });
@@ -85,7 +85,7 @@ describe('Encounter Handler', () => {
     });
 
     it('returns false when in town (center room)', () => {
-      const townState = { ...baseState, world: { currentRoom: 'center' } };
+      const townState = { ...baseState, world: { roomRow: 1, roomCol: 1 } };
       assert.strictEqual(shouldCheckForEncounter(townState), false);
     });
 
@@ -109,33 +109,33 @@ describe('Encounter Handler', () => {
     });
 
     it('maps n room to mountain', () => {
-      const state = { ...baseState, world: { currentRoom: 'n' } };
+      const state = { ...baseState, world: { roomRow: 0, roomCol: 1 } };
       assert.strictEqual(getCurrentLocationType(state), LOCATION_TYPE.MOUNTAIN);
     });
 
     it('maps ne room to ruins', () => {
-      const state = { ...baseState, world: { currentRoom: 'ne' } };
+      const state = { ...baseState, world: { roomRow: 0, roomCol: 2 } };
       assert.strictEqual(getCurrentLocationType(state), LOCATION_TYPE.RUINS);
     });
 
     it('maps center room to town', () => {
-      const state = { ...baseState, world: { currentRoom: 'center' } };
+      const state = { ...baseState, world: { roomRow: 1, roomCol: 1 } };
       assert.strictEqual(getCurrentLocationType(state), LOCATION_TYPE.TOWN);
     });
 
     it('maps sw room to cave', () => {
-      const state = { ...baseState, world: { currentRoom: 'sw' } };
+      const state = { ...baseState, world: { roomRow: 2, roomCol: 0 } };
       assert.strictEqual(getCurrentLocationType(state), LOCATION_TYPE.CAVE);
     });
 
     it('maps se room to dungeon', () => {
-      const state = { ...baseState, world: { currentRoom: 'se' } };
+      const state = { ...baseState, world: { roomRow: 2, roomCol: 2 } };
       assert.strictEqual(getCurrentLocationType(state), LOCATION_TYPE.DUNGEON);
     });
 
-    it('defaults to road for unknown rooms', () => {
-      const state = { ...baseState, world: { currentRoom: 'unknown' } };
-      assert.strictEqual(getCurrentLocationType(state), LOCATION_TYPE.ROAD);
+    it('defaults to town for unknown room coordinates', () => {
+      const state = { ...baseState, world: { roomRow: 99, roomCol: 99 } };
+      assert.strictEqual(getCurrentLocationType(state), LOCATION_TYPE.TOWN);
     });
   });
 });
