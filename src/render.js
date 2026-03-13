@@ -58,6 +58,8 @@ import { renderAtmospherePanel } from './location-atmosphere.js';
 import { renderAreaScene, getAreaSceneStyles } from './area-scene-renderer.js';
 import { renderCombatHpSection, getCombatHpBarStyles } from './combat-hp-bars.js';
 import { renderNotificationToasts, getNotificationToastStyles } from './notification-toast.js';
+import { createRewardsState, renderRewardsHtml, getRewardsStyles } from './combat-rewards-animator.js';
+let _victoryAnimStartTime = 0;
 
 /** Track previous log for floating text diff */
 let _previousLog = [];
@@ -934,52 +936,63 @@ export function render(state, dispatch) {
     return;
   }
 
-    // --- Victory Phase ---
+  // Reset victory animation timer when not in victory phase
+  if (state.phase !== 'victory') { _victoryAnimStartTime = 0; }
+
   if (state.phase === 'victory') {
-    const xpGained = state.xpGained ?? 0;
-    const goldGained = state.goldGained ?? 0;
+    // Inject rewards animator styles
+    if (!document.getElementById('rewards-animator-styles')) {
+      const styleEl = document.createElement('style');
+      styleEl.id = 'rewards-animator-styles';
+      styleEl.textContent = getRewardsStyles();
+      document.head.appendChild(styleEl);
+    }
 
-    hud.innerHTML = `
-      <div class="row">
-        <div class="card">
-          <h2>Victory!</h2>
-          <div class="kv">
-            <div>XP Gained</div><div><b class="good">${xpGained}</b></div>
-            <div>Gold Gained</div><div><b class="good">${goldGained}</b></div>
-            <div>Total XP</div><div><b>${state.player.xp ?? 0}</b></div>
-            <div>Total Gold</div><div><b>${state.player.gold ?? 0}</b></div>
-          </div>
-        </div>
+    // Compute animation phase based on elapsed time since victory
+    const PHASE_TIMINGS = [0, 600, 1400, 2200, 3000]; // ms for rating, xp, gold, loot, complete
+    const PHASE_NAMES = ['rating', 'xp', 'gold', 'loot', 'complete'];
+    if (!_victoryAnimStartTime) { _victoryAnimStartTime = Date.now(); }
+    const elapsed = Date.now() - _victoryAnimStartTime;
+    let currentPhase = 'rating';
+    for (let i = PHASE_TIMINGS.length - 1; i >= 0; i--) {
+      if (elapsed >= PHASE_TIMINGS[i]) {
+        currentPhase = PHASE_NAMES[i];
+        break;
+      }
+    }
 
-        <div class="card">
-          <h2>${esc(state.player.name)}</h2>
-          <div class="kv">
-            <div>HP</div><div><b>${hpLine(state.player)}</b></div>
-            <div>Level</div><div><b>${state.player.level ?? 1}</b></div>
-            <div>Potions</div><div><b>${state.player.inventory.potion ?? 0}</b></div>
-          </div>
-        </div>
-      </div>
-    `;
+    const rewardsState = createRewardsState(state);
+    const rewardsHtml = renderRewardsHtml(rewardsState, currentPhase);
+
+    hud.innerHTML = '<div class="row"><div class="card">' + rewardsHtml + '</div>' +
+      '<div class="card">' +
+        '<h2>' + esc(state.player.name) + '</h2>' +
+        '<div class="kv">' +
+          '<div>HP</div><div><b>' + hpLine(state.player) + '</b></div>' +
+          '<div>Level</div><div><b>' + (state.player.level ?? 1) + '</b></div>' +
+          '<div>Potions</div><div><b>' + (state.player.inventory.potion ?? 0) + '</b></div>' +
+        '</div>' +
+      '</div></div>';
 
     const hasLevelUps = state.pendingLevelUps && state.pendingLevelUps.length > 0;
     const levelUpBtn = hasLevelUps
       ? '<button id="btnViewLevelUps" class="good">View Level Ups \u2B50</button>'
       : '';
 
-    actions.innerHTML = `
-      <div class="buttons">
-        ${levelUpBtn}
-        <button id="btnContinue">Continue Exploring</button>
-        <button id="btnSave">Save</button>
-      </div>
-    `;
+    actions.innerHTML = '<div class="buttons">' + levelUpBtn +
+      '<button id="btnContinue">Continue Exploring</button>' +
+      '<button id="btnSave">Save</button></div>';
 
     if (hasLevelUps) {
       document.getElementById('btnViewLevelUps').onclick = () => dispatch({ type: 'VIEW_LEVEL_UPS' });
     }
     document.getElementById('btnContinue').onclick = () => dispatch({ type: 'CONTINUE_EXPLORING' });
     document.getElementById('btnSave').onclick = () => dispatch({ type: 'SAVE' });
+
+    // Schedule re-render if animation not yet complete
+    if (currentPhase !== 'complete') {
+      setTimeout(() => dispatch({ type: 'TICK_REWARDS_ANIMATION' }), 200);
+    }
 
     log.innerHTML = state.log
       .slice()
