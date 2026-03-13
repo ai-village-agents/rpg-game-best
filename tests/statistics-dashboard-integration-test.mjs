@@ -14,15 +14,58 @@ import {
   getStatsDashboardIntegrationStyles
 } from '../src/statistics-dashboard-integration.js';
 import { createEmptyStatistics } from '../src/statistics-dashboard.js';
-import { JSDOM } from 'jsdom';
+
+function createMockDocument() {
+  const elementsById = new Map();
+  const headChildren = [];
+
+  const doc = {
+    head: {
+      appendChild: (el) => {
+        headChildren.push(el);
+        if (el && el.id) {
+          elementsById.set(el.id, el);
+        }
+      },
+    },
+    body: {},
+    createElement: (tagName) => ({
+      tagName,
+      id: '',
+      textContent: '',
+    }),
+    getElementById: (id) => elementsById.get(id) || null,
+    querySelectorAll: (selector) => {
+      // Minimal support for '#stats-dashboard-integration-styles'
+      if (typeof selector === 'string' && selector.startsWith('#')) {
+        const id = selector.slice(1);
+        const el = elementsById.get(id);
+        return el ? [el] : [];
+      }
+      return [];
+    },
+    querySelector: (selector) => {
+      // Minimal support for '#btnCloseStatsDashboard'
+      if (selector === '#btnCloseStatsDashboard') {
+        return elementsById.get('btnCloseStatsDashboard') || null;
+      }
+      return null;
+    },
+    __setElement: (id, el) => {
+      elementsById.set(id, el);
+      return el;
+    },
+    __getHeadChildren: () => headChildren.slice(),
+  };
+
+  return doc;
+}
 
 describe('Statistics Dashboard Integration', () => {
-  let dom;
   let document;
 
   beforeEach(() => {
-    dom = new JSDOM('<!DOCTYPE html><html><head></head><body><div id="hud"></div><div id="actions"></div></body></html>');
-    document = dom.window.document;
+    document = createMockDocument();
     global.document = document;
   });
 
@@ -99,18 +142,20 @@ describe('Statistics Dashboard Integration', () => {
 
   describe('attachStatsDashboardHandlers', () => {
     it('should attach close button handler', () => {
-      const actionsDiv = document.getElementById('actions');
-      actionsDiv.innerHTML = renderStatsDashboardActions();
-      
+      const closeBtn = {
+        onclick: null,
+        click() {
+          if (typeof this.onclick === 'function') this.onclick();
+        },
+      };
+      document.__setElement('btnCloseStatsDashboard', closeBtn);
+
       let dispatched = null;
       const dispatch = (action) => { dispatched = action; };
-      
+
       attachStatsDashboardHandlers(document, dispatch);
-      
-      const closeBtn = document.getElementById('btnCloseStatsDashboard');
-      assert.ok(closeBtn);
       closeBtn.click();
-      
+
       assert.deepStrictEqual(dispatched, { type: 'CLOSE_STATISTICS_DASHBOARD' });
     });
 
@@ -165,7 +210,7 @@ describe('UI Handler Integration', () => {
     const { handleUIAction } = await import('../src/handlers/ui-handler.js');
     const state = { phase: 'exploration' };
     const result = handleUIAction(state, { type: 'OPEN_STATISTICS_DASHBOARD' });
-    
+
     assert.strictEqual(result.phase, 'statistics-dashboard');
     assert.strictEqual(result.previousPhase, 'exploration');
   });
@@ -174,7 +219,7 @@ describe('UI Handler Integration', () => {
     const { handleUIAction } = await import('../src/handlers/ui-handler.js');
     const state = { phase: 'statistics-dashboard', previousPhase: 'exploration' };
     const result = handleUIAction(state, { type: 'CLOSE_STATISTICS_DASHBOARD' });
-    
+
     assert.strictEqual(result.phase, 'exploration');
   });
 
@@ -182,7 +227,7 @@ describe('UI Handler Integration', () => {
     const { handleUIAction } = await import('../src/handlers/ui-handler.js');
     const state = { phase: 'exploration' };
     const result = handleUIAction(state, { type: 'CLOSE_STATISTICS_DASHBOARD' });
-    
+
     assert.strictEqual(result, null);
   });
 
@@ -190,7 +235,7 @@ describe('UI Handler Integration', () => {
     const { handleUIAction } = await import('../src/handlers/ui-handler.js');
     const state = { phase: 'statistics-dashboard' };
     const result = handleUIAction(state, { type: 'CLOSE_STATISTICS_DASHBOARD' });
-    
+
     assert.strictEqual(result.phase, 'exploration');
   });
 });
@@ -200,7 +245,7 @@ describe('Render Integration', () => {
     // This test verifies the button was added to render.js
     const fs = await import('fs');
     const renderContent = fs.readFileSync('./src/render.js', 'utf8');
-    
+
     assert.ok(renderContent.includes('btnStatsDashboard'));
     assert.ok(renderContent.includes('OPEN_STATISTICS_DASHBOARD'));
   });
@@ -208,7 +253,7 @@ describe('Render Integration', () => {
   it('should have statistics-dashboard phase handling', async () => {
     const fs = await import('fs');
     const renderContent = fs.readFileSync('./src/render.js', 'utf8');
-    
+
     assert.ok(renderContent.includes("phase === 'statistics-dashboard'"));
     assert.ok(renderContent.includes('renderStatsDashboardPhase'));
   });

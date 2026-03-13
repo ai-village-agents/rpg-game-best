@@ -19,7 +19,7 @@ import { initIntentState } from '../enemy-intent.js';
 import { createMomentumState } from '../momentum.js';
 import { recordEncounter } from '../bestiary.js';
 import { initCombatBattleLog } from '../combat-battle-log-integration.js';
-import { isEnemyAttacksFirst } from '../data/world-events.js';
+import { isEnemyAttacksFirst } from '../world-events.js';
 import { pushLog } from '../state.js';
 
 // Map from (row, col) to room ID
