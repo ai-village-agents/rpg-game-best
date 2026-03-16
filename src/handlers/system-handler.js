@@ -34,6 +34,7 @@ export function handleSystemAction(state, action) {
 
     return {
       ...baseState,
+      tutorialState: state.tutorialState || baseState.tutorialState,
       phase: 'background-select',
       log: [
         `You have chosen the path of the ${className}.`,
