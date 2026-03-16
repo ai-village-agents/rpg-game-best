@@ -155,9 +155,11 @@ export function handleEnemyTurnLogic(state) {
   if (!cs && state.enemy) {
     cs = createCombatStats(state.enemy?.displayName || state.enemy?.name || 'Unknown Enemy', state.enemy?.isBoss || false);
   }
-  const logLen = getBattleLogEntries().length;
-    const next = enemyAct(state);
-    const { enemyDamage: dmgReceived } = extractTurnStats(logLen);
+  const hpBefore = state.player?.hp ?? 0;
+  const next = enemyAct(state);
+  // Use HP-based tracking for damage received — captures all sources:
+  // basic attacks, enemy abilities, and status effect ticks (poison/burn/bleed)
+  const dmgReceived = Math.max(0, hpBefore - (next.player?.hp ?? hpBefore));
   applyCraftingMaterialDrops(next);
 
   if (cs) {
