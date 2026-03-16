@@ -9,7 +9,7 @@ import { getCategorizedInventory, getEquipmentDisplay, getItemDetails, getEquipm
 import { getEffectiveCombatStats, getEquipmentBonusDisplay, hasEquipmentBonuses } from './combat/equipment-bonuses.js';
 import { getCurrentLevelUp, getStatDiffs, formatStatName, xpForNextLevel } from './level-up.js';
 import { formatAbilityName } from './specialization-ui.js';
-import { getNPCsInRoom, getCurrentDialogLine, getDialogProgress } from './npc-dialog.js';
+import { getNPCsInRoom, getCurrentDialogLine, getDialogProgress, isLastDialogLine } from './npc-dialog.js';
 import { getActiveQuestsSummary, getCompletedQuestsSummary, getAvailableQuestsInRoom } from './quest-integration.js';
 import { getAbilityDisplayInfo } from './combat/abilities.js';
 import { items as itemsData } from './data/items.js';
@@ -1709,6 +1709,7 @@ if (state.phase === 'achievements') {
   if (state.phase === 'dialog' && state.dialogState) {
     const ds = state.dialogState;
     const currentLine = getCurrentDialogLine(ds);
+    const isLastLine = isLastDialogLine(ds);
     const progress = getDialogProgress(ds);
     const progressText = ds.lines.length > 0
       ? `(${progress.current}/${progress.total})`
@@ -1728,13 +1729,13 @@ if (state.phase === 'achievements') {
     const npcHasShop = hasShop(ds.npcId);
     actions.innerHTML = `
       <div class="buttons">
-        ${currentLine ? `<button id="btnDialogNext">Next ▶</button>` : ''}
+        ${(currentLine && !isLastLine) ? `<button id="btnDialogNext">Next ▶</button>` : ''}
         ${npcHasShop ? `<button id="btnViewShop">🛒 View Shop</button>` : ''}
         <button id="btnDialogClose">Farewell</button>
       </div>
     `;
 
-    if (currentLine) {
+    if (currentLine && !isLastLine) {
       document.getElementById('btnDialogNext').onclick = () => dispatch({ type: 'DIALOG_NEXT' });
     }
     document.getElementById('btnDialogClose').onclick = () => dispatch({ type: 'DIALOG_CLOSE' });
