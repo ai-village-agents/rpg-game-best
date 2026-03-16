@@ -97,6 +97,13 @@ function hpLine(entity) {
   return `<span class="${status}">${entity.hp}</span> / ${entity.maxHp}`;
 }
 
+function mpLine(entity) {
+  if (!entity.maxMp || entity.maxMp <= 0) return null;
+  const pct = Math.round((entity.mp / entity.maxMp) * 100);
+  const status = pct <= 25 ? 'bad' : (pct >= 75 ? 'good' : '');
+  return '<span class="' + status + '">' + (entity.mp ?? 0) + '</span> / ' + entity.maxMp;
+}
+
 function esc(s) {
   return String(s)
     .replaceAll('&', '&amp;')
@@ -606,6 +613,7 @@ export function render(state, dispatch) {
           <div class="kv">
             <div>Class</div><div><b>${esc(state.player.classId ? state.player.classId[0].toUpperCase() + state.player.classId.slice(1) : 'Adventurer')}</b></div>
             <div>HP</div><div><b>${hpLine(state.player)}</b></div>
+            ${mpLine(state.player) !== null ? '<div>MP</div><div><b>' + mpLine(state.player) + '</b></div>' : ''}
             <div>Level</div><div><b>${state.player.level ?? 1}</b></div>
             <div>XP</div><div><b>${state.player.xp ?? 0}</b></div>
           </div>
