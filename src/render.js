@@ -638,31 +638,54 @@ export function render(state, dispatch) {
 
     actions.innerHTML = `
       <div class="buttons">
-        <button id="btnNorth">North</button>
-        <button id="btnSouth">South</button>
-        <button id="btnWest">West</button>
-        <button id="btnEast">East</button>
-        <button id="btnSeek">Seek Battle</button>
-        ${shouldShowDungeonEntrance(state) ? '<button id="btnEnterDungeon" class="dungeon-enter-btn">Enter Dungeon \u26CF\uFE0F</button>' : ''}
-        <button id="btnInventory">Inventory</button>
-        <button id="btnQuests">Quests 📜</button>
-        <button id="btnViewStats">Stats 📊</button>
-        <button id="btnSaveSlots">Save/Load 💾</button>
-        <button id="btnSettings">Settings ⚙️</button>
-        <button id="btnCrafting">Crafting 🔨</button>
-        <button id="btnHelp">Help ❓</button>
-        <button id="btnTalents">Talents ⭐</button>
-        <button id="btnTavern">Tavern 🍺</button>
-        <button id="btnBountyBoard">Bounty Board 📜</button>
-        <button id="btnJournal">Journal 📔${renderJournalBadge(state)}</button>
-        <button id="btnFactions">Factions 👑</button>
-        <button id="btnArena">Arena ⚔️</button>
-        <button id="btnCompanions">Companions 🤝${renderCompanionBadge(state)}</button>
-        <button id="btnSporeling">\uD83E\uDDA0 Sporeling</button>
-        <button id="btnProvisions">Provisions 🍖</button>
-        <button id="btnFastTravel">🗺️ Fast Travel</button>
-        <button id="btnDailyChallenges">Daily 📅</button>
-        <button id="btnStatsDashboard">📈 Statistics</button>
+        <div class="action-category">
+          <h3>EXPLORATION</h3>
+          <div class="action-category-buttons">
+            <button id="btnNorth">North</button>
+            <button id="btnSouth">South</button>
+            <button id="btnWest">West</button>
+            <button id="btnEast">East</button>
+            <button id="btnSeek">Seek Battle</button>
+            ${shouldShowDungeonEntrance(state) ? '<button id="btnEnterDungeon" class="dungeon-enter-btn">Enter Dungeon \u26CF\uFE0F</button>' : ''}
+            <button id="btnFastTravel">🗺️ Fast Travel</button>
+          </div>
+        </div>
+
+        <div class="action-category">
+          <h3>CHARACTER</h3>
+          <div class="action-category-buttons">
+            <button id="btnInventory">Inventory</button>
+            <button id="btnViewStats">Stats 📊</button>
+            <button id="btnTalents">Talents ⭐</button>
+            <button id="btnQuests">Quests 📜</button>
+            <button id="btnJournal">Journal 📔${renderJournalBadge(state)}</button>
+            <button id="btnCompanions">Companions 🤝${renderCompanionBadge(state)}</button>
+            <button id="btnProvisions">Provisions 🍖</button>
+            <button id="btnStatsDashboard">📈 Statistics</button>
+          </div>
+        </div>
+
+        <div class="action-category">
+          <h3>ACTIVITIES</h3>
+          <div class="action-category-buttons">
+            <button id="btnTavern">Tavern 🍺</button>
+            <button id="btnBountyBoard">Bounty Board 📜</button>
+            <button id="btnArena">Arena ⚔️</button>
+            <button id="btnCrafting">Crafting 🔨</button>
+            <button id="btnDailyChallenges">Daily 📅</button>
+            <button id="btnFactions">Factions 👑</button>
+            <button id="btnSporeling">\uD83E\uDDA0 Sporeling</button>
+          </div>
+        </div>
+
+        <div class="action-category">
+          <h3>SYSTEM</h3>
+          <div class="action-category-buttons">
+            <button id="btnSaveSlots">Save/Load 💾</button>
+            <button id="btnSettings">Settings ⚙️</button>
+            <button id="btnHelp">Help ❓</button>
+          </div>
+        </div>
       </div>
     `;
 
