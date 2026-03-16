@@ -41,6 +41,9 @@ export function recruitCompanion(state, companionId) {
   if (companions.length >= maxCompanions) {
     return pushLog(state, 'Your party is full.');
   }
+  if (state.world?.currentRoom && state.world.currentRoom !== npc.location) {
+    return pushLog(state, `${npc.name} is not here.`);
+  }
 
   const stats = npc.stats || {};
   const newCompanion = {

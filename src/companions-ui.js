@@ -18,6 +18,7 @@ const getClassIcon = (className) => {
 };
 
 const formatStatus = (isAlive) => (isAlive ? 'Alive' : 'Fallen');
+const formatLocationId = (id) => id.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
 const renderHpBar = (current, max) => {
   const percent = getBarPercent(current, max);
@@ -78,7 +79,7 @@ const renderAvailableCompanion = (npc) => {
         <div class="companion-name">${npc.name}</div>
         <div class="companion-meta">${stats.class} • Lv ${stats.level}</div>
       </div>
-      <div class="companion-location">Location: ${npc.location || 'Unknown'}</div>
+      <div class="companion-location">Location: ${npc.location ? formatLocationId(npc.location) : 'Unknown'}</div>
       <div class="companion-actions">
         <button class="companion-button" data-action="RECRUIT_COMPANION" data-companion-id="${npc.id}">Recruit</button>
       </div>
