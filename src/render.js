@@ -1249,6 +1249,9 @@ if (state.phase === 'achievements') {
 
     log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
+    if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+      requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }));
+    }
     return;
   }
 
