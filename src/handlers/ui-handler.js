@@ -454,7 +454,7 @@ export function handleUIAction(state, action) {
 
   if (type === 'SHOP_SWITCH_TAB') {
     if (state.phase !== 'shop' || !state.shopState) return null;
-    return { ...state, shopState: { ...state.shopState, tab: action.tab || 'buy', message: null } };
+    return { ...state, shopState: { ...state.shopState, tab: action.tab || 'buy', message: null, messageType: null } };
   }
 
   if (type === 'CLOSE_SHOP') {

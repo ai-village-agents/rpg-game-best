@@ -21,6 +21,7 @@ import { recordEncounter } from '../bestiary.js';
 import { initCombatBattleLog } from '../combat-battle-log-integration.js';
 import { isEnemyAttacksFirst } from '../world-events.js';
 import { pushLog } from '../state.js';
+import { createEncounterShopState } from '../shop.js';
 
 // Map from (row, col) to room ID
 const ROOM_GRID = [
@@ -131,6 +132,19 @@ export function handleEncounterAction(state, action) {
         outcome,
         details
       );
+
+      if (outcome === 'shop' && state.currentEncounter?.type === 'merchant') {
+        const shopState = createEncounterShopState(state.currentEncounter.shopType, state.previousPhase || 'exploration');
+        if (shopState) {
+          return {
+            ...state,
+            encounterState: result.state,
+            currentEncounter: null,
+            phase: 'shop',
+            shopState,
+          };
+        }
+      }
 
       // Extract state from result object
       return {
