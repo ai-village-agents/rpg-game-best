@@ -12,6 +12,7 @@ function escapeHtml(str) {
 }
 
 const ICONS = {
+  'status-effect': '⚡',
   'attack': '⚔️',
   'damage-dealt': '⚔️',
   'ability': '🔥',
@@ -27,6 +28,7 @@ const ICONS = {
 };
 
 export const COLOR_MAP = {
+  'status-effect': '#f39c12',
   'attack': '#e05c5c',
   'damage-dealt': '#e05c5c',
   'damage-received': '#c0392b',

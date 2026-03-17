@@ -115,6 +115,8 @@ function processTurnStart(state, actorKey) {
   const actor = state[actorKey];
   if (!actor) return state;
 
+  logTurnStart(state.turn, actorKey === 'player');
+
   let nextState = state;
   const actorName = actorKey === 'player' ? 'You' : (state.enemy.displayName ?? state.enemy.name);
   const actorPossessive = actorKey === 'player' ? 'Your' : `${(state.enemy.displayName ?? state.enemy.name)}'s`;
@@ -137,12 +139,22 @@ function processTurnStart(state, actorKey) {
       if (damage > 0) {
         hp = clamp(hp - damage, 0, actor.maxHp);
         const source = effect.type === 'poison' ? 'poison' : 'burn';
+        if (actorKey === 'player') {
+          logDamageReceived(damage, source);
+        } else {
+          logDamageDealt(damage, 'status');
+        }
         nextState = pushLog(nextState, `${actorName} ${verb} ${damage} ${source} damage.`);
       }
     } else if (effect.type === 'bleed') {
       const damage = Math.max(0, effect.power ?? 0);
       if (damage > 0) {
         hp = clamp(hp - damage, 0, actor.maxHp);
+        if (actorKey === 'player') {
+          logDamageReceived(damage, 'bleed');
+        } else {
+          logDamageDealt(damage, 'status');
+        }
         nextState = pushLog(nextState, `${actorName} ${verb} ${damage} bleed damage.`);
       }
     } else if (effect.type === 'regen') {
@@ -415,6 +427,7 @@ export function playerUsePotion(state) {
 
   const heal = items.potion.heal;
   const hp = clamp(state.player.hp + heal, 0, state.player.maxHp);
+  const actualHeal = hp - state.player.hp;
   state = {
     ...state,
     player: {
@@ -425,7 +438,9 @@ export function playerUsePotion(state) {
     },
   };
 
-  state = pushLog(state, `You drink a potion and heal ${hp - (state.player.hp)} HP.`);
+  state = pushLog(state, `You drink a potion and heal ${actualHeal} HP.`);
+  logItemUsed('potion', `Restored ${actualHeal} HP`);
+  logHealing(actualHeal, 'potion');
   if (state.comboState) {
     state = { ...state, comboState: resetCombo(state.comboState) };
   }
@@ -643,6 +658,7 @@ export function playerUseItem(state, itemId) {
     };
     state = pushLog(state, `You use ${item.name} and restore ${actualHeal} HP.`);
     logItemUsed(item.name, `Restored ${actualHeal} HP`);
+    logHealing(actualHeal, item.name);
   }
 
   // Handle mana restoration (ether)
