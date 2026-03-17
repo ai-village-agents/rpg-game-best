@@ -13,9 +13,9 @@ const ABILITIES = {
   'power-strike': {
     id: 'power-strike',
     name: 'Power Strike',
-    description: 'A mighty blow dealing 1.5x damage.',
+    description: 'A mighty blow dealing 1.3x damage.',
     mpCost: 4,
-    power: 1.5,
+    power: 1.3,
     healPower: 0,
     element: 'physical',
     targetType: 'single-enemy',

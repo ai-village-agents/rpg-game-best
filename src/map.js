@@ -245,13 +245,13 @@ export class WorldMap {
       return { moved: false, blocked: 'edge', transitioned: false, state: this.snapshot() };
     }
 
-    // Move to the opposite edge of the next room.
+    // Move to one tile inside the opposite edge of the next room.
     let nextX = this.state.x;
     let nextY = this.state.y;
-    if (directionKey === 'north') nextY = this.roomHeight - 1;
-    if (directionKey === 'south') nextY = 0;
-    if (directionKey === 'west') nextX = this.roomWidth - 1;
-    if (directionKey === 'east') nextX = 0;
+    if (directionKey === 'north') nextY = this.roomHeight - 2;
+    if (directionKey === 'south') nextY = 1;
+    if (directionKey === 'west') nextX = this.roomWidth - 2;
+    if (directionKey === 'east') nextX = 1;
 
     if (directionKey === 'north' || directionKey === 'south') {
       const minX = Math.floor(this.roomWidth / 2) - 1;
