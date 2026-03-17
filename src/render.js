@@ -2220,6 +2220,15 @@ if (state.phase === 'achievements') {
     const closeBtn = document.getElementById('btnCloseBountyBoard');
     if (closeBtn) closeBtn.onclick = () => dispatch({ type: 'CLOSE_BOUNTY_BOARD' });
     
+    // Add listeners for dynamic buttons inside the board
+    hud.querySelectorAll('[data-action="REFRESH_BOUNTIES"]').forEach(btn => {
+      btn.onclick = () => dispatch({ type: 'REFRESH_BOUNTIES' });
+    });
+    
+    hud.querySelectorAll('[data-action="ACCEPT_BOUNTY"]').forEach(btn => {
+      btn.onclick = () => dispatch({ type: 'ACCEPT_BOUNTY', id: btn.dataset.id });
+    });
+    
     return;
   }
 
