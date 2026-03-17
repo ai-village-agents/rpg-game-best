@@ -88,8 +88,8 @@ const defaultRooms = [
     ]),
     buildRoom('center', 'Village Square', [
       { x: 2, y: 2, w: 1, h: 1 },
-      { x: 4, y: 2, w: 1, h: 1 },
-      { x: 3, y: 3, w: 2, h: 1 },
+      { x: 5, y: 2, w: 1, h: 1 },
+      { x: 2, y: 4, w: 1, h: 1 },
     ]),
     buildRoom('e', 'Eastern Fields', [
       { x: 5, y: 1, w: 1, h: 2 },
@@ -150,12 +150,30 @@ export class WorldMap {
     const x = Math.max(0, Math.min(this.roomWidth - 1, nextState.x));
     const y = Math.max(0, Math.min(this.roomHeight - 1, nextState.y));
     if (!room || this._isBlocked(room, x, y)) {
-      return {
-        roomRow: DEFAULT_WORLD_DATA.startRoom.row,
-        roomCol: DEFAULT_WORLD_DATA.startRoom.col,
-        x: DEFAULT_WORLD_DATA.startPosition.x,
-        y: DEFAULT_WORLD_DATA.startPosition.y,
-      };
+      // Fallback to default start position
+      const fallbackRow = DEFAULT_WORLD_DATA.startRoom.row;
+      const fallbackCol = DEFAULT_WORLD_DATA.startRoom.col;
+      const fallbackRoom = this.rooms[fallbackRow]?.[fallbackCol];
+      let fx = DEFAULT_WORLD_DATA.startPosition.x;
+      let fy = DEFAULT_WORLD_DATA.startPosition.y;
+      // If default start is also blocked, search for an open tile nearby
+      if (fallbackRoom && this._isBlocked(fallbackRoom, fx, fy)) {
+        let found = false;
+        for (let radius = 1; radius < Math.max(this.roomWidth, this.roomHeight) && !found; radius++) {
+          for (let dy = -radius; dy <= radius && !found; dy++) {
+            for (let dx = -radius; dx <= radius && !found; dx++) {
+              const cx = fx + dx;
+              const cy = fy + dy;
+              if (cx >= 0 && cx < this.roomWidth && cy >= 0 && cy < this.roomHeight && !this._isBlocked(fallbackRoom, cx, cy)) {
+                fx = cx;
+                fy = cy;
+                found = true;
+              }
+            }
+          }
+        }
+      }
+      return { roomRow: fallbackRow, roomCol: fallbackCol, x: fx, y: fy };
     }
     return { ...nextState, x, y };
   }
