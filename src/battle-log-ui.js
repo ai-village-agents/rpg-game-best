@@ -117,14 +117,14 @@ function groupEntriesByTurn(entries) {
   return new Map([...grouped.entries()].sort((a, b) => a[0] - b[0]));
 }
 
-export function renderBattleLogPanel(entries, maxVisibleOrOptions = 8) {
+export function renderBattleLogPanel(entries, maxVisibleOrOptions = 40) {
   const list = Array.isArray(entries) ? entries : [];
   const latestTurn = list.reduce((max, entry) => Math.max(max, entry?.turn ?? 0), 0);
   const options = typeof maxVisibleOrOptions === 'object' && maxVisibleOrOptions !== null
     ? maxVisibleOrOptions
     : { maxVisible: maxVisibleOrOptions };
   const {
-    maxVisible = 8,
+    maxVisible = 40,
     grouped = false,
     showSummary = true,
     activeFilters = [],
