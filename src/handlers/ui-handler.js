@@ -76,6 +76,11 @@ export function handleUIAction(state, action) {
     return { ...state, showHelp: false };
   }
 
+  if (type === 'DISMISS_WORLD_EVENT') {
+    if (!state.worldEvent) return null;
+    return pushLog({ ...state, worldEvent: null }, 'You dismiss the world event notification.');
+  }
+
   // Journal
   if (type === 'OPEN_JOURNAL') {
     if (isPreAdventure) return null;
