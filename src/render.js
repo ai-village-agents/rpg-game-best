@@ -16,7 +16,7 @@ import { items as itemsData } from './data/items.js';
 import { getRarityMeta } from './ui/rarity-util.js';
 import { renderStatusEffectsRow, getStatusEffectStyles } from './status-effect-ui.js';
 import { getMinimapStyles, renderMinimap } from './minimap.js';
-import { renderStatsPanel, getStatsPanelStyles } from './stats-display.js';
+import { getStatsPanelStyles } from './stats-display.js';
 import { renderSaveSlotsList, getSaveSlotsStyles } from './save-slots-ui.js';
 import { renderSettingsPanel, getSettingsStyles, attachSettingsHandlers } from './settings-ui.js';
 import { renderQuestRewardScreen, renderQuestRewardActions, attachQuestRewardHandlers, getQuestRewardStyles } from './quest-rewards-ui.js';
@@ -192,6 +192,66 @@ function inventorySummary(player) {
     .join('');
   const gold = player?.gold ?? 0;
   return entries + `<div>Gold</div><div><b>${gold}</b></div>`;
+}
+
+function getPlayerClassName(player) {
+  const classId = player?.classId;
+  if (!classId || typeof classId !== 'string') return 'Adventurer';
+  return CLASS_DEFINITIONS[classId]?.name || (classId[0].toUpperCase() + classId.slice(1));
+}
+
+function getPlayerBackgroundName(player) {
+  const backgroundId = player?.backgroundId;
+  if (!backgroundId || typeof backgroundId !== 'string') return null;
+  return BACKGROUNDS[backgroundId]?.name || backgroundId;
+}
+
+function getPlayerIntDisplay(player) {
+  if (typeof player?.int === 'number') {
+    return { label: 'INT', value: player.int };
+  }
+  if (typeof player?.magic === 'number') {
+    return { label: 'MAGIC', value: player.magic };
+  }
+  return { label: 'INT', value: 0 };
+}
+
+function formatStatWithBonus(baseValue, bonusValue, finalValue) {
+  if (typeof bonusValue !== 'number' || bonusValue === 0) {
+    return `<b>${finalValue}</b>`;
+  }
+  const sign = bonusValue > 0 ? '+' : '';
+  return `<b>${baseValue}</b> <span style="color:#4f4;">${sign}${bonusValue}</span> = <b>${finalValue}</b>`;
+}
+
+function renderEquipmentSummaryRows(player) {
+  const equipment = getEquipmentDisplay(player?.equipment || {});
+  return Object.entries(EQUIPMENT_SLOTS)
+    .map(([slotId, slotLabel]) => {
+      const equipped = equipment[slotId];
+      const itemName = equipped?.name || 'None';
+      return `<div>${esc(slotLabel)}</div><div><b>${esc(itemName)}</b></div>`;
+    })
+    .join('');
+}
+
+function renderCompactCharacterSummary(player) {
+  const effectiveStats = getEffectiveCombatStats(player || {});
+  const equipmentBonuses = getEquipmentBonuses(player?.equipment || {});
+  const intStat = getPlayerIntDisplay(player);
+  const finalIntValue = intStat.value + (equipmentBonuses.magic || 0);
+
+  return `
+    <div>Class</div><div><b>${esc(getPlayerClassName(player))}</b></div>
+    <div>Level</div><div><b>${player?.level ?? 1}</b></div>
+    <div>HP</div><div><b>${hpLine(player || { hp: 0, maxHp: 0 })}</b></div>
+    ${mpLine(player || {}) !== null ? '<div>MP</div><div><b>' + mpLine(player || {}) + '</b></div>' : ''}
+    <div>ATK</div><div><b>${effectiveStats.atk}</b></div>
+    <div>DEF</div><div><b>${effectiveStats.def}</b></div>
+    <div>SPD</div><div><b>${effectiveStats.spd}</b></div>
+    <div>${intStat.label}</div><div><b>${finalIntValue}</b></div>
+    <div>Gold</div><div><b>${player?.gold ?? 0}</b></div>
+  `;
 }
 
 function summarizeBonuses(bonuses) {
@@ -611,11 +671,7 @@ export function render(state, dispatch) {
         <div class="card">
           <h2>${esc(state.player.name)}</h2>
           <div class="kv">
-            <div>Class</div><div><b>${esc(state.player.classId ? state.player.classId[0].toUpperCase() + state.player.classId.slice(1) : 'Adventurer')}</b></div>
-            <div>HP</div><div><b>${hpLine(state.player)}</b></div>
-            ${mpLine(state.player) !== null ? '<div>MP</div><div><b>' + mpLine(state.player) + '</b></div>' : ''}
-            <div>Level</div><div><b>${state.player.level ?? 1}</b></div>
-            <div>XP</div><div><b>${state.player.xp ?? 0}</b></div>
+            ${renderCompactCharacterSummary(state.player)}
           </div>
         </div>
 
@@ -663,13 +719,13 @@ export function render(state, dispatch) {
           <h3>CHARACTER</h3>
           <div class="action-category-buttons">
             <button id="btnInventory">Inventory</button>
-            <button id="btnViewStats">Stats 📊</button>
+            <button id="btnViewStats">Character 👤</button>
             <button id="btnTalents">Talents ⭐</button>
             <button id="btnQuests">Quests 📜</button>
             <button id="btnJournal">Journal 📔${renderJournalBadge(state)}</button>
             <button id="btnCompanions">Companions 🤝${renderCompanionBadge(state)}</button>
             <button id="btnProvisions">Provisions 🍖</button>
-            <button id="btnStatsDashboard">📈 Statistics</button>
+            <button id="btnStatsDashboard">Statistics 📈</button>
           </div>
         </div>
 
@@ -1119,12 +1175,37 @@ export function render(state, dispatch) {
 
   // --- Stats Phase ---
   if (state.phase === 'stats') {
+    const player = state.player || {};
+    const className = getPlayerClassName(player);
+    const backgroundName = getPlayerBackgroundName(player);
+    const effectiveStats = getEffectiveCombatStats(player);
+    const equipmentBonuses = getEquipmentBonuses(player.equipment || {});
+    const intStat = getPlayerIntDisplay(player);
+    const finalIntValue = intStat.value + (equipmentBonuses.magic || 0);
     hud.innerHTML = `
       <div class="row">
-        ${renderStatsPanel(state.gameStats ?? {}, { title: 'Adventure Statistics' })}
+        <div class="card">
+          <h2>Character Sheet</h2>
+          <div class="kv">
+            <div>Name</div><div><b>${esc(player.name ?? 'Adventurer')}</b></div>
+            <div>Class</div><div><b>${esc(className)}</b></div>
+            ${backgroundName ? `<div>Background</div><div><b>${esc(backgroundName)}</b></div>` : ''}
+            <div>Level</div><div><b>${player.level ?? 1}</b></div>
+            <div>XP</div><div><b>${player.xp ?? 0}</b></div>
+            <div>HP</div><div><b>${player.hp ?? 0}/${player.maxHp ?? 0}</b></div>
+            ${(player.maxMp ?? 0) > 0 ? `<div>MP</div><div><b>${player.mp ?? 0}/${player.maxMp ?? 0}</b></div>` : ''}
+            <div>ATK</div><div>${formatStatWithBonus(player.atk ?? 0, equipmentBonuses.attack, effectiveStats.atk)}</div>
+            <div>DEF</div><div>${formatStatWithBonus(player.def ?? 0, equipmentBonuses.defense, effectiveStats.def)}</div>
+            <div>SPD</div><div>${formatStatWithBonus(player.spd ?? 0, equipmentBonuses.speed, effectiveStats.spd)}</div>
+            <div>${intStat.label}</div><div>${formatStatWithBonus(intStat.value, equipmentBonuses.magic, finalIntValue)}</div>
+            <div>Gold</div><div><b>${player.gold ?? 0}</b></div>
+            ${renderEquipmentSummaryRows(player)}
+            ${renderStatusEffectsRow(player.statusEffects ?? [])}
+          </div>
+        </div>
       </div>
     `;
-    actions.innerHTML = '<div class="buttons"><button id="btnCloseStats">Close 📊</button></div>';
+    actions.innerHTML = '<div class="buttons"><button id="btnCloseStats">Close Character</button></div>';
     document.getElementById('btnCloseStats').onclick = () => dispatch({ type: 'CLOSE_STATS' });
     log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
@@ -1677,6 +1758,9 @@ if (state.phase === 'achievements') {
     document.getElementById('btnCloseTalents').onclick = () => dispatch({ type: 'CLOSE_TALENTS' });
     log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
+    if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+      requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }));
+    }
     return;
   }
 

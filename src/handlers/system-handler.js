@@ -65,6 +65,7 @@ export function handleSystemAction(state, action) {
     applyFlat('atk');
     applyFlat('def');
     applyFlat('spd');
+    applyFlat('int');
     applyFlat('gold');
 
     if (bonuses.inventory && typeof bonuses.inventory === 'object') {
