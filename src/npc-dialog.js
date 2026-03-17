@@ -106,7 +106,7 @@ const DIALOG_LINES = {
     'Should you face great danger, remember: courage is the heart of every hero.',
   ],
   inn_1: [
-    'A room costs 10 gold per night. Our stew is the best in the realm!',
+    'A room costs 20 gold per night. Our stew is the best in the realm!',
     'Many adventurers have passed through here. Not all returned...',
   ],
   scout_1: [
