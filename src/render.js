@@ -700,6 +700,11 @@ export function render(state, dispatch) {
       btn.onclick = () => dispatch({ type: 'EXPLORE', direction: btn.dataset.dir });
     });
 
+    const worldEventDismissBtn = hud.querySelector('.world-event-dismiss-btn');
+    if (worldEventDismissBtn) {
+      worldEventDismissBtn.onclick = () => dispatch({ type: 'DISMISS_WORLD_EVENT' });
+    }
+
     actions.innerHTML = `
       <div class="buttons">
         <div class="action-category">
