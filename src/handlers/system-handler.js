@@ -6,6 +6,7 @@ import { createGameStats, recordBattleFled } from '../game-stats.js';
 import { initVisitedRooms } from '../minimap.js';
 import { getCurrentRoom } from '../map.js';
 import { saveToSlot, loadFromSlot, getSaveSlots, deleteSaveSlot } from '../engine.js';
+import { createSaveMetadata } from '../save-system.js';
 import { consumeAchievementNotifications } from '../achievements.js';
 import { DIFFICULTY_LEVELS } from '../difficulty.js';
 
@@ -185,7 +186,13 @@ export function handleSystemAction(state, action) {
 
   if (type === 'SAVE_TO_SLOT') {
     const slotIndex = action.slotIndex;
-    const success = saveToSlot(state, slotIndex);
+    const metadata = createSaveMetadata(state);
+    const payload = {
+      ...state,
+      saveMetadata: metadata,
+      location: metadata.location,
+    };
+    const success = saveToSlot(payload, slotIndex);
     if (success) {
       return { ...state, phase: 'save-slots', saveSlotMode: 'save', saveSlots: getSaveSlots(), log: [...(state.log || []), 'Saved to slot ' + (slotIndex + 1) + '.'] };
     }
