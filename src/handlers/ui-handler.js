@@ -30,7 +30,7 @@ import { renderReputationPanel } from '../faction-reputation-system-ui.js';
 import { createGuild, addMember, removeMember, changeMemberRank, depositGold, withdrawGold, unlockPerk, disbandGuild, getGuildStats } from '../guild-system.js';
 import { renderGuildPanel, renderCreateGuildForm, renderGuildBrowser, renderGuildHud } from '../guild-system-ui.js';
 import { processMatchResult, createTournament, recordTournamentMatchResult, getTournamentRewards, resetSeason, generateOpponent } from '../arena-tournament-system.js';
-import { createMomentumState } from '../combat.js';
+import { createMomentumState } from '../momentum.js';
 import { initIntentState } from '../enemy-intent.js';
 import { dismissSporeling } from '../sporeling-integration.js';
 import {
