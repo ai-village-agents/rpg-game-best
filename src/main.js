@@ -126,8 +126,8 @@ if (IS_BROWSER) {
     transitionedState = ensureDailyChallengeState(transitionedState);
     transitionedState = applyDailyProgressFromTransition(state, transitionedState, action);
     
-    state = transitionedState;
-    render(state, dispatch);
+    state = transitionedState; window.state = state;
+    window.render = render; window.dispatch = dispatch; render(state, dispatch);
     renderDailyChallengesUI(state, dispatch);
 
     // If it became enemy turn, resolve after a short pause.
@@ -212,13 +212,13 @@ if (IS_BROWSER) {
       // No-op or unknown action
       // console.warn('Unhandled action:', action);
       // Render current state to maintain consistency
-      render(state, dispatch);
+      window.render = render; window.dispatch = dispatch; render(state, dispatch);
       renderDailyChallengesUI(state, dispatch);
     }
   }
 
   // Initial Render
-  render(state, dispatch);
+  window.render = render; window.dispatch = dispatch; render(state, dispatch);
   renderDailyChallengesUI(state, dispatch);
 
   // Initialize context-sensitive keyboard shortcuts (combat 1-4, exploration menus, etc.)

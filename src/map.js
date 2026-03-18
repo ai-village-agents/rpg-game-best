@@ -119,7 +119,8 @@ const defaultRooms = [
       { x: 2, y: 3, w: 1, h: 1 },
     ]),
     buildRoom('s', 'Southern Road', [
-      { x: 4, y: 1, w: 1, h: 3 },
+      { x: 2, y: 3, w: 2, h: 1 },
+      { x: 5, y: 2, w: 1, h: 2 },
     ]),
     buildRoom('se', 'Southeast Dock', [
       { x: 2, y: 1, w: 1, h: 1 },
