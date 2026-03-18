@@ -84,13 +84,25 @@ console.log('\n--- Movement within room ---');
 
   const before = world.snapshot();
   const west = world.move('west');
-  assert(!west.moved, 'Cannot move into perimeter wall');
-  assert(west.blocked === 'collision', 'Wall collision reported');
-  assert(deepEqual(world.snapshot(), before), 'State unchanged on blocked move');
+  assert(west.moved, 'Wall slide occurs when near door midpoint');
+  assert(!west.blocked, 'No collision reported on wall slide');
+  assert(!deepEqual(world.snapshot(), before), 'State changes on wall slide');
+  assert(world.snapshot().y === 2, 'Slides toward door midpoint on west move');
+
+  const farFromDoor = new WorldMap(DEFAULT_WORLD_DATA, {
+    roomRow: 1,
+    roomCol: 1,
+    x: 1,
+    y: 1,
+  });
+  const north = farFromDoor.move('north');
+  assert(!north.moved, 'No wall slide when far from door midpoint');
+  assert(north.blocked === 'collision', 'Wall collision reported when slide does not apply');
+  assert(farFromDoor.snapshot().y === 1, 'State unchanged on blocked north move');
 
   const south = world.move('south');
   assert(south.moved, 'Can move south into open tile');
-  assert(world.snapshot().y === 2, 'Y increments on south move');
+  assert(world.snapshot().y === 3, 'Y increments on south move');
 }
 
 console.log('\n--- Invalid direction ---');

@@ -214,6 +214,36 @@ export class WorldMap {
     return row[x] === 1;
   }
 
+  _tryWallSlide(directionKey, room, position = this.state) {
+    const direction = DIRECTIONS[directionKey];
+    if (!direction) return null;
+
+    const midX = Math.floor(this.roomWidth / 2);
+    const midY = Math.floor(this.roomHeight / 2);
+    let slideX = position.x;
+    let slideY = position.y;
+
+    if (direction.dy !== 0) {
+      if (Math.abs(position.x - midX) > 2) return null;
+      if (position.x < midX) slideX += 1;
+      else if (position.x > midX) slideX -= 1;
+      else return null;
+    } else if (direction.dx !== 0) {
+      if (Math.abs(position.y - midY) > 2) return null;
+      if (position.y < midY) slideY += 1;
+      else if (position.y > midY) slideY -= 1;
+      else return null;
+    } else {
+      return null;
+    }
+
+    if (!this._isInsideRoom(slideX, slideY) || this._isBlocked(room, slideX, slideY)) {
+      return null;
+    }
+
+    return { x: slideX, y: slideY };
+  }
+
   move(directionKey) {
     const direction = DIRECTIONS[directionKey];
     if (!direction) {
@@ -226,6 +256,11 @@ export class WorldMap {
 
     if (this._isInsideRoom(targetX, targetY)) {
       if (this._isBlocked(room, targetX, targetY)) {
+        const slide = this._tryWallSlide(directionKey, room, this.state);
+        if (slide) {
+          this.state = { ...this.state, ...slide };
+          return { moved: true, blocked: null, transitioned: false, state: this.snapshot() };
+        }
         return { moved: false, blocked: 'collision', transitioned: false, state: this.snapshot() };
       }
       this.state = { ...this.state, x: targetX, y: targetY };
@@ -267,6 +302,11 @@ export class WorldMap {
 
     // Clamp against obstacles on the edge tile; if blocked, stop at boundary.
     if (this._isBlocked(targetRoom, nextX, nextY)) {
+      const slide = this._tryWallSlide(directionKey, this.getCurrentRoom(), this.state);
+      if (slide) {
+        this.state = { ...this.state, ...slide };
+        return { moved: true, blocked: null, transitioned: false, state: this.snapshot() };
+      }
       return { moved: false, blocked: 'collision', transitioned: false, state: this.snapshot() };
     }
 
