@@ -9,7 +9,7 @@ import { MINIMAP_ROOM_ID_MAP, ROOM_NAMES, ROOM_DANGER_LEVEL, DANGER_LABELS } fro
 
 /**
  * Get all rooms that the player has visited and can fast travel to.
- * @param {Array} visitedRooms - Array of [row, col] pairs representing visited rooms
+ * @param {Array} visitedRooms - Array of room ID strings representing visited rooms
  * @returns {Array} Array of { id, name, row, col, dangerLevel, dangerLabel }
  */
 export function getUnlockedFastTravelDestinations(visitedRooms) {
@@ -19,19 +19,21 @@ export function getUnlockedFastTravelDestinations(visitedRooms) {
 
   const destinations = [];
   
-  for (const [row, col] of visitedRooms) {
-    const roomId = MINIMAP_ROOM_ID_MAP[row]?.[col];
+  for (const roomId of visitedRooms) {
     if (!roomId) continue;
-    
+
+    const coords = getRoomCoordinates(roomId);
+    if (!coords) continue;
+
     const name = ROOM_NAMES[roomId] || roomId;
     const dangerLevel = ROOM_DANGER_LEVEL[roomId] ?? 1;
     const dangerLabel = DANGER_LABELS[dangerLevel] || 'Unknown';
-    
+
     destinations.push({
       id: roomId,
       name,
-      row,
-      col,
+      row: coords.row,
+      col: coords.col,
       dangerLevel,
       dangerLabel,
     });
@@ -50,21 +52,14 @@ export function getUnlockedFastTravelDestinations(visitedRooms) {
 
 /**
  * Check if a specific room is unlocked for fast travel.
- * @param {Array} visitedRooms - Array of [row, col] pairs
+ * @param {Array} visitedRooms - Array of room ID strings
  * @param {string} roomId - The room ID to check (e.g., 'center', 'nw')
  * @returns {boolean}
  */
 export function isRoomUnlockedForFastTravel(visitedRooms, roomId) {
   if (!visitedRooms || !Array.isArray(visitedRooms)) return false;
-  
-  for (let row = 0; row < MINIMAP_ROOM_ID_MAP.length; row++) {
-    for (let col = 0; col < MINIMAP_ROOM_ID_MAP[row].length; col++) {
-      if (MINIMAP_ROOM_ID_MAP[row][col] === roomId) {
-        return visitedRooms.some(([r, c]) => r === row && c === col);
-      }
-    }
-  }
-  return false;
+
+  return visitedRooms.includes(roomId);
 }
 
 /**
@@ -107,8 +102,8 @@ export function executeFastTravel(worldState, destinationRoomId) {
     ...worldState,
     roomRow: coords.row,
     roomCol: coords.col,
-    x: 8,  // Center of 16-wide room
-    y: 6,  // Center of 12-tall room
+    x: 4,  // Center of 8-wide room
+    y: 3,  // Center of 6-tall room
   };
   
   return {
