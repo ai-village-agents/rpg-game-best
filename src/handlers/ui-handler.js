@@ -703,8 +703,16 @@ export function handleUIAction(state, action) {
     const opponent = generateOpponent(playerLevel);
     
     // Convert generated opponent to enemy format for combat
+    // Arena opponents store combat values in a nested `stats` object using
+    // attack/defense/speed keys, while the combat engine expects flat
+    // atk/def/spd fields on `state.enemy`. Normalize both shapes here.
     const arenaEnemy = {
       ...opponent,
+      hp: opponent.stats?.hp ?? opponent.hp ?? 1,
+      maxHp: opponent.stats?.maxHp ?? opponent.maxHp ?? opponent.stats?.hp ?? opponent.hp ?? 1,
+      atk: opponent.stats?.attack ?? opponent.atk ?? 1,
+      def: opponent.stats?.defense ?? opponent.def ?? 0,
+      spd: opponent.stats?.speed ?? opponent.spd ?? 0,
       displayName: opponent.name,
       xpReward: opponent.rewards.xp,
       goldReward: opponent.rewards.gold
