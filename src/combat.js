@@ -289,7 +289,7 @@ export function startNewEncounter(state, zoneLevel = 1) {
   }
   next = { ...next, currentEnemyId: enemyId, bestiary: recordEncounter(next.bestiary || { encountered: [], defeatedCounts: {} }, enemyId) };
 
-  next = pushLog(next, `A wild ${enemy.displayName ?? enemy.name} appears.`);
+  next = pushLog(next, `${enemy.displayName ?? enemy.name} appears!`);
   initCombatBattleLog();
   next = pushLog(next, `Your turn.`);
   return next;

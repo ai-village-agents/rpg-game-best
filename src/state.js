@@ -49,7 +49,7 @@ export function initialState() {
       defending: false,
     },
     log: [
-      `A wild ${enemyBase.name} appears.`,
+      `${enemyBase.displayName ?? enemyBase.name} appears!`,
       `Your turn.`,
     ],
     world: createWorldState(),
@@ -118,7 +118,7 @@ export function initialStateWithClass(classId, characterName = '', difficulty = 
       defending: false,
     },
     log: [
-      `A wild ${enemyBase.name} appears.`,
+      `${enemyBase.displayName ?? enemyBase.name} appears!`,
       `Your turn.`,
     ],
     world: createWorldState(),

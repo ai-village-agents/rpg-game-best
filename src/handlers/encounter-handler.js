@@ -211,7 +211,7 @@ export function handleEncounterAction(state, action) {
             next = pushLog(next, 'The enemy strikes first!');
           }
 
-          next = pushLog(next, 'A wild ' + (enemyBase.displayName || enemyBase.name) + ' appears!');
+          next = pushLog(next, (enemyBase.displayName || enemyBase.name) + ' appears!');
           initCombatBattleLog();
           next = pushLog(next, 'Your turn.');
           return next;
