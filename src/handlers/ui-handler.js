@@ -32,7 +32,9 @@ import { createGuild, addMember, removeMember, changeMemberRank, depositGold, wi
 import { renderGuildPanel, renderCreateGuildForm, renderGuildBrowser, renderGuildHud } from '../guild-system-ui.js';
 import { processMatchResult, createTournament, recordTournamentMatchResult, getTournamentRewards, resetSeason, generateOpponent } from '../arena-tournament-system.js';
 import { createMomentumState } from '../momentum.js';
+import { createComboState } from '../combo-system.js';
 import { initIntentState } from '../enemy-intent.js';
+import { initCombatBattleLog } from '../combat-battle-log-integration.js';
 import { dismissSporeling } from '../sporeling-integration.js';
 import {
   recordEnemyDefeated as recordDashboardEnemyDefeated,
@@ -726,6 +728,7 @@ export function handleUIAction(state, action) {
       turn: 1,
       combatStats: null,
       combatStatsSummary: null,
+      comboState: createComboState(),
       player: { ...state.player, defending: false, statusEffects: [] },
       momentumState: state.momentumState ? createMomentumState() : undefined,
       intentState: initIntentState(),
@@ -733,6 +736,7 @@ export function handleUIAction(state, action) {
       arenaOpponentRating: Math.max(0, (state.arenaState.rating || 1000) + ((opponent.level - playerLevel) * 25))
     };
 
+    initCombatBattleLog();
     next = pushLog(next, 'Welcome to the Arena!');
     next = pushLog(next, 'You are facing ' + opponent.name + ' (Level ' + opponent.level + ')!');
     return pushLog(next, 'Your turn.');
