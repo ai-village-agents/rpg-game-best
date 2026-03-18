@@ -1,4 +1,4 @@
-import { movePlayer, getCurrentRoom, getRoomExits, getExitPreview } from '../map.js';
+import { movePlayer, travelToAdjacentRoom, getCurrentRoom, getRoomExits, getExitPreview } from '../map.js';
 import { nextRng, startNewEncounter } from '../combat.js';
 import { markRoomVisited } from '../minimap.js';
 import { onRoomEnter, onNPCTalk, onNPCDeliver } from '../quest-integration.js';
@@ -132,12 +132,18 @@ export function handleExplorationAction(state, action) {
 
   const type = action.type;
 
-  if (type === 'EXPLORE') {
+  if (type === 'EXPLORE' || type === 'EXPLORE_ADJACENT') {
+    const isAdjacentTravel = type === 'EXPLORE_ADJACENT';
     const direction = action.direction;
     if (!direction) return pushLog(state, 'Choose a direction to move.');
 
-    const result = movePlayer(state.world, direction);
+    const result = isAdjacentTravel
+      ? travelToAdjacentRoom(state.world, direction, state.worldData)
+      : movePlayer(state.world, direction, state.worldData);
     if (!result.moved) {
+      if (isAdjacentTravel && result.blocked === 'edge') {
+        return pushLog(state, `No adjacent area lies to the ${direction}.`);
+      }
       return pushLog(state, `You cannot go ${direction}. The way is blocked.`);
     }
 

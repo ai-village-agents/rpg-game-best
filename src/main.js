@@ -89,7 +89,7 @@ if (IS_BROWSER) {
     if (action?.type === 'PLAYER_POTION') {
       applyProgress('potionsUsed', 1);
     }
-    if (action?.type === 'EXPLORE') {
+    if (action?.type === 'EXPLORE' || action?.type === 'EXPLORE_ADJACENT') {
       applyProgress('stepsTaken', 1);
     }
 

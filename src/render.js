@@ -706,7 +706,7 @@ export function render(state, dispatch) {
 
     // Attach map movement button listeners
     hud.querySelectorAll('.move-btn').forEach((btn) => {
-      btn.onclick = () => dispatch({ type: 'EXPLORE', direction: btn.dataset.dir });
+      btn.onclick = () => dispatch({ type: 'EXPLORE_ADJACENT', direction: btn.dataset.dir });
     });
 
     const worldEventDismissBtn = hud.querySelector('.world-event-dismiss-btn');

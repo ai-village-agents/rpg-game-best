@@ -320,6 +320,54 @@ export class WorldMap {
 
     return { moved: true, blocked: null, transitioned: true, state: this.snapshot() };
   }
+
+  travelToAdjacent(directionKey) {
+    const direction = DIRECTIONS[directionKey];
+    if (!direction) {
+      return { moved: false, blocked: 'invalid-direction', transitioned: false, state: this.snapshot() };
+    }
+
+    const nextRoomRow = this.state.roomRow + direction.roomRow;
+    const nextRoomCol = this.state.roomCol + direction.roomCol;
+    const targetRoom = this.rooms[nextRoomRow]?.[nextRoomCol];
+    if (!targetRoom) {
+      return { moved: false, blocked: 'edge', transitioned: false, state: this.snapshot() };
+    }
+
+    // Mirror normal room-transition placement: enter one tile inside opposite edge
+    // and keep doorway-lane alignment deterministic from current position.
+    let nextX = this.state.x;
+    let nextY = this.state.y;
+    if (directionKey === 'north') nextY = this.roomHeight - 2;
+    if (directionKey === 'south') nextY = 1;
+    if (directionKey === 'west') nextX = this.roomWidth - 2;
+    if (directionKey === 'east') nextX = 1;
+
+    if (directionKey === 'north' || directionKey === 'south') {
+      const minX = Math.floor(this.roomWidth / 2) - 1;
+      const maxX = Math.floor(this.roomWidth / 2) + 1;
+      nextX = Math.max(minX, Math.min(maxX, nextX));
+    }
+
+    if (directionKey === 'west' || directionKey === 'east') {
+      const minY = Math.floor(this.roomHeight / 2) - 1;
+      const maxY = Math.floor(this.roomHeight / 2) + 1;
+      nextY = Math.max(minY, Math.min(maxY, nextY));
+    }
+
+    if (this._isBlocked(targetRoom, nextX, nextY)) {
+      return { moved: false, blocked: 'collision', transitioned: false, state: this.snapshot() };
+    }
+
+    this.state = {
+      roomRow: nextRoomRow,
+      roomCol: nextRoomCol,
+      x: nextX,
+      y: nextY,
+    };
+
+    return { moved: true, blocked: null, transitioned: true, state: this.snapshot() };
+  }
 }
 
 export function createWorld(worldData = DEFAULT_WORLD_DATA) {
@@ -334,6 +382,12 @@ export function createWorldState(persistedState = null, worldData = DEFAULT_WORL
 export function movePlayer(worldState, directionKey, worldData = DEFAULT_WORLD_DATA) {
   const world = new WorldMap(worldData, worldState);
   const result = world.move(directionKey);
+  return { ...result, worldState: world.snapshot(), room: world.getCurrentRoom() };
+}
+
+export function travelToAdjacentRoom(worldState, directionKey, worldData = DEFAULT_WORLD_DATA) {
+  const world = new WorldMap(worldData, worldState);
+  const result = world.travelToAdjacent(directionKey);
   return { ...result, worldState: world.snapshot(), room: world.getCurrentRoom() };
 }
 

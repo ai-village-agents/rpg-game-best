@@ -8,6 +8,7 @@ import {
   WorldMap,
   createWorldState,
   movePlayer,
+  travelToAdjacentRoom,
   getAdjacentRoom,
   getExitPreview,
   getExitPreviews,
@@ -145,6 +146,27 @@ console.log('\n--- Room transitions ---');
   assert(!res2.moved, 'No move when transitioning past world edge');
   assert(res2.blocked === 'edge', 'Blocked reason is edge at world boundary');
   assert(!res2.transitioned, 'No transition at world boundary');
+}
+
+console.log('\n--- Direct adjacent travel helper ---');
+{
+  const startState = {
+    roomRow: 1,
+    roomCol: 1,
+    x: 1,
+    y: 1,
+  };
+  const res = travelToAdjacentRoom(startState, 'north');
+  assert(res.moved, 'Direct adjacent travel moves immediately');
+  assert(res.transitioned, 'Direct adjacent travel always transitions when adjacent exists');
+  assert(res.worldState.roomRow === 0 && res.worldState.roomCol === 1, 'Moves to adjacent north room');
+  assert(res.worldState.y === ROOM_H - 2, 'Enters north destination from opposite edge');
+  assert(res.worldState.x === MID_X - 1, 'Entry lane aligns/clamps like normal transition');
+
+  const edgeState = { roomRow: 0, roomCol: 1, x: MID_X, y: MID_Y };
+  const blocked = travelToAdjacentRoom(edgeState, 'north');
+  assert(!blocked.moved, 'Direct adjacent travel does not move when no adjacent room exists');
+  assert(blocked.blocked === 'edge', 'Direct adjacent travel reports edge when no adjacent room');
 }
 
 console.log('\n--- Exit preview helpers ---');
