@@ -70,6 +70,41 @@ export function handleUIAction(state, action) {
   const type = action.type;
   const isPreAdventure = state.phase === 'class-select' || state.phase === 'background-select';
 
+  if (type === 'GO_BACK') {
+    if (state.phase === 'inventory') {
+      return handleInventoryAction(state, { type: 'CLOSE_INVENTORY' });
+    }
+
+    if (state.phase === 'provisions') {
+      return handleProvisionAction(state, { type: 'CLOSE_PROVISIONS' });
+    }
+
+    const closeActionByPhase = {
+      journal: 'CLOSE_JOURNAL',
+      settings: 'CLOSE_SETTINGS',
+      achievements: 'CLOSE_ACHIEVEMENTS',
+      quests: 'CLOSE_QUESTS',
+      stats: 'CLOSE_STATS',
+      'statistics-dashboard': 'CLOSE_STATISTICS_DASHBOARD',
+      dialog: 'DIALOG_CLOSE',
+      shop: 'CLOSE_SHOP',
+      crafting: 'CLOSE_CRAFTING',
+      talents: 'CLOSE_TALENTS',
+      sporeling: 'CLOSE_SPORELING',
+      companions: 'CLOSE_COMPANIONS',
+      factions: 'CLOSE_FACTIONS',
+      arena: 'CLOSE_ARENA',
+      guilds: 'CLOSE_GUILDS',
+      bestiary: 'CLOSE_BESTIARY',
+      'bounty-board': 'CLOSE_BOUNTY_BOARD',
+      'tavern-dice': 'CLOSE_TAVERN',
+    };
+
+    const closeActionType = closeActionByPhase[state.phase];
+    if (!closeActionType) return null;
+    return handleUIAction(state, { type: closeActionType });
+  }
+
   if (type === "TOGGLE_HELP") {
     return { ...state, showHelp: !state.showHelp };
   }

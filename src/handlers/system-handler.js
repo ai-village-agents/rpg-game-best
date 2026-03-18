@@ -19,6 +19,10 @@ function getRoomDescription(worldState) {
 export function handleSystemAction(state, action) {
   const type = action.type;
 
+  if (type === 'GO_BACK' && state.phase === 'save-slots') {
+    return handleSystemAction(state, { type: 'CLOSE_SAVE_SLOTS' });
+  }
+
   if (type === 'SELECT_CLASS') {
     if (!CLASS_DEFINITIONS[action.classId]) {
       return pushLog(state, 'Unknown class selected.');
