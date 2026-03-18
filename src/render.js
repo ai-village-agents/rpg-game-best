@@ -1072,6 +1072,7 @@ export function render(state, dispatch) {
             <div>Defeated</div><div><b>${esc(bs.enemyName ?? 'Unknown')}</b></div>
             <div>XP Gained</div><div><b class="good">+${bs.xpGained ?? 0}</b></div>
             <div>Gold Earned</div><div><b class="good">+${bs.goldGained ?? 0}</b></div>
+            ${(bs.mpRecovered ?? 0) > 0 ? '<div>MP Recovered</div><div><b class="good">+' + (bs.mpRecovered ?? 0) + '</b></div>' : ''}
           </div>
         </div>
         <div class="card">

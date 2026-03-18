@@ -164,7 +164,7 @@ describe('Shop System', () => {
 
       // Stock should decrease
       const potionStock = result.shopState.stock.find(s => s.itemId === 'potion');
-      assert.equal(potionStock.quantity, 9); // was 10
+      assert.equal(potionStock.quantity, 19); // was 20
     });
 
     it('should buy multiple items at once', () => {

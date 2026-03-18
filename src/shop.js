@@ -57,6 +57,7 @@ export const SHOPS = {
       { itemId: 'chainmail', quantity: 2 },
       { itemId: 'shadowCloak', quantity: 1 },
       { itemId: 'potion', quantity: 5 },
+      { itemId: 'ether', quantity: 3 },
     ],
   },
   void_merchant: {

@@ -17,9 +17,12 @@ export function createBattleSummary(state) {
   const lootedItems = Array.isArray(state.lootedItems) ? [...state.lootedItems] : [];
   const levelUps = Array.isArray(state.pendingLevelUps) ? [...state.pendingLevelUps] : [];
 
+  const mpRecovered = state.mpRecovered ?? 0;
+
   const summary = {
     xpGained,
     goldGained,
+    mpRecovered,
     enemyName,
     lootedItems,
     levelUps,
@@ -57,6 +60,7 @@ export function formatBattleSummary(summary) {
     enemyLine: `Defeated: ${summary.enemyName}`,
     xpLine: `XP Gained: +${summary.xpGained}`,
     goldLine: `Gold Earned: +${summary.goldGained}`,
+    mpLine: summary.mpRecovered > 0 ? `MP Recovered: +${summary.mpRecovered}` : null,
     lootLines,
     levelUpLines,
     hasLevelUps: summary.levelUps.length > 0,

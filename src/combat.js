@@ -224,15 +224,23 @@ function applyVictoryDefeat(state) {
     const xpGained = applyDifficultyToXpReward(state.enemy.xpReward ?? 0, difficulty);
     const baseGold = applyDifficultyToGoldReward(state.enemy.goldReward ?? 0, difficulty);
     const goldGained = Math.floor(baseGold * getGoldMultiplier(state.worldEvent));
+    // Post-battle MP recovery: restore 20% of maxMP after winning
+    const currentMp = state.player.mp ?? 0;
+    const maxMp = state.player.maxMp ?? 0;
+    const mpRegen = maxMp > 0 ? Math.max(1, Math.floor(maxMp * 0.2)) : 0;
+    const newMp = Math.min(currentMp + mpRegen, maxMp);
+    const mpRecovered = newMp - currentMp;
     state = {
       ...state,
       phase: 'victory',
       xpGained,
       goldGained,
+      mpRecovered,
       player: {
         ...state.player,
         xp: (state.player.xp ?? 0) + xpGained,
         gold: (state.player.gold ?? 0) + goldGained,
+        mp: newMp,
       },
     };
     if (state.enemy.isBroken) { state = { ...state, _defeatedWhileBroken: true }; }
