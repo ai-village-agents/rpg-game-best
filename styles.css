@@ -113,6 +113,7 @@ button:active {
 button:disabled { opacity: 0.45; cursor: not-allowed; }
 /* Primary action button — large click target for Continue, etc. */
 button.primary-action {
+  flex: 0 0 100%;
   display: block;
   width: 100%;
   padding: 16px 24px;
