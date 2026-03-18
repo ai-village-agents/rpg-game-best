@@ -35,6 +35,8 @@ import { applyDifficultyToEnemyHp, applyDifficultyToEnemyDamage, applyDifficulty
 import { ACTION_TYPES, calculateMomentumGain, addMomentum, consumeOverdrive, applyMomentumDecay, getOverdriveAbility, calculateOverdriveDamage, canUseOverdrive, createMomentumState } from './momentum.js';
 import { registerHit, checkComboDecay, resetCombo, isComboBreaker, getChainBonus, getComboMultiplier } from './combo-system.js';
 import { initIntentState, updateIntentState } from './enemy-intent.js';
+import { modifyReputation } from './faction-reputation-system.js';
+import { updateBountyProgress } from './bounty-board.js';
 
 // Minimal deterministic RNG (Park-Miller LCG)
 export function nextRng(seed) {
@@ -230,7 +232,54 @@ function applyVictoryDefeat(state) {
       },
     };
     if (state.enemy.isBroken) { state = { ...state, _defeatedWhileBroken: true }; }
+    
     if (state.bestiary && state.currentEnemyId) { state = { ...state, bestiary: recordDefeat(state.bestiary, state.currentEnemyId) }; }
+    
+    // Update bounty progress
+    if (state.currentEnemyId && state.enemy.name) {
+      state = updateBountyProgress(state, 'ENEMY_DEFEATED', state.enemy.name, 1);
+    }
+    
+    // Faction reputation gains
+    if (state.currentEnemyId && state.factionReputation) {
+      const eId = state.currentEnemyId;
+      let repFaction = null;
+      let repAmount = 0;
+      let kingdomValorExtra = 0;
+      
+      if (['skeleton', 'wraith', 'lich-king', 'blood-fiend', 'undead_legion', 'plague-bearer'].includes(eId)) {
+        repFaction = 'silver_order';
+        repAmount = eId === 'lich-king' ? 500 : 20;
+      } else if (['bandit', 'orc', 'dark-cultist', 'chaos-spawn', 'infernal-knight', 'void-stalker'].includes(eId)) {
+        repFaction = 'kingdom_valor';
+        repAmount = 25;
+      } else if (['wolf', 'giant-spider', 'goblin', 'slime', 'goblin_chief'].includes(eId)) {
+        repFaction = 'forest_guardians';
+        repAmount = 15;
+      } else if (['dragon', 'glacial-wyrm', 'ember-drake', 'celestial-wyrm'].includes(eId)) {
+        repFaction = 'dragon_alliance';
+        repAmount = -50; // Killing dragons hurts dragon alliance
+        kingdomValorExtra = 100;
+      }
+      
+      if (kingdomValorExtra > 0) {
+         const kvResult = modifyReputation(state.factionReputation, 'kingdom_valor', kingdomValorExtra, 'Slew a dragon');
+         if (!kvResult.error) {
+           state.factionReputation = kvResult.state;
+           state = pushLog(state, `Faction Standing: +${kingdomValorExtra} with kingdom_valor`);
+         }
+      }
+      
+      if (repFaction) {
+        const repResult = modifyReputation(state.factionReputation, repFaction, repAmount, 'Slew an enemy');
+        if (!repResult.error) {
+          state.factionReputation = repResult.state;
+          const sign = repAmount > 0 ? '+' : '';
+          state = pushLog(state, `Faction Standing: ${sign}${repAmount} with ${repFaction}`);
+        }
+      }
+    }
+
     // Generate loot drops
     if (state.currentEnemyId) {
       const lootSeed = state.rngSeed ?? Date.now();

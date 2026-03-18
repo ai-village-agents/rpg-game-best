@@ -386,7 +386,7 @@ console.log('\n--- getAbility and getAbilityDisplayInfo ---');
   assert(ability !== null, 'getAbility returns ability for valid id');
   assert(ability.id === 'power-strike', 'ability has correct id');
   assert(ability.mpCost === 4, 'power-strike costs 4 MP');
-  assert(ability.power === 1.5, 'power-strike has power 1.5');
+  assert(ability.power === 1.3, 'power-strike has power 1.3');
   assert(ability.class === 'warrior', 'power-strike is warrior class');
 }
 

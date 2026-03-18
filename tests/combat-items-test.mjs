@@ -417,7 +417,7 @@ it('multiple items can be used in sequence', () => {
   assert.equal(result.player.inventory.potion, 2);
 
   // Reset to player-turn for next use
-  result = { ...result, phase: 'player-turn' };
+  result = { ...result, phase: 'player-turn', potionCooldown: 0 };
   result = playerUseItem(result, 'potion');
   assert.equal(result.player.hp, 90);
   assert.equal(result.player.inventory.potion, 1);
