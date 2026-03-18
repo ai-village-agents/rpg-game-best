@@ -17,7 +17,7 @@ import { advanceDialog } from '../npc-dialog.js';
 import { renderAchievementsPanel } from '../achievements-ui.js';
 import { loadSettings, updateSetting, resetSettings, saveSettings } from '../settings.js';
 import { createShopState, buyItem, sellItem } from '../shop.js';
-import { createCraftingState, craftItem } from '../crafting.js';
+import { createCraftingState, craftItem, autoDiscoverRecipes } from '../crafting.js';
 import { createTalentState, allocateTalent, deallocateTalent, resetAllTalents } from '../talents.js';
 import { recruitCompanion, dismissCompanion } from '../companions.js';
 import { shouldShowSpecialization, createSpecializationState, applySpecialization } from '../specialization-ui.js';
@@ -529,6 +529,7 @@ export function handleUIAction(state, action) {
     if (!state.crafting) {
       state = { ...state, crafting: createCraftingState() };
     }
+    state = autoDiscoverRecipes(state);
     return {
       ...state,
       phase: 'crafting',

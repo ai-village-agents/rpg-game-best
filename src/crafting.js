@@ -72,6 +72,34 @@ export function discoverRecipe(state, recipeId) {
   return { success: true, message: `Discovered recipe: ${recipe.name}.` };
 }
 
+
+/**
+ * Auto-discover all recipes the player qualifies for by level.
+ * @param {object} state
+ * @returns {object} updated state
+ */
+export function autoDiscoverRecipes(state) {
+  if (!state) return state;
+  const playerLevel = state.player?.level ?? 1;
+  let crafting = state.crafting || createCraftingState();
+  const discovered = new Set(crafting.discoveredRecipes || []);
+  let changed = false;
+  for (const recipe of recipes) {
+    if (recipe.requiredLevel <= playerLevel && !discovered.has(recipe.id)) {
+      discovered.add(recipe.id);
+      changed = true;
+    }
+  }
+  if (!changed) return state;
+  return {
+    ...state,
+    crafting: {
+      ...crafting,
+      discoveredRecipes: [...discovered],
+    },
+  };
+}
+
 /**
  * Get all discovered recipes with crafting availability info.
  * @param {object} state
