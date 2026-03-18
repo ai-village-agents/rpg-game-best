@@ -49,6 +49,7 @@ export function handleStateTransitions(prevState, nextState) {
               def: lu.newStats.def,
               spd: lu.newStats.spd,
               int: lu.newStats.int,
+              stats: { ...lu.newStats },
             },
             talentState: newTalentState,
             pendingLevelUps: levelUps,

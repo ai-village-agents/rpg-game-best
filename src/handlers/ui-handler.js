@@ -368,15 +368,21 @@ export function handleUIAction(state, action) {
     gs = recordBattleFled(gs);
     let next = {
       ...state,
-      phase: 'exploration',
+      phase: state.isArenaMatch ? 'arena' : 'exploration',
       player: { ...state.player, defending: false },
       enemy: undefined,
       battleSummary: undefined,
       pendingLevelUps: undefined,
       gameStats: gs,
     };
-    next = pushLog(next, 'You slip away and return to safety.');
-    next = pushLog(next, `${getRoomDescription(state.world)} Exits: ${exits.join(', ') || 'none'}.`);
+    if (state.isArenaMatch) {
+      next = pushLog(next, 'You forfeited the match and returned to the arena desk.');
+      next.isArenaMatch = false;
+      next.arenaOpponentRating = undefined;
+    } else {
+      next = pushLog(next, 'You slip away and return to safety.');
+      next = pushLog(next, `${getRoomDescription(state.world)} Exits: ${exits.join(', ') || 'none'}.`);
+    }
     return next;
   }
 

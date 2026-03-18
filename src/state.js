@@ -104,6 +104,7 @@ export function initialStateWithClass(classId, characterName = '', difficulty = 
       def: character.stats.def,
       spd: character.stats.spd,
       int: character.stats.int,
+      stats: { ...character.stats },
       classId,
       abilities: classDef.abilities,
       level: 1,
