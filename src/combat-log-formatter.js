@@ -33,6 +33,7 @@ const LOG_TYPES = {
   'damage-dealt':    { icon: '\u2694\uFE0F', cssClass: 'log-damage-dealt' },
   'damage-received': { icon: '\u{1F4A5}', cssClass: 'log-damage-received' },
   'ability':         { icon: '\u2728',    cssClass: 'log-ability' },
+  'elemental':       { icon: '\u{1F525}', cssClass: 'log-elemental' },
   'info':            { icon: '\u{1F4CB}', cssClass: 'log-info' }
 };
 
@@ -105,6 +106,11 @@ export function classifyLogEntry(line) {
     return { type: 'poison-damage', ...LOG_TYPES['poison-damage'] };
   }
 
+  // Elemental effectiveness feedback
+  if (/super effective|strong!|resisted\.\.\.|immune!/i.test(lower)) {
+    return { type: 'elemental', ...LOG_TYPES['elemental'] };
+  }
+
   // Status effects
   if (/\bpoison(ed)?\b|\bburn(ed|ing|s)?\b|\bstun(ned|s)?\b|\bfroz(en|e)\b|\bbleed(ing|s)?\b|\bstatus\b|\bweaken/i.test(lower)) {
     return { type: 'status-effect', ...LOG_TYPES['status-effect'] };
@@ -172,6 +178,7 @@ export function getLogStyles() {
     .log-defeat { color: #B71C1C; font-weight: bold; }
     .log-companion { color: #00BCD4; }
     .log-item { color: #8BC34A; }
+    .log-elemental { color: #FFD54F; font-weight: bold; font-style: italic; }
     .log-info { color: #9E9E9E; }
     .log-icon {
       margin-right: 6px;

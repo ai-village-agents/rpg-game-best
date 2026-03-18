@@ -154,7 +154,10 @@ export function executeEnemyAbility(state, abilityId) {
     }
 
     if (critical) extras.push('Critical!');
-    if (elementMult > 1.0) extras.push('Elemental!');
+    if (elementMult >= 2.0) extras.push('Super effective!');
+    else if (elementMult > 1.0) extras.push('Strong!');
+    else if (elementMult === 0.5) extras.push('Resisted');
+    else if (elementMult === 0) extras.push('Immune!');
 
     const suffix = extras.length > 0 ? ` (${extras.join(') (')})` : '';
     nextState = pushLog(

@@ -620,7 +620,7 @@ export function playerUseAbility(state, abilityId) {
       const abilityElement = ability.element ?? 'physical';
       // Apply equipment bonuses to player's attack stat for abilities
       const abilityPlayerStats = getEffectiveCombatStats(state.player);
-      const { damage, critical } = calculateDamage({
+      const { damage, critical, elementMult } = calculateDamage({
         attackerAtk: abilityPlayerStats.atk,
         targetDef: state.enemy.def,
         targetDefending: state.enemy.defending,
@@ -641,6 +641,15 @@ export function playerUseAbility(state, abilityId) {
       };
       let msg = `${(state.enemy.displayName ?? state.enemy.name)} takes ${damage} ${abilityElement} damage!`;
       if (critical) msg += ' Critical hit!';
+      if (elementMult >= 2.0) {
+        state = pushLog(state, `⚡ Super effective! ${abilityElement} devastates ${(state.enemy.displayName ?? state.enemy.name)}!`);
+      } else if (elementMult === 1.5) {
+        state = pushLog(state, `✦ Strong! ${abilityElement} is powerful against ${(state.enemy.displayName ?? state.enemy.name)}!`);
+      } else if (elementMult === 0.5) {
+        state = pushLog(state, `🛡️ Resisted... ${(state.enemy.displayName ?? state.enemy.name)} shrugs off the ${abilityElement} attack.`);
+      } else if (elementMult === 0) {
+        state = pushLog(state, `⊘ Immune! ${(state.enemy.displayName ?? state.enemy.name)} is completely immune to ${abilityElement}!`);
+      }
       state = pushLog(state, msg);
       logPlayerAbility(ability.name, damage, abilityElement, (state.enemy.displayName ?? state.enemy.name));
     }

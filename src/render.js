@@ -1083,8 +1083,9 @@ export function render(state, dispatch) {
         ${bs.combatStatsDisplay ? '<div class="card">' + renderCombatStatsHtml(bs.combatStatsDisplay) + '</div>' : ''}
       </div>
     `;
-    actions.innerHTML = '<div class="buttons"><button id="btnContinueAfterBattle">Continue →</button></div>';
+    actions.innerHTML = '<div class="buttons"><button id="btnContinueAfterBattle" class="primary-action">Continue →</button></div>';
     document.getElementById('btnContinueAfterBattle').onclick = () => dispatch({ type: 'CONTINUE_AFTER_BATTLE' });
+    document.getElementById('btnContinueAfterBattle').focus();
     log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
@@ -1880,8 +1881,9 @@ if (state.phase === 'achievements') {
         </div>
       </div>
     `;
-    actions.innerHTML = '<div class="buttons"><button id="btnContinueAfterFlee">Continue Exploring</button></div>';
+    actions.innerHTML = '<div class="buttons"><button id="btnContinueAfterFlee" class="primary-action">Continue Exploring</button></div>';
     document.getElementById('btnContinueAfterFlee').onclick = () => dispatch({ type: 'CONTINUE_AFTER_FLEE' });
+    document.getElementById('btnContinueAfterFlee').focus();
     log.innerHTML = state.log.slice().reverse().map((line) => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;
