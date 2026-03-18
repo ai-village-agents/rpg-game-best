@@ -65,6 +65,10 @@ function isIncapacitated(entity) {
   return isStunned(entity) || isFrozen(entity);
 }
 
+function isActiveCombatPhase(phase) {
+  return phase === 'player-turn' || phase === 'enemy-turn';
+}
+
 export function addStatusEffect(state, targetKey, effect) {
   const target = state[targetKey];
   if (!target) return state;
@@ -454,7 +458,7 @@ export function playerAttack(state) {
     state = { ...state, rngSeed: companionResult.seed };
   }
   state = applyVictoryDefeat(state);
-  if (state.phase === 'victory' || state.phase === 'defeat') return state;
+  if (!isActiveCombatPhase(state.phase)) return state;
   if (state.momentumState) {
     const isCrit = false; // base attacks don't crit by default
     const brokeShield = state._triggeredShieldBreak === true;
@@ -701,7 +705,7 @@ export function playerUseOverdrive(state) {
   state = pushLog(state, `OVERDRIVE: ${ability.name}! Deals ${totalDamage} damage (${ability.hits || 1} hits)!`);
   state = { ...state, momentumState: consumeOverdrive(state.momentumState) };
   state = applyVictoryDefeat(state);
-  if (state.phase === 'victory' || state.phase === 'defeat') return state;
+  if (!isActiveCombatPhase(state.phase)) return state;
   return { ...state, phase: 'enemy-turn' };
 }
 
@@ -790,7 +794,7 @@ export function playerUseItem(state, itemId) {
     state = pushLog(state, `You throw ${item.name} for ${damage} ${element} damage!`);
     logItemUsed(item.name, `Dealt ${damage} ${element} damage to ${(state.enemy.displayName ?? state.enemy.name)}`);
     state = applyVictoryDefeat(state);
-    if (state.phase === 'victory' || state.phase === 'defeat') return state;
+    if (!isActiveCombatPhase(state.phase)) return state;
   }
 
   // Handle cleanse items (antidote)
@@ -832,13 +836,13 @@ export function enemyAct(state) {
   const wasEnemyFrozen = isFrozen(state.enemy);
 
   state = processTurnStart(state, 'enemy');
-  if (state.phase === 'victory' || state.phase === 'defeat') return state;
+  if (!isActiveCombatPhase(state.phase)) return state;
 
   if (wasEnemyStunned || wasEnemyFrozen) {
     const reason = wasEnemyFrozen ? 'frozen' : 'stunned';
     state = pushLog(state, `${(state.enemy.displayName ?? state.enemy.name)} is ${reason} and cannot act!`);
     state = processTurnStart(state, 'player');
-    if (state.phase === 'victory' || state.phase === 'defeat') return state;
+    if (!isActiveCombatPhase(state.phase)) return state;
     state = pushLog(state, `Your turn.`);
     return { ...state, phase: 'player-turn' };
   }
@@ -848,7 +852,7 @@ export function enemyAct(state) {
     state = { ...state, enemy: { ...state.enemy, ...breakResult } };
     state = pushLog(state, `${(state.enemy.displayName ?? state.enemy.name)} is recovering from the break and cannot act!`);
     state = processTurnStart(state, 'player');
-    if (state.phase === 'victory' || state.phase === 'defeat') return state;
+    if (!isActiveCombatPhase(state.phase)) return state;
     state = pushLog(state, 'Your turn.');
     return { ...state, phase: 'player-turn' };
   }
@@ -900,7 +904,7 @@ export function enemyAct(state) {
             turn: state.turn + 1,
           };
           state = processTurnStart(state, 'player');
-          if (state.phase === 'victory' || state.phase === 'defeat') return state;
+          if (!isActiveCombatPhase(state.phase)) return state;
           state = pushLog(state, 'Your turn.');
           return { ...state, phase: 'player-turn' };
         }
@@ -935,9 +939,9 @@ export function enemyAct(state) {
     state = applyVictoryDefeat(state);
   }
 
-  if (state.phase === 'victory' || state.phase === 'defeat') return state;
+  if (!isActiveCombatPhase(state.phase)) return state;
   state = processTurnStart(state, 'player');
-  if (state.phase === 'victory' || state.phase === 'defeat') return state;
+  if (!isActiveCombatPhase(state.phase)) return state;
   state = pushLog(state, `Your turn.`);
   if (state.comboState) {
     state = { ...state, comboState: checkComboDecay(state.comboState, state.turn ?? 0) };
