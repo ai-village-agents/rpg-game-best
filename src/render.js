@@ -664,7 +664,7 @@ export function render(state, dispatch) {
       ? exploreNpcs.map(n => `<button class="npc-talk-btn" data-npcid="${esc(n.id)}">${esc(n.name)}</button>`).join('')
       : '<em>No one is here.</em>';
     hud.innerHTML = `
-      ${renderWorldEventBanner(state.worldEvent || null)}
+      ${renderWorldEventBanner(state.worldEvent || null, state.worldEventDismissed)}
       ${renderAtmospherePanel(state)}
       ${renderAreaScene(state)}
       <div class="row">

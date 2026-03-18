@@ -116,7 +116,7 @@ export function handleUIAction(state, action) {
 
   if (type === 'DISMISS_WORLD_EVENT') {
     if (!state.worldEvent) return null;
-    return pushLog({ ...state, worldEvent: null }, 'You dismiss the world event notification.');
+    return { ...state, worldEventDismissed: true };
   }
 
   // Journal

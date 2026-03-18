@@ -11,8 +11,8 @@ import { hasActiveWorldEvent, getWorldEventBanner } from './world-events.js';
  * @param {object|null} worldEvent
  * @returns {string}
  */
-export function renderWorldEventBanner(worldEvent) {
-  if (!hasActiveWorldEvent(worldEvent)) return '';
+export function renderWorldEventBanner(worldEvent, dismissed) {
+  if (!hasActiveWorldEvent(worldEvent) || dismissed) return '';
   const remaining = worldEvent.movesRemaining;
   const total = worldEvent.totalMoves;
   const pct = Math.round((remaining / total) * 100);
@@ -21,6 +21,7 @@ export function renderWorldEventBanner(worldEvent) {
     '<div class="world-event-banner ' + rarityClass + '" data-testid="world-event-banner">' +
     '<span class="world-event-icon">' + worldEvent.icon + '</span>' +
     '<span class="world-event-name">' + worldEvent.name + '</span>' +
+    ' — ' +
     '<span class="world-event-desc">' + worldEvent.description + '</span>' +
     '<div class="world-event-timer">' +
     '<span class="world-event-moves">' + remaining + ' move' + (remaining === 1 ? '' : 's') + ' left</span>' +

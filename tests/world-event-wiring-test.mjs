@@ -137,8 +137,8 @@ describe('World event wiring', () => {
 
     const next = handleUIAction(state, { type: 'DISMISS_WORLD_EVENT' });
     assert.ok(next);
-    assert.equal(next.worldEvent, null);
-    assert.equal(next.log.at(-1), 'You dismiss the world event notification.');
+    assert.ok(next.worldEvent);
+    assert.equal(next.worldEventDismissed, true);
   });
 
   it('Shop UI displays discounted price when worldEvent is provided', () => {

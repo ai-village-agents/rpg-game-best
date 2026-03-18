@@ -189,23 +189,24 @@ export function handleExplorationAction(state, action) {
       next = logLocationDiscovery(next, roomName);
     }
 
-    let newWorldEvent = tickWorldEvent(state.worldEvent);
-    if (state.worldEvent && !newWorldEvent) {
-      next = pushLog(next, 'The world event has ended.');
-    }
-
-    if (!hasActiveWorldEvent(newWorldEvent)) {
-      const triggeredEvent = tryTriggerWorldEvent(next.rngSeed, newWorldEvent);
-      if (triggeredEvent) {
-        newWorldEvent = triggeredEvent;
-        next = applyImmediateEffect(next, newWorldEvent);
-        const banner = getWorldEventBanner(newWorldEvent);
-        if (banner) next = pushLog(next, banner);
+    if (result.transitioned) {
+      let newWorldEvent = tickWorldEvent(state.worldEvent);
+      if (state.worldEvent && !newWorldEvent) {
+        next = pushLog(next, 'The world event has ended.');
       }
+      if (!hasActiveWorldEvent(newWorldEvent)) {
+        const triggeredEvent = tryTriggerWorldEvent(next.rngSeed, newWorldEvent);
+        if (triggeredEvent) {
+          newWorldEvent = triggeredEvent;
+          next = { ...next, worldEventDismissed: false };
+          next = applyImmediateEffect(next, newWorldEvent);
+          const banner = getWorldEventBanner(newWorldEvent);
+          if (banner) next = pushLog(next, banner);
+        }
+      }
+      next = { ...next, worldEvent: newWorldEvent };
+      next = applyPerMoveEffect(next, next.worldEvent);
     }
-
-    next = { ...next, worldEvent: newWorldEvent };
-    next = applyPerMoveEffect(next, next.worldEvent);
 
     // Random Encounter
     if (result.transitioned) {
@@ -369,8 +370,7 @@ export function handleExplorationAction(state, action) {
   }
 
   if (type === 'DISMISS_WORLD_EVENT') {
-    const next = pushLog({ ...state, worldEvent: null }, 'You dismiss the world event notification.');
-    return next;
+    return { ...state, worldEventDismissed: true };
   }
 
   return null;
