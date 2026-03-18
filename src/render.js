@@ -4,7 +4,7 @@ import { renderFastTravelButton, renderFastTravelModal, isFastTravelModalOpen, a
 import { renderTavernDicePanel } from './tavern-dice-ui.js';
 import { saveToLocalStorage } from './state.js';
 import { CLASS_DEFINITIONS } from './characters/classes.js';
-import { DEFAULT_WORLD_DATA, getRoomExits } from './map.js';
+import { DEFAULT_WORLD_DATA, getRoomExits, getExitPreviews } from './map.js';
 import { getCategorizedInventory, getEquipmentDisplay, getItemDetails, getEquipmentComparison, INVENTORY_SCREENS, EQUIPMENT_SLOTS, getEquipmentBonuses } from './inventory.js';
 import { getEffectiveCombatStats, getEquipmentBonusDisplay, hasEquipmentBonuses } from './combat/equipment-bonuses.js';
 import { getCurrentLevelUp, getStatDiffs, formatStatName, xpForNextLevel } from './level-up.js';
@@ -291,8 +291,9 @@ function renderMapPanel(state, dispatch) {
   if (!state.world) return '';
 
   const { roomRow, roomCol } = state.world;
-  const rooms = DEFAULT_WORLD_DATA.rooms;
-  const exits = getRoomExits(state.world);
+  const rooms = state.worldData?.rooms ?? DEFAULT_WORLD_DATA.rooms;
+  const exits = getRoomExits(state.world, state.worldData);
+  const exitPreviews = getExitPreviews(state.world, state.worldData);
   const currentRoom = rooms[roomRow]?.[roomCol];
   const roomName = currentRoom?.name ?? 'Unknown';
 
@@ -311,8 +312,10 @@ function renderMapPanel(state, dispatch) {
   const exitBtns = ['north', 'south', 'west', 'east']
     .filter(d => exits.includes(d))
     .map(d => {
-      const label = { north: 'N', south: 'S', west: 'W', east: 'E' }[d];
-      return `<button class="move-btn" data-dir="${d}">${label}</button>`;
+      const shortLabel = { north: 'N', south: 'S', west: 'W', east: 'E' }[d];
+      const destination = exitPreviews[d]?.roomName;
+      const label = destination ? `${shortLabel} → ${destination}` : shortLabel;
+      return `<button class="move-btn" data-dir="${d}">${esc(label)}</button>`;
     }).join('');
 
   const controlsHtml = state.phase === 'exploration'
@@ -657,6 +660,12 @@ export function render(state, dispatch) {
 
   // --- Exploration Phase ---
   if (state.phase === 'exploration') {
+    const exitPreviews = getExitPreviews(state.world, state.worldData);
+    const movementTitle = (direction) => {
+      const destination = exitPreviews[direction]?.roomName;
+      if (!destination) return '';
+      return ` title="${esc(`Move ${direction} toward ${destination}`)}"`;
+    };
     const mapHtml = renderMapPanel(state, dispatch);
     const exploreRoomId = RENDER_ROOM_ID_MAP[state.world?.roomRow]?.[state.world?.roomCol] ?? null;
     const exploreNpcs = exploreRoomId ? getNPCsInRoom(exploreRoomId) : [];
@@ -710,10 +719,10 @@ export function render(state, dispatch) {
         <div class="action-category">
           <h3>EXPLORATION</h3>
           <div class="action-category-buttons">
-            <button id="btnNorth">North</button>
-            <button id="btnSouth">South</button>
-            <button id="btnWest">West</button>
-            <button id="btnEast">East</button>
+            <button id="btnNorth"${movementTitle('north')}>North</button>
+            <button id="btnSouth"${movementTitle('south')}>South</button>
+            <button id="btnWest"${movementTitle('west')}>West</button>
+            <button id="btnEast"${movementTitle('east')}>East</button>
             <button id="btnSeek">Seek Battle</button>
             ${shouldShowDungeonEntrance(state) ? '<button id="btnEnterDungeon" class="dungeon-enter-btn">Enter Dungeon \u26CF\uFE0F</button>' : ''}
             <button id="btnFastTravel">🗺️ Fast Travel</button>

@@ -3,7 +3,15 @@
  * Run: node tests/map-test.mjs
  */
 
-import { DEFAULT_WORLD_DATA, WorldMap, createWorldState, movePlayer } from '../src/map.js';
+import {
+  DEFAULT_WORLD_DATA,
+  WorldMap,
+  createWorldState,
+  movePlayer,
+  getAdjacentRoom,
+  getExitPreview,
+  getExitPreviews,
+} from '../src/map.js';
 
 let passed = 0;
 let failed = 0;
@@ -137,6 +145,45 @@ console.log('\n--- Room transitions ---');
   assert(!res2.moved, 'No move when transitioning past world edge');
   assert(res2.blocked === 'edge', 'Blocked reason is edge at world boundary');
   assert(!res2.transitioned, 'No transition at world boundary');
+}
+
+console.log('\n--- Exit preview helpers ---');
+{
+  const centerAligned = { roomRow: 1, roomCol: 1, x: MID_X, y: MID_Y };
+  const northPreview = getExitPreview(centerAligned, 'north');
+  assert(northPreview.available, 'North preview available from center room');
+  assert(northPreview.roomName === 'Northern Path', 'North preview includes adjacent room name');
+  assert(northPreview.aligned, 'North preview aligned when x is in doorway lane');
+  assert(!northPreview.ready, 'North preview not ready while away from edge');
+
+  const northReady = getExitPreview({ roomRow: 1, roomCol: 1, x: MID_X, y: 1 }, 'north');
+  assert(northReady.aligned, 'North ready check remains aligned at doorway lane');
+  assert(northReady.ready, 'North preview ready on doorway edge tile');
+
+  const northMisaligned = getExitPreview({ roomRow: 1, roomCol: 1, x: MID_X - 2, y: 1 }, 'north');
+  assert(!northMisaligned.aligned, 'North preview not aligned outside doorway lane');
+  assert(!northMisaligned.ready, 'North preview not ready when not aligned');
+
+  const eastReady = getExitPreview({ roomRow: 1, roomCol: 1, x: ROOM_W - 2, y: MID_Y - 1 }, 'east');
+  assert(eastReady.aligned, 'East preview aligned for center doorway lane y');
+  assert(eastReady.ready, 'East preview ready on doorway edge tile');
+
+  const westReady = getExitPreview({ roomRow: 1, roomCol: 1, x: 1, y: MID_Y }, 'west');
+  assert(westReady.aligned, 'West preview aligned for center doorway lane y');
+  assert(westReady.ready, 'West preview ready on doorway edge tile');
+
+  const blockedNorth = getExitPreview({ roomRow: 0, roomCol: 0, x: MID_X, y: 1 }, 'north');
+  assert(!blockedNorth.available, 'Preview unavailable when no adjacent room exists');
+  assert(blockedNorth.roomName === null, 'Preview roomName null when exit is unavailable');
+
+  const adjacentSouth = getAdjacentRoom({ roomRow: 0, roomCol: 0, x: MID_X, y: MID_Y }, 'south');
+  assert(adjacentSouth?.name === 'Western Crossing', 'Adjacent south room resolves correctly');
+
+  const previews = getExitPreviews({ roomRow: 0, roomCol: 0, x: MID_X, y: MID_Y });
+  assert(previews.east.available, 'East preview available in northwest corner room');
+  assert(previews.south.available, 'South preview available in northwest corner room');
+  assert(!previews.north.available, 'North preview unavailable in northwest corner room');
+  assert(!previews.west.available, 'West preview unavailable in northwest corner room');
 }
 
 console.log('\n========================================');

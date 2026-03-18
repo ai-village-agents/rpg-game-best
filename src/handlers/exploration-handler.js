@@ -1,4 +1,4 @@
-import { movePlayer, getCurrentRoom, getRoomExits } from '../map.js';
+import { movePlayer, getCurrentRoom, getRoomExits, getExitPreview } from '../map.js';
 import { nextRng, startNewEncounter } from '../combat.js';
 import { markRoomVisited } from '../minimap.js';
 import { onRoomEnter, onNPCTalk, onNPCDeliver } from '../quest-integration.js';
@@ -127,20 +127,16 @@ function applyQuestRelationshipEffects(nextState, completedQuests) {
 }
 
 export function handleExplorationAction(state, action) {
-  console.log('[EXPLORE-HANDLER] Called with phase:', state.phase, 'action:', action.type);
   // Check if phase is exploration (except maybe SEEK_ENCOUNTER which forces it? No, checks phase too)
-  if (state.phase !== 'exploration') { console.log('[EXPLORE-HANDLER] Rejected: phase is', state.phase, 'not exploration'); return null; }
+  if (state.phase !== 'exploration') { return null; }
 
   const type = action.type;
 
   if (type === 'EXPLORE') {
     const direction = action.direction;
-    console.log('[EXPLORE-HANDLER] EXPLORE direction:', direction, 'world:', state.world ? 'exists' : 'missing');
     if (!direction) return pushLog(state, 'Choose a direction to move.');
 
-    console.log('[EXPLORE-HANDLER] Calling movePlayer...');
     const result = movePlayer(state.world, direction);
-    console.log('[EXPLORE-HANDLER] movePlayer result:', JSON.stringify({moved: result.moved, transitioned: result.transitioned}));
     if (!result.moved) {
       return pushLog(state, `You cannot go ${direction}. The way is blocked.`);
     }
@@ -187,6 +183,12 @@ export function handleExplorationAction(state, action) {
     if (result.transitioned) {
       next = pushLog(next, `You travel ${direction} and arrive at ${roomName}.`);
       next = logLocationDiscovery(next, roomName);
+    } else {
+      const exitPreview = getExitPreview(result.worldState, direction, state.worldData);
+      const moveMsg = exitPreview.available && exitPreview.roomName
+        ? `You move ${direction} toward ${exitPreview.roomName}.`
+        : `You move ${direction}.`;
+      next = pushLog(next, moveMsg);
     }
 
     if (result.transitioned) {

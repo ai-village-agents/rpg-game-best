@@ -1,5 +1,5 @@
 import { COORD_TO_ROOM } from './location-atmosphere.js';
-import { DEFAULT_WORLD_DATA, getRoomExits, getCurrentRoom } from './map.js';
+import { DEFAULT_WORLD_DATA, getRoomExits, getCurrentRoom, getExitPreviews } from './map.js';
 import { getNPCsInRoom } from './npc-dialog.js';
 
 const ROOM_LABELS = {
@@ -59,6 +59,29 @@ function renderExitLocks(exits) {
   if (!blocked.length) return '';
   return blocked
     .map((direction) => `<div class="area-scene-exit-lock lock-${direction}">🔒</div>`)
+    .join('');
+}
+
+function renderExitCues(exitPreviews) {
+  const arrows = {
+    north: '↑',
+    south: '↓',
+    west: '←',
+    east: '→',
+  };
+
+  return ALL_DIRECTIONS
+    .map((direction) => exitPreviews[direction])
+    .filter((preview) => preview?.available && preview?.roomName)
+    .map((preview) => {
+      const classes = [
+        'area-scene-exit-cue',
+        `cue-${preview.direction}`,
+      ];
+      if (preview.aligned) classes.push('cue-aligned');
+      if (preview.ready) classes.push('cue-ready');
+      return `<div class="${classes.join(' ')}">${arrows[preview.direction]} ${esc(preview.roomName)}</div>`;
+    })
     .join('');
 }
 
@@ -168,9 +191,11 @@ export function renderAreaScene(state) {
   if (!roomId) return '';
 
   const exits = getRoomExits(state.world, state.worldData);
+  const exitPreviews = getExitPreviews(state.world, state.worldData);
   const label = ROOM_LABELS[roomId] ?? 'Unknown';
   const sceneElements = renderSceneElements(roomId);
   const npcs = renderNpcIcons(roomId);
+  const cues = renderExitCues(exitPreviews);
   const locks = renderExitLocks(exits);
   const collisionOverlay = renderCollisionOverlay(state);
   const playerStyle = getPlayerPositionStyles(state);
@@ -179,6 +204,7 @@ export function renderAreaScene(state) {
     <div class="area-scene" data-room="${roomId}">
       ${sceneElements}
       ${collisionOverlay}
+      ${cues}
       ${locks}
       ${npcs}
       <div class="area-player-marker" style="${playerStyle}">🧍</div>
@@ -249,6 +275,55 @@ export function getAreaSceneStyles() {
       color: #f0d36a;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
       z-index: 7;
+    }
+
+    .area-scene-exit-cue {
+      position: absolute;
+      font-size: 11px;
+      font-weight: 600;
+      color: #f6f6f6;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      padding: 2px 6px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+      z-index: 7;
+      pointer-events: none;
+    }
+
+    .area-scene-exit-cue.cue-aligned {
+      background: rgba(38, 70, 38, 0.62);
+      border-color: rgba(156, 225, 156, 0.7);
+    }
+
+    .area-scene-exit-cue.cue-ready {
+      background: rgba(201, 132, 26, 0.78);
+      border-color: rgba(255, 227, 133, 0.95);
+      box-shadow: 0 0 6px rgba(255, 216, 130, 0.75);
+    }
+
+    .area-scene-exit-cue.cue-north {
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .area-scene-exit-cue.cue-south {
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .area-scene-exit-cue.cue-west {
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .area-scene-exit-cue.cue-east {
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     .area-scene-exit-lock.lock-north {

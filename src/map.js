@@ -379,3 +379,79 @@ export function getRoomExits(mapState, worldData = DEFAULT_WORLD_DATA) {
     .filter(([, dir]) => Boolean(rooms[roomRow + dir.roomRow]?.[roomCol + dir.roomCol]))
     .map(([key]) => key);
 }
+
+/**
+ * Get the adjacent room object in a direction, if any.
+ * @param {object} mapState
+ * @param {string} direction
+ * @param {object} worldData
+ * @returns {object|null}
+ */
+export function getAdjacentRoom(mapState, direction, worldData = DEFAULT_WORLD_DATA) {
+  const dir = DIRECTIONS[direction];
+  if (!dir) return null;
+
+  const resolvedWorldData = mapState?.worldData ?? worldData;
+  const resolvedWorldState = mapState?.worldState ?? mapState;
+  const roomRow = resolvedWorldState?.roomRow ?? 0;
+  const roomCol = resolvedWorldState?.roomCol ?? 0;
+  const rooms = resolvedWorldData.rooms ?? [];
+
+  return rooms[roomRow + dir.roomRow]?.[roomCol + dir.roomCol] ?? null;
+}
+
+/**
+ * Get readable metadata for one exit direction.
+ * @param {object} mapState
+ * @param {string} direction
+ * @param {object} worldData
+ * @returns {{direction: string, available: boolean, roomName: string|null, aligned: boolean, ready: boolean}}
+ */
+export function getExitPreview(mapState, direction, worldData = DEFAULT_WORLD_DATA) {
+  const resolvedWorldData = mapState?.worldData ?? worldData;
+  const resolvedWorldState = mapState?.worldState ?? mapState;
+  const roomWidth = resolvedWorldData.roomWidth ?? ROOM_WIDTH;
+  const roomHeight = resolvedWorldData.roomHeight ?? ROOM_HEIGHT;
+  const midX = Math.floor(roomWidth / 2);
+  const midY = Math.floor(roomHeight / 2);
+  const x = resolvedWorldState?.x ?? midX;
+  const y = resolvedWorldState?.y ?? midY;
+  const adjacentRoom = getAdjacentRoom(resolvedWorldState, direction, resolvedWorldData);
+  const available = Boolean(adjacentRoom);
+
+  let aligned = false;
+  if (direction === 'north' || direction === 'south') {
+    aligned = x >= midX - 1 && x <= midX + 1;
+  } else if (direction === 'west' || direction === 'east') {
+    aligned = y >= midY - 1 && y <= midY + 1;
+  }
+
+  let ready = false;
+  if (aligned && direction === 'north') ready = y <= 1;
+  if (aligned && direction === 'south') ready = y >= roomHeight - 2;
+  if (aligned && direction === 'west') ready = x <= 1;
+  if (aligned && direction === 'east') ready = x >= roomWidth - 2;
+
+  return {
+    direction,
+    available,
+    roomName: available ? (adjacentRoom?.name ?? null) : null,
+    aligned,
+    ready,
+  };
+}
+
+/**
+ * Get readable metadata for all four exits.
+ * @param {object} mapState
+ * @param {object} worldData
+ * @returns {{north: object, south: object, west: object, east: object}}
+ */
+export function getExitPreviews(mapState, worldData = DEFAULT_WORLD_DATA) {
+  return {
+    north: getExitPreview(mapState, 'north', worldData),
+    south: getExitPreview(mapState, 'south', worldData),
+    west: getExitPreview(mapState, 'west', worldData),
+    east: getExitPreview(mapState, 'east', worldData),
+  };
+}

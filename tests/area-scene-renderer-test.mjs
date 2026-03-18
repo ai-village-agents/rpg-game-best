@@ -94,6 +94,29 @@ describe('Area Scene Renderer', () => {
     assert.ok(html.includes('area-scene-npc'), 'Center should show NPC icons');
   });
 
+  it('renders exit destination cues for available exits', () => {
+    const state = { phase: 'exploration', world: { roomRow: 1, roomCol: 1, x: 4, y: 3 } };
+    const html = renderAreaScene(state);
+    assert.ok(html.includes('area-scene-exit-cue cue-north'), 'Should render north cue');
+    assert.ok(html.includes('area-scene-exit-cue cue-south'), 'Should render south cue');
+    assert.ok(html.includes('area-scene-exit-cue cue-west'), 'Should render west cue');
+    assert.ok(html.includes('area-scene-exit-cue cue-east'), 'Should render east cue');
+    assert.ok(html.includes('↑ Northern Path'), 'Should include north destination room name');
+  });
+
+  it('renders ready highlight on cues when player is aligned at edge', () => {
+    const state = { phase: 'exploration', world: { roomRow: 1, roomCol: 1, x: 4, y: 1 } };
+    const html = renderAreaScene(state);
+    assert.ok(html.includes('area-scene-exit-cue cue-north cue-aligned cue-ready'), 'North cue should be ready');
+  });
+
+  it('keeps blocked exits rendered as locks', () => {
+    const state = { phase: 'exploration', world: { roomRow: 0, roomCol: 0, x: 4, y: 3 } };
+    const html = renderAreaScene(state);
+    assert.ok(html.includes('area-scene-exit-lock lock-north'), 'Blocked north exit should render lock');
+    assert.ok(html.includes('area-scene-exit-lock lock-west'), 'Blocked west exit should render lock');
+  });
+
   it('escapes HTML in labels', () => {
     // All room labels are safe, but the esc function should work
     const state = { phase: 'exploration', world: { roomRow: 0, roomCol: 1 } };
@@ -121,5 +144,11 @@ describe('Area Scene Styles', () => {
   it('includes exit lock styles', () => {
     const css = getAreaSceneStyles();
     assert.ok(css.includes('.area-scene-exit-lock'), 'Should style exit locks');
+  });
+
+  it('includes exit cue styles', () => {
+    const css = getAreaSceneStyles();
+    assert.ok(css.includes('.area-scene-exit-cue'), 'Should style exit cues');
+    assert.ok(css.includes('.cue-ready'), 'Should style ready cues');
   });
 });
