@@ -84,6 +84,7 @@ function buildDamageSummary(list) {
   for (const entry of list) {
     switch (entry?.type) {
       case 'attack':
+      case 'ability':
       case 'damage-dealt':
         dealt += asNumber(entry.details);
         break;

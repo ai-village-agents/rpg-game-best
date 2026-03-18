@@ -64,6 +64,18 @@ test('getCombatSummary totals damage, received damage, and healing', () => {
   assert.equal(summary.totalHealingDone, 6);
 });
 
+
+test('getCombatSummary counts damaging ability entries toward damage dealt', () => {
+  const log = new BattleLog();
+  log.startTurn(1);
+  log.addEntry('ability', 'Cast Fireball', { ability: 'Fireball', damage: 14, element: 'fire' });
+  log.addEntry('ability', 'Cast Frostbolt', { ability: 'Frostbolt', amount: 9, element: 'ice' });
+  const summary = log.getCombatSummary();
+
+  assert.equal(summary.totalDamageDealt, 23);
+  assert.deepEqual(summary.abilitiesUsed, ['Fireball', 'Frostbolt']);
+});
+
 test('getCombatSummary tracks status effects uniquely', () => {
   const log = new BattleLog();
   log.startTurn(1);
@@ -224,6 +236,16 @@ test('renderBattleLogPanel with showSummary=true shows damage summary when damag
   const html = renderBattleLogPanel(log.entries, { showSummary: true });
 
   assert.match(html, /bl-damage-summary/);
+});
+
+
+test('renderBattleLogPanel summary includes ability damage in dealt badge', () => {
+  const log = new BattleLog();
+  log.startTurn(1);
+  log.addEntry('ability', 'Cast Fireball', { ability: 'Fireball', damage: 12, element: 'fire' });
+  const html = renderBattleLogPanel(log.entries, { showSummary: true });
+
+  assert.match(html, /Dealt 12/);
 });
 
 test('renderBattleLogPanel entries have data-type attribute', () => {

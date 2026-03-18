@@ -93,11 +93,11 @@ export class BattleLog {
     };
 
     for (const entry of this.entries) {
+      if (entry.type === 'attack' || entry.type === 'ability' || entry.type === 'damage-dealt') {
+        summary.totalDamageDealt += asNumber(entry.details);
+      }
+
       switch (entry.type) {
-        case 'attack':
-        case 'damage-dealt':
-          summary.totalDamageDealt += asNumber(entry.details);
-          break;
         case 'damage-received':
           summary.totalDamageReceived += asNumber(entry.details);
           break;
