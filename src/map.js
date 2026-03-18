@@ -102,7 +102,7 @@ const defaultRooms = [
   [
     buildRoom('w', 'Western Crossing', [
       { x: 3, y: 2, w: 1, h: 1 },
-      { x: 5, y: 4, w: 1, h: 1 },
+      { x: 6, y: 4, w: 1, h: 1 },
     ]),
     buildRoom('center', 'Village Square', [
       { x: 2, y: 2, w: 1, h: 1 },
