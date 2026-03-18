@@ -7,11 +7,12 @@ import { updateAudioSettings } from '../audio-system.js';
 import { createInventoryState, handleInventoryAction } from '../inventory.js';
 import { markAllRead } from '../journal.js';
 import { createLevelUpState, advanceLevelUp } from '../level-up.js';
-import { acceptQuest } from '../quest-integration.js';
-import { claimAllQuestRewards, hasPendingRewards } from '../quest-rewards.js';
+import { acceptQuest, onRoomEnter } from '../quest-integration.js';
+import { buildPendingRewards, claimAllQuestRewards, hasPendingRewards } from '../quest-rewards.js';
 import { createGameStats, recordBattleFled, recordBattleWon, recordEnemyDefeated, recordXPEarned, recordGoldEarned } from '../game-stats.js';
 import { pushLog } from '../state.js';
 import { getCurrentRoom, getRoomExits } from '../map.js';
+import { getCurrentRoomId } from '../minimap.js';
 import { advanceDialog } from '../npc-dialog.js';
 import { renderAchievementsPanel } from '../achievements-ui.js';
 import { loadSettings, updateSetting, resetSettings, saveSettings } from '../settings.js';
@@ -218,7 +219,22 @@ export function handleUIAction(state, action) {
   if (type === 'ACCEPT_QUEST') {
     if (!state.questState) return pushLog(state, 'Quest system not initialized.');
     const result = acceptQuest(state.questState, action.questId);
-    const next = { ...state, questState: result.questState };
+    let next = { ...state, questState: result.questState };
+
+    if (result.accepted) {
+      const roomId = getCurrentRoomId(state.world);
+      if (roomId) {
+        const questResult = onRoomEnter(next.questState, roomId);
+        next = { ...next, questState: questResult.questState };
+
+        const newRewards = buildPendingRewards(questResult.completedQuests);
+        if (newRewards.length > 0) {
+          const existing = next.pendingQuestRewards || [];
+          next = { ...next, pendingQuestRewards: [...existing, ...newRewards] };
+        }
+      }
+    }
+
     return pushLog(next, result.message);
   }
 

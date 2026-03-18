@@ -7,6 +7,7 @@
 import { strict as assert } from 'node:assert';
 import { describe, it, beforeEach } from 'node:test';
 import { initQuestState, acceptQuest, onRoomEnter, getAvailableQuestsInRoom, getActiveQuestsSummary } from '../src/quest-integration.js';
+import { createWorldState } from '../src/map.js';
 
 describe('Quest Log UI - Quest State Management', () => {
   let questState;
@@ -227,6 +228,28 @@ describe('Quest Log UI - UI handler aliases', () => {
     assert.strictEqual(next, null);
   });
 });
+
+describe('Quest Log UI - ACCEPT_QUEST live handler regression', () => {
+  it('accepting "Know Your Surroundings" in Village Square immediately advances first EXPLORE stage', async () => {
+    const { handleUIAction } = await import('../src/handlers/ui-handler.js');
+    const state = {
+      phase: 'quests',
+      previousPhase: 'exploration',
+      log: [],
+      world: createWorldState(), // starts in center
+      questState: initQuestState(),
+      pendingQuestRewards: [],
+    };
+
+    const next = handleUIAction(state, { type: 'ACCEPT_QUEST', questId: 'explore_village' });
+    assert.ok(next);
+    assert.strictEqual(next.questState.questProgress.explore_village.stageIndex, 1);
+    assert.deepStrictEqual(next.questState.questProgress.explore_village.objectiveProgress, {});
+    assert.ok(next.questState.discoveredRooms.includes('center'));
+    assert.deepStrictEqual(next.pendingQuestRewards, []);
+  });
+});
+
 describe('Quest Log UI - Phase Transitions', () => {
   describe('Valid phase transitions', () => {
     it('exploration -> quests is valid', () => {
