@@ -38,6 +38,21 @@ console.log('--- Testing Combat Handler ---');
   assert(next.gameStats.turnsPlayed > 0, 'Turn played recorded');
 }
 
+// Regression: enemy turn start is logged exactly once per enemy turn
+{
+  const logLen = getBattleLogEntries().length;
+  const afterAttack = handleCombatAction(mockState, { type: 'PLAYER_ATTACK' });
+  const afterEnemyTurn = handleEnemyTurnLogic(afterAttack);
+  const newEntries = getBattleLogEntries().slice(logLen);
+  const enemyTurnStartCount = newEntries.filter(
+    (entry) => entry.type === 'turn-start' && entry.message.includes('Enemy turn begins')
+  ).length;
+
+  assert(afterAttack.phase === 'enemy-turn', 'PLAYER_ATTACK transitions to enemy-turn');
+  assert(afterEnemyTurn.phase === 'player-turn' || afterEnemyTurn.phase === 'victory' || afterEnemyTurn.phase === 'defeat', 'Enemy turn logic resolves from enemy-turn state');
+  assert(enemyTurnStartCount === 1, "Enemy turn start logged once after PLAYER_ATTACK + enemy turn resolution");
+}
+
 
 // Test PLAYER_ABILITY victory records max single hit from ability battle-log damage
 {

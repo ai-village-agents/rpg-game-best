@@ -391,8 +391,6 @@ export function playerAttack(state) {
   if (isIncapacitated(state.player)) {
     const reason = isFrozen(state.player) ? 'frozen solid' : 'stunned';
     state = pushLog(state, `You are ${reason} and cannot act!`);
-    state = processTurnStart(state, 'enemy');
-    if (state.phase === 'victory' || state.phase === 'defeat') return state;
     return { ...state, phase: 'enemy-turn' };
   }
 
@@ -402,8 +400,6 @@ export function playerAttack(state) {
     state = { ...state, rngSeed: blindSeed };
     if (blindRoll < 0.5) {
       state = pushLog(state, 'Your attack misses! (Blinded)');
-      state = processTurnStart(state, 'enemy');
-      if (state.phase === 'victory' || state.phase === 'defeat') return state;
       return { ...state, phase: 'enemy-turn' };
     }
   }
@@ -459,8 +455,6 @@ export function playerAttack(state) {
   }
   state = applyVictoryDefeat(state);
   if (state.phase === 'victory' || state.phase === 'defeat') return state;
-  state = processTurnStart(state, 'enemy');
-  if (state.phase === 'victory' || state.phase === 'defeat') return state;
   if (state.momentumState) {
     const isCrit = false; // base attacks don't crit by default
     const brokeShield = state._triggeredShieldBreak === true;
@@ -476,8 +470,6 @@ export function playerDefend(state) {
   if (isIncapacitated(state.player)) {
     const reason = isFrozen(state.player) ? 'frozen solid' : 'stunned';
     state = pushLog(state, `You are ${reason} and cannot act!`);
-    state = processTurnStart(state, 'enemy');
-    if (state.phase === 'victory' || state.phase === 'defeat') return state;
     return { ...state, phase: 'enemy-turn' };
   }
   state = {
@@ -488,8 +480,6 @@ export function playerDefend(state) {
   if (state.comboState) {
     state = { ...state, comboState: resetCombo(state.comboState) };
   }
-  state = processTurnStart(state, 'enemy');
-  if (state.phase === 'victory' || state.phase === 'defeat') return state;
   if (state.momentumState) {
     const gain = calculateMomentumGain(ACTION_TYPES.DEFEND, {}, state.momentumState);
     state = { ...state, momentumState: addMomentum(state.momentumState, gain, ACTION_TYPES.DEFEND) };
@@ -502,8 +492,6 @@ export function playerFlee(state) {
   if (isIncapacitated(state.player)) {
     const reason = isFrozen(state.player) ? 'frozen solid' : 'stunned';
     state = pushLog(state, `You are ${reason} and cannot act!`);
-    state = processTurnStart(state, 'enemy');
-    if (state.phase === 'victory' || state.phase === 'defeat') return state;
     return { ...state, phase: 'enemy-turn' };
   }
 
@@ -516,8 +504,6 @@ export function playerFlee(state) {
   }
 
   state = pushLog(state, 'Failed to flee!');
-  state = processTurnStart(state, 'enemy');
-  if (state.phase === 'victory' || state.phase === 'defeat') return state;
   return { ...state, phase: 'enemy-turn' };
 }
 
@@ -527,8 +513,6 @@ export function playerUsePotion(state) {
   if (isIncapacitated(state.player)) {
     const reason = isFrozen(state.player) ? 'frozen solid' : 'stunned';
     state = pushLog(state, `You are ${reason} and cannot act!`);
-    state = processTurnStart(state, 'enemy');
-    if (state.phase === 'victory' || state.phase === 'defeat') return state;
     return { ...state, phase: 'enemy-turn' };
   }
 
@@ -566,8 +550,6 @@ export function playerUsePotion(state) {
     const gain = calculateMomentumGain(ACTION_TYPES.ITEM, {}, state.momentumState);
     state = { ...state, momentumState: addMomentum(state.momentumState, gain, ACTION_TYPES.ITEM) };
   }
-  state = processTurnStart(state, 'enemy');
-  if (state.phase === 'victory' || state.phase === 'defeat') return state;
   return { ...state, phase: 'enemy-turn' };
 }
 
@@ -709,8 +691,6 @@ export function playerUseOverdrive(state) {
   if (isIncapacitated(state.player)) {
     const reason = isFrozen(state.player) ? 'frozen solid' : 'stunned';
     state = pushLog(state, `You are ${reason} and cannot act!`);
-    state = processTurnStart(state, 'enemy');
-    if (state.phase === 'victory' || state.phase === 'defeat') return state;
     return { ...state, phase: 'enemy-turn' };
   }
   const ability = getOverdriveAbility(state.player.classId);
@@ -722,8 +702,6 @@ export function playerUseOverdrive(state) {
   state = { ...state, momentumState: consumeOverdrive(state.momentumState) };
   state = applyVictoryDefeat(state);
   if (state.phase === 'victory' || state.phase === 'defeat') return state;
-  state = processTurnStart(state, 'enemy');
-  if (state.phase === 'victory' || state.phase === 'defeat') return state;
   return { ...state, phase: 'enemy-turn' };
 }
 
@@ -734,8 +712,6 @@ export function playerUseItem(state, itemId) {
   if (isIncapacitated(state.player)) {
     const reason = isFrozen(state.player) ? 'frozen solid' : 'stunned';
     state = pushLog(state, `You are ${reason} and cannot act!`);
-    state = processTurnStart(state, 'enemy');
-    if (state.phase === 'victory' || state.phase === 'defeat') return state;
     return { ...state, phase: 'enemy-turn' };
   }
 
@@ -838,8 +814,6 @@ export function playerUseItem(state, itemId) {
   if (state.comboState) {
     state = { ...state, comboState: resetCombo(state.comboState) };
   }
-  state = processTurnStart(state, 'enemy');
-  if (state.phase === 'victory' || state.phase === 'defeat') return state;
   return { ...state, phase: 'enemy-turn' };
 }
 
