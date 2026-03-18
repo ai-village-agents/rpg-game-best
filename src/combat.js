@@ -1,4 +1,5 @@
 import { recordShieldBroken, recordWeaknessHit, recordDefeatedWhileBroken } from './game-stats.js';
+import { processMatchResult, MATCH_RESULT } from './arena-tournament-system.js';
 import { clamp, pushLog } from './state.js';
 import { items } from './data/items.js';
 import { removeItemFromInventory, hasItem } from './items.js';
@@ -187,11 +188,31 @@ function processTurnStart(state, actorKey) {
 function applyVictoryDefeat(state) {
   if (state.enemy.hp <= 0) {
     if (state.isArenaMatch) {
-      return {
+      const matchData = {
+        opponentRating: state.arenaOpponentRating || 1000,
+        result: MATCH_RESULT.WIN,
+        duration: state.turn || 1,
+        damageDealt: state.playerDamageDealt || 0,
+        damageTaken: state.playerDamageTaken || 0
+      };
+      
+      const arenaState = state.arenaState && state.arenaState.seasonStats ? state.arenaState : createArenaState();
+      const arenaResult = processMatchResult(arenaState, matchData);
+      const newArenaState = arenaResult.state || arenaResult;
+      const rewards = arenaResult.rewards || { ratingChange: 0, gold: 0, xp: 0 };
+      
+      let nextState = pushLog({
         ...state,
         phase: 'arena',
-        isArenaMatch: false
-      };
+        isArenaMatch: false,
+        arenaState: newArenaState,
+        player: {
+          ...state.player,
+          gold: (state.player.gold || 0) + (rewards.gold || 0),
+          xp: (state.player.xp || 0) + (rewards.xp || 0)
+        }
+      }, `Arena Victory! Rating ${(rewards.ratingChange || 0) > 0 ? '+' : ''}${rewards.ratingChange || 0} (${newArenaState.rating || 1000}). Earned ${rewards.gold || 0}g, ${rewards.xp || 0}xp.`);
+      return nextState;
     }
     const difficulty = state.difficulty ?? DEFAULT_DIFFICULTY;
     const xpGained = applyDifficultyToXpReward(state.enemy.xpReward ?? 0, difficulty);
@@ -237,12 +258,32 @@ function applyVictoryDefeat(state) {
   }
   if (state.player.hp <= 0) {
     if (state.isArenaMatch) {
-      return {
+      const matchData = {
+        opponentRating: state.arenaOpponentRating || 1000,
+        result: MATCH_RESULT.LOSS,
+        duration: state.turn || 1,
+        damageDealt: state.playerDamageDealt || 0,
+        damageTaken: state.playerDamageTaken || 0
+      };
+      
+      const arenaState = state.arenaState && state.arenaState.seasonStats ? state.arenaState : createArenaState();
+      const arenaResult = processMatchResult(arenaState, matchData);
+      const newArenaState = arenaResult.state || arenaResult;
+      const rewards = arenaResult.rewards || { ratingChange: 0, gold: 0, xp: 0 };
+      
+      let nextState = pushLog({
         ...state,
         phase: 'arena',
         isArenaMatch: false,
-        player: { ...state.player, hp: 1 } // prevent actual death
-      };
+        arenaState: newArenaState,
+        player: {
+          ...state.player,
+          hp: 1, // prevent actual death
+          gold: (state.player.gold || 0) + (rewards.gold || 0),
+          xp: (state.player.xp || 0) + (rewards.xp || 0)
+        }
+      }, `Arena Defeat! Rating ${(rewards.ratingChange || 0) > 0 ? '+' : ''}${rewards.ratingChange || 0} (${newArenaState.rating || 1000}). Earned ${rewards.gold || 0}g, ${rewards.xp || 0}xp.`);
+      return nextState;
     }
     state = { ...state, phase: 'defeat' };
     logDefeat();
