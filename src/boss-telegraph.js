@@ -66,7 +66,7 @@ export function getTelegraphUrgency(action, abilityId, enemy) {
     if (ability) {
       const power = ability.power ?? 0;
       if (power >= 2.0) return URGENCY_LEVELS.EXTREME;
-      if (power >= 1.5) return URGENCY_LEVELS.HIGH;
+      if (power >= 1.6) return URGENCY_LEVELS.HIGH;
       if (power >= 1.0) return URGENCY_LEVELS.MEDIUM;
       return URGENCY_LEVELS.LOW;
     }

@@ -183,7 +183,7 @@ describe('getTelegraphDescription', () => {
   test('ability description uses regular ability text', () => {
     assert.strictEqual(
       telegraph.getTelegraphDescription('ability', 'blizzard', weakEnemy),
-      'Unleash a freezing storm on all enemies.'
+      'Unleash a freezing storm on all enemies. May freeze them.'
     );
   });
 

@@ -2199,12 +2199,12 @@ if (state.phase === 'achievements') {
 
     actions.innerHTML = `
       <div class="buttons">
-        <button id="btnCloseProvisions">Close Provisions</button>
+        <button id="btnCloseProvisionsBottom">Close Provisions</button>
       </div>
     `;
 
     attachProvisionsHandlers(dispatch);
-    document.getElementById('btnCloseProvisions').onclick = () => dispatch({ type: 'CLOSE_PROVISIONS' });
+    document.getElementById('btnCloseProvisionsBottom').onclick = () => dispatch({ type: 'CLOSE_PROVISIONS' });
 
     log.innerHTML = state.log
       .slice()
