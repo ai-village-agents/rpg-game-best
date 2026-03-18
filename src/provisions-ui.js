@@ -42,15 +42,46 @@ function formatEffect(effect) {
  * @param {Array} inventory - Player inventory array
  * @returns {Array} Provisions found in inventory with their data
  */
+function getInventoryQuantity(inventory, itemId) {
+  if (!inventory || !itemId) return 0;
+
+  if (Array.isArray(inventory)) {
+    const item = inventory.find((entry) => entry.id === itemId);
+    return Number(item?.quantity || 0);
+  }
+
+  if (typeof inventory === 'object') {
+    return Number(inventory[itemId] || 0);
+  }
+
+  return 0;
+}
+
 function getPlayerProvisions(inventory) {
   if (!inventory) return [];
   const results = [];
-  for (const item of inventory) {
-    const provData = PROVISIONS[item.id];
-    if (provData && item.quantity > 0) {
-      results.push({ ...provData, quantity: item.quantity });
+
+  if (Array.isArray(inventory)) {
+    for (const item of inventory) {
+      const provData = PROVISIONS[item.id];
+      const quantity = Number(item.quantity || 0);
+      if (provData && quantity > 0) {
+        results.push({ ...provData, quantity });
+      }
+    }
+    return results;
+  }
+
+  if (typeof inventory === 'object') {
+    for (const [itemId, rawQuantity] of Object.entries(inventory)) {
+      const provData = PROVISIONS[itemId];
+      const quantity = Number(rawQuantity || 0);
+      if (provData && quantity > 0) {
+        results.push({ ...provData, quantity });
+      }
     }
   }
+
   return results;
 }
 
@@ -163,7 +194,7 @@ function renderUseTab(provisions, selectedId) {
 }
 
 function renderCookTab(state) {
-  const inventory = state.player?.inventory || [];
+  const inventory = state.player?.inventory || {};
   const playerLevel = state.player?.level || 1;
 
   if (COOKING_RECIPES.length === 0) {
@@ -173,8 +204,7 @@ function renderCookTab(state) {
   const recipesHtml = COOKING_RECIPES.map((recipe) => {
     const canCook = playerLevel >= recipe.requiredLevel;
     const ingredientsHtml = recipe.ingredients.map((ing) => {
-      const item = inventory.find((i) => i.id === ing.itemId);
-      const have = item ? item.quantity : 0;
+      const have = getInventoryQuantity(inventory, ing.itemId);
       const enough = have >= ing.quantity;
       return `<span class="recipe-ingredient${enough ? ' has-enough' : ' not-enough'}">${esc(ing.itemId)} ${have}/${ing.quantity}</span>`;
     }).join(', ');
@@ -182,10 +212,9 @@ function renderCookTab(state) {
     const resultProv = PROVISIONS[recipe.result.itemId];
     const resultName = resultProv ? resultProv.name : recipe.result.itemId;
 
-    const hasAllIngredients = recipe.ingredients.every((ing) => {
-      const item = inventory.find((i) => i.id === ing.itemId);
-      return item && item.quantity >= ing.quantity;
-    });
+    const hasAllIngredients = recipe.ingredients.every((ing) => (
+      getInventoryQuantity(inventory, ing.itemId) >= ing.quantity
+    ));
 
     const canCookNow = canCook && hasAllIngredients;
 

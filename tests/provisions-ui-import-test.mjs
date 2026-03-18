@@ -67,6 +67,23 @@ assert.ok(itemsHtml.includes("Traveler&#39;s Bread") || itemsHtml.includes("Trav
 assert.ok(itemsHtml.includes('Herb Tea'), 'Should include tea name');
 assert.ok(itemsHtml.includes('x3'), 'Should show quantity');
 
+// 6b. renderProvisionsPanel with live object-shaped inventory
+const panelWithInventoryMap = {
+  ...panelState,
+  player: {
+    ...panelState.player,
+    inventory: {
+      travelerBread: 2,
+      herbTea: 1,
+      potion: 4,
+    },
+  },
+};
+const mapHtml = renderProvisionsPanel(panelWithInventoryMap);
+assert.ok(mapHtml.includes("Traveler&#39;s Bread") || mapHtml.includes("Traveler's Bread"), 'Should include bread name from object inventory');
+assert.ok(mapHtml.includes('Herb Tea'), 'Should include tea name from object inventory');
+assert.ok(mapHtml.includes('x2'), 'Should show object-inventory quantity');
+
 // 7. renderProvisionsPanel cook tab
 const cookState = {
   ...panelState,
