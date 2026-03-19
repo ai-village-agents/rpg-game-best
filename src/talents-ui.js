@@ -552,27 +552,43 @@ export function attachTalentHandlers(container, dispatch) {
 
   const filterInput = container.querySelector('.talent-filter');
   if (filterInput) {
-    filterInput.addEventListener('input', () => {
-      dispatch({ type: 'SET_TALENT_FILTER_TEXT', filterText: filterInput.value });
+    // Do NOT dispatch on every keystroke — that causes a full re-render which
+    // destroys the input, losing focus. Instead, only dispatch on Enter or Apply.
+    filterInput.addEventListener('keydown', (e) => {
+      // Stop propagation so game shortcuts don't fire while typing
+      e.stopPropagation();
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        dispatch({ type: 'SET_TALENT_FILTER_TEXT', filterText: filterInput.value });
+      }
     });
+    // Also stop keyup/keypress propagation to prevent game shortcut interference
+    filterInput.addEventListener('keyup', (e) => e.stopPropagation());
+    filterInput.addEventListener('keypress', (e) => e.stopPropagation());
   }
 
-  container.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const action = btn.dataset.action;
-    if (action === 'ALLOCATE_TALENT') {
-      const talentId = btn.dataset.talent;
-      if (talentId) dispatch({ type: 'ALLOCATE_TALENT', talentId });
-    } else if (action === 'DEALLOCATE_TALENT') {
-      const talentId = btn.dataset.talent;
-      if (talentId) dispatch({ type: 'DEALLOCATE_TALENT', talentId });
-    } else if (action === 'RESET_TALENTS') {
-      dispatch({ type: 'RESET_TALENTS' });
-    } else if (action === 'CLOSE_TALENTS') {
-      dispatch({ type: 'CLOSE_TALENTS' });
-    }
-  });
+  // Use delegated click handler on the inner talent-tree-container (which gets
+  // replaced on re-render) instead of the persistent container element.
+  // This prevents event listener stacking across re-renders.
+  const innerContainer = container.querySelector('.talent-tree-container');
+  if (innerContainer) {
+    innerContainer.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const action = btn.dataset.action;
+      if (action === 'ALLOCATE_TALENT') {
+        const talentId = btn.dataset.talent;
+        if (talentId) dispatch({ type: 'ALLOCATE_TALENT', talentId });
+      } else if (action === 'DEALLOCATE_TALENT') {
+        const talentId = btn.dataset.talent;
+        if (talentId) dispatch({ type: 'DEALLOCATE_TALENT', talentId });
+      } else if (action === 'RESET_TALENTS') {
+        dispatch({ type: 'RESET_TALENTS' });
+      } else if (action === 'CLOSE_TALENTS') {
+        dispatch({ type: 'CLOSE_TALENTS' });
+      }
+    });
+  }
 
   const applyFilterButton = container.querySelector('.talent-filter-apply');
   if (applyFilterButton && filterInput) {

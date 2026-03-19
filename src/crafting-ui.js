@@ -289,7 +289,10 @@ export function renderCraftingPanel(state, uiState = {}) {
  * @param {function} dispatch - The game's dispatch function
  */
 export function attachCraftingHandlers(container, dispatch) {
-  container.addEventListener('click', (e) => {
+  // Delegate on the inner .crafting-panel (replaced on re-render) to prevent
+  // event listener stacking on the persistent container element.
+  const panel = container.querySelector('.crafting-panel') || container;
+  panel.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
 
