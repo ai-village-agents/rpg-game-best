@@ -14,6 +14,7 @@ import {
   isEquippable,
 } from '../src/inventory.js';
 import { initialStateWithClass } from '../src/state.js';
+import { handleUIAction } from '../src/handlers/ui-handler.js';
 
 let passed = 0;
 let failed = 0;
@@ -203,6 +204,20 @@ test('potion is usable', () => {
 });
 test('potion is not equippable', () => {
   assert(!isEquippable('potion'), 'potion should not be equippable');
+});
+
+console.log('\n--- inventory ui routing regression ---');
+test('UI handler routes INVENTORY_SET_FILTER while in inventory phase', () => {
+  const base = makeExplorationState();
+  const invPhase = { ...base, phase: 'inventory', inventoryState: createInventoryState('exploration') };
+  const result = handleUIAction(invPhase, { type: 'INVENTORY_SET_FILTER', filterBy: 'weapon' });
+  assertEqual(result.inventoryState.filterBy, 'weapon');
+});
+test('UI handler routes INVENTORY_SET_SORT while in inventory phase', () => {
+  const base = makeExplorationState();
+  const invPhase = { ...base, phase: 'inventory', inventoryState: createInventoryState('exploration') };
+  const result = handleUIAction(invPhase, { type: 'INVENTORY_SET_SORT', sortBy: 'name-asc' });
+  assertEqual(result.inventoryState.sortBy, 'name-asc');
 });
 
 console.log('\n--- no-op for unknown inventory action ---');
