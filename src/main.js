@@ -3,7 +3,7 @@ import { loadSettings } from './settings.js';
 import { applyTheme } from './data/themes.js';
 import { applyReducedMotion } from './accessibility.js';
 
-import { render } from './render.js';
+import { render, triggerFleeFailedFeedback } from './render.js';
 import { keyToCardinalDirection } from './input.js';
 import { loadKeybindings, getActionForKey } from './keybindings.js';
 import { handleCombatAction, handleEnemyTurnLogic } from './handlers/combat-handler.js';
@@ -191,6 +191,11 @@ if (IS_BROWSER) {
 
   function dispatch(action) {
     console.log('[DISPATCH]', action.type, 'direction:', action.direction, 'phase:', state.phase);
+
+    if (action.type === 'FLEE_FAILED_FEEDBACK') {
+      triggerFleeFailedFeedback();
+      return;
+    }
     
     if (action.type === 'DISMISS_NARRATIVE') {
       setState({ ...state, narrativeIntroSeen: true }, action);
@@ -244,7 +249,10 @@ if (IS_BROWSER) {
 
     // Try each handler in order
     console.log('[DISPATCH] Trying handlers... phase:', state.phase, 'action:', JSON.stringify(action));
-    const combatResult = handleCombatAction(state, action);
+    const queuedUiActions = [];
+    const combatResult = handleCombatAction(state, action, (uiAction) => {
+      queuedUiActions.push(uiAction);
+    });
     console.log('[DISPATCH] handleCombatAction returned:', combatResult !== null ? 'non-null' : 'null');
     const dungeonResult = !combatResult && handleDungeonAction(state, action);
     console.log('[DISPATCH] handleDungeonAction returned:', dungeonResult !== null && dungeonResult !== false ? 'non-null' : 'null/false');
@@ -260,6 +268,11 @@ if (IS_BROWSER) {
 
     if (next) {
       setState(next, action);
+      if (queuedUiActions.length > 0) {
+        for (const uiAction of queuedUiActions) {
+          dispatch(uiAction);
+        }
+      }
     } else {
       // No-op or unknown action
       // console.warn('Unhandled action:', action);

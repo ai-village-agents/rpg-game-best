@@ -142,7 +142,7 @@ describe('getTelegraphUrgency', () => {
   });
 
   test('regular ability with power 1.5 is high urgency', () => {
-    assert.strictEqual(telegraph.getTelegraphUrgency('ability', 'power-strike', weakEnemy), telegraph.URGENCY_LEVELS.HIGH);
+    assert.strictEqual(telegraph.getTelegraphUrgency('ability', 'smite', weakEnemy), telegraph.URGENCY_LEVELS.HIGH);
   });
 
   test('regular ability with power 1.0 is medium urgency', () => {

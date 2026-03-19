@@ -20,7 +20,7 @@ import {
  * @param {Object} action - Action object
  * @returns {Object|null} New state or null
  */
-export function handleCombatAction(state, action) {
+export function handleCombatAction(state, action, dispatchUiAction = null) {
   // Only handle actions if it's player's turn
   if (state.phase !== 'player-turn') return null;
 
@@ -68,6 +68,9 @@ export function handleCombatAction(state, action) {
 
   if (type === 'PLAYER_FLEE') {
     const next = playerFlee(state);
+    if (next.phase === 'enemy-turn' && typeof dispatchUiAction === 'function') {
+      dispatchUiAction({ type: 'FLEE_FAILED_FEEDBACK' });
+    }
     let gs = next.gameStats || createGameStats();
     gs = recordTurnPlayed(gs);
     if (cs) {

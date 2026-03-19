@@ -73,6 +73,56 @@ let _victoryAnimStartTime = 0;
 /** Track previous log for floating text diff */
 let _previousLog = [];
 
+function ensureFleeFeedbackStyles() {
+  if (document.getElementById('flee-feedback-styles')) return;
+  const styleEl = document.createElement('style');
+  styleEl.id = 'flee-feedback-styles';
+  styleEl.textContent = `
+    #btnFlee.flee-failed-shake {
+      animation: flee-failed-shake 320ms ease-in-out;
+    }
+    @keyframes flee-failed-shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+      100% { transform: translateX(0); }
+    }
+    .flee-failed-flash {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9998;
+      background: rgba(255, 65, 65, 0.18);
+      animation: flee-failed-flash 220ms ease-out forwards;
+    }
+    @keyframes flee-failed-flash {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  `;
+  document.head.appendChild(styleEl);
+}
+
+export function triggerFleeFailedFeedback() {
+  if (typeof document === 'undefined') return;
+  ensureFleeFeedbackStyles();
+
+  const fleeBtn = document.getElementById('btnFlee');
+  if (fleeBtn) {
+    fleeBtn.classList.remove('flee-failed-shake');
+    // Force reflow so the shake restarts on repeated failures.
+    void fleeBtn.offsetWidth;
+    fleeBtn.classList.add('flee-failed-shake');
+  }
+
+  const flash = document.createElement('div');
+  flash.className = 'flee-failed-flash';
+  flash.addEventListener('animationend', () => flash.remove(), { once: true });
+  document.body.appendChild(flash);
+}
+
 export function getStyles() {
   return [
     getStatusEffectStyles(),

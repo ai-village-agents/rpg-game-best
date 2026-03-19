@@ -130,6 +130,87 @@ const CANON_PHOENIX_FILE_PATHS = [
 const CANON_PHOENIX_FILES = new Set(CANON_PHOENIX_FILE_PATHS);
 const PHOENIX_USAGE_LIMIT = 13;
 let totalPhoenixOccurrences = 0;
+const EXTENDED_PICTOGRAPHIC_RE = /\p{Extended_Pictographic}/u;
+
+function getPreviousCodePointStart(text, index) {
+  if (index <= 0) {
+    return -1;
+  }
+  let i = index - 1;
+  const codeUnit = text.charCodeAt(i);
+  if (codeUnit >= 0xDC00 && codeUnit <= 0xDFFF && i > 0) {
+    const prevCodeUnit = text.charCodeAt(i - 1);
+    if (prevCodeUnit >= 0xD800 && prevCodeUnit <= 0xDBFF) {
+      i -= 1;
+    }
+  }
+  return i;
+}
+
+function getNextCodePointStart(text, index) {
+  if (index < 0 || index >= text.length) {
+    return -1;
+  }
+  const codePoint = text.codePointAt(index);
+  if (codePoint === undefined) {
+    return -1;
+  }
+  const nextIndex = index + (codePoint > 0xFFFF ? 2 : 1);
+  return nextIndex < text.length ? nextIndex : -1;
+}
+
+function isEmojiSequenceIgnorableCodePoint(codePoint) {
+  return (
+    codePoint === 0xFE0E || // text presentation selector
+    codePoint === 0xFE0F || // emoji presentation selector
+    (codePoint >= 0x1F3FB && codePoint <= 0x1F3FF) // skin tone modifiers
+  );
+}
+
+function isExtendedPictographicCodePoint(codePoint) {
+  if (codePoint === undefined) {
+    return false;
+  }
+  return EXTENDED_PICTOGRAPHIC_RE.test(String.fromCodePoint(codePoint));
+}
+
+/**
+ * Treat U+200D as valid only when it joins emoji components.
+ */
+function isValidEmojiZwjSequence(line, zwjIndex) {
+  if (line[zwjIndex] !== '\u200D') {
+    return false;
+  }
+
+  let leftIndex = getPreviousCodePointStart(line, zwjIndex);
+  while (leftIndex !== -1) {
+    const codePoint = line.codePointAt(leftIndex);
+    if (!isEmojiSequenceIgnorableCodePoint(codePoint)) {
+      break;
+    }
+    leftIndex = getPreviousCodePointStart(line, leftIndex);
+  }
+
+  let rightIndex = getNextCodePointStart(line, zwjIndex);
+  while (rightIndex !== -1) {
+    const codePoint = line.codePointAt(rightIndex);
+    if (!isEmojiSequenceIgnorableCodePoint(codePoint)) {
+      break;
+    }
+    rightIndex = getNextCodePointStart(line, rightIndex);
+  }
+
+  if (leftIndex === -1 || rightIndex === -1) {
+    return false;
+  }
+
+  const leftCodePoint = line.codePointAt(leftIndex);
+  const rightCodePoint = line.codePointAt(rightIndex);
+  return (
+    isExtendedPictographicCodePoint(leftCodePoint) &&
+    isExtendedPictographicCodePoint(rightCodePoint)
+  );
+}
 
 /**
  * Check if pattern is in defensive/security context
@@ -285,6 +366,9 @@ function scanFile(filePath) {
       const match = CONFIG.zeroWidthChars.find(zw => zw.char === char);
       if (match) {
         if (match.char === '\uFEFF' && i === 0 && j === 0) {
+          continue;
+        }
+        if (match.char === '\u200D' && isValidEmojiZwjSequence(line, j)) {
           continue;
         }
         results.issues.push({
