@@ -699,6 +699,32 @@ export function render(state, dispatch) {
     }).join('');
 
     hud.innerHTML = `
+      <div class="card quickstart-card">
+        <h2>⚡ Quick Start Builds</h2>
+        <div class="quickstart-sub">Recommended combos for new adventurers</div>
+        <div class="quickstart-list">
+          <button class="quickstart-button" data-quickstart-class="warrior" data-quickstart-bg="soldier">
+            <div class="quickstart-title">🛡️ Iron Guardian</div>
+            <div class="quickstart-meta">Warrior + Soldier</div>
+            <div class="quickstart-desc">A sturdy frontline fighter with extra HP and potions. Great for beginners.</div>
+          </button>
+          <button class="quickstart-button" data-quickstart-class="mage" data-quickstart-bg="scholar">
+            <div class="quickstart-title">🔥 Arcane Scholar</div>
+            <div class="quickstart-meta">Mage + Scholar</div>
+            <div class="quickstart-desc">A spellcaster with deep MP reserves. Master elemental weaknesses to dominate.</div>
+          </button>
+          <button class="quickstart-button" data-quickstart-class="rogue" data-quickstart-bg="wanderer">
+            <div class="quickstart-title">🗡️ Shadow Drifter</div>
+            <div class="quickstart-meta">Rogue + Wanderer</div>
+            <div class="quickstart-desc">A fast, evasive fighter who strikes first. Starts with extra gold to gear up.</div>
+          </button>
+          <button class="quickstart-button" data-quickstart-class="cleric" data-quickstart-bg="artisan">
+            <div class="quickstart-title">✨ Battle Cleric</div>
+            <div class="quickstart-meta">Cleric + Artisan</div>
+            <div class="quickstart-desc">A healer who can hold their own in combat. Balanced and versatile.</div>
+          </button>
+        </div>
+      </div>
       <div class="card">
         <h2>Choose Your Name</h2>
         <input id="class-select-name" type="text" maxlength="24" placeholder="Enter your character name" autocomplete="off" />
@@ -729,6 +755,15 @@ export function render(state, dispatch) {
       button.onclick = () => dispatch({
         type: 'SELECT_CLASS',
         classId: button.dataset.class,
+        name: nameInput?.value ?? '',
+        difficulty: document.getElementById('difficulty-select')?.value || 'normal',
+      });
+    });
+    hud.querySelectorAll('button[data-quickstart-class][data-quickstart-bg]').forEach((button) => {
+      button.onclick = () => dispatch({
+        type: 'QUICK_START',
+        classId: button.dataset.quickstartClass,
+        backgroundId: button.dataset.quickstartBg,
         name: nameInput?.value ?? '',
         difficulty: document.getElementById('difficulty-select')?.value || 'normal',
       });

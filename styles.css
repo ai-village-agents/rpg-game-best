@@ -75,6 +75,52 @@ body {
   font-size: 15px;
 }
 
+.quickstart-card {
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--card) 85%, var(--accent) 15%);
+}
+
+.quickstart-sub {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.quickstart-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.quickstart-button {
+  width: 100%;
+  text-align: left;
+  background: color-mix(in srgb, var(--card) 80%, var(--accent) 20%);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 10px;
+}
+
+.quickstart-button:hover {
+  border-color: rgba(122,162,255,0.65);
+  background: color-mix(in srgb, var(--card) 70%, var(--accent) 30%);
+}
+
+.quickstart-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.quickstart-meta {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.quickstart-desc {
+  font-size: 12px;
+  color: var(--text);
+}
+
 .kv {
   display: grid;
   grid-template-columns: 120px 1fr;

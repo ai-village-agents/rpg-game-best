@@ -29,6 +29,78 @@ export function handleSystemAction(state, action) {
     return handleSystemAction(state, { type: 'CLOSE_SAVE_SLOTS' });
   }
 
+  if (type === 'QUICK_START') {
+    if (!CLASS_DEFINITIONS[action.classId]) {
+      return pushLog(state, 'Unknown class selected.');
+    }
+
+    const background = BACKGROUNDS[action.backgroundId];
+    if (!background) {
+      return pushLog(state, 'Unknown background selected.');
+    }
+
+    const selectedName = typeof action.name === 'string' ? action.name.trim() : '';
+    const difficulty = Object.values(DIFFICULTY_LEVELS).includes(action.difficulty)
+      ? action.difficulty
+      : DIFFICULTY_LEVELS.NORMAL;
+
+    const baseState = initialStateWithClass(action.classId, selectedName, difficulty);
+    const bonuses = background.bonuses || {};
+    const player = { ...(baseState.player || {}), backgroundId: background.id };
+
+    const applyFlat = (key) => {
+      if (typeof bonuses[key] === 'number') {
+        player[key] = (player[key] ?? 0) + bonuses[key];
+      }
+    };
+
+    applyFlat('hp');
+    applyFlat('maxHp');
+    applyFlat('mp');
+    applyFlat('maxMp');
+    applyFlat('atk');
+    applyFlat('def');
+    applyFlat('spd');
+    applyFlat('int');
+    applyFlat('gold');
+
+    if (bonuses.inventory && typeof bonuses.inventory === 'object') {
+      const inventory = { ...(player.inventory || {}) };
+      for (const [itemId, count] of Object.entries(bonuses.inventory)) {
+        if (typeof count === 'number') {
+          inventory[itemId] = (inventory[itemId] ?? 0) + count;
+        }
+      }
+      player.inventory = inventory;
+    }
+
+    if (typeof player.maxHp === 'number' && typeof player.hp === 'number') {
+      player.hp = Math.min(player.hp, player.maxHp);
+    }
+    if (typeof player.maxMp === 'number' && typeof player.mp === 'number') {
+      player.mp = Math.min(player.mp, player.maxMp);
+    }
+
+    const className = action.classId[0].toUpperCase() + action.classId.slice(1);
+
+    return {
+      questState: initQuestState(),
+      ...baseState,
+      player,
+      phase: 'exploration',
+      log: [
+        `You have chosen the path of the ${className}.`,
+        `You carry the experience of a ${background.name}.`,
+        `${getRoomDescription(baseState.world)} You may explore in any direction.`,
+      ],
+      visitedRooms: initVisitedRooms(1, 1),
+      gameStats: createGameStats(),
+      statistics: createEmptyStatistics(),
+      narrativeIntroSeen: false,
+      tutorialState: state.tutorialState || baseState.tutorialState,
+    };
+  }
+
   if (type === 'SELECT_CLASS') {
     if (!CLASS_DEFINITIONS[action.classId]) {
       return pushLog(state, 'Unknown class selected.');
