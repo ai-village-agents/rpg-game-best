@@ -12,6 +12,7 @@ import { xpToNextLevel, XP_THRESHOLDS } from './characters/stats.js';
 import { formatAbilityName } from './specialization-ui.js';
 import { getNPCsInRoom, getCurrentDialogLine, getDialogProgress, isLastDialogLine } from './npc-dialog.js';
 import { getActiveQuestsSummary, getCompletedQuestsSummary, getAvailableQuestsInRoom, getQuestProgress } from './quest-integration.js';
+import { getExplorationQuest } from './data/exploration-quests.js';
 import { getAbility, getAbilityDisplayInfo } from './combat/abilities.js';
 import { items as itemsData } from './data/items.js';
 import { getRarityMeta } from './ui/rarity-util.js';
@@ -392,15 +393,21 @@ function renderQuestBreadcrumb(state) {
   const stageProgress = quest.stageIndex + 1;
   const stageName = quest.currentStage || 'In Progress';
   
-  // Build objective detail if available
+  // Build objective detail from the quest definition so boolean progress doesn't leak
   let objectiveHtml = '';
   const objProgress = quest.objectiveProgress || {};
-  const objKeys = Object.keys(objProgress);
-  if (objKeys.length > 0) {
-    const items = objKeys.map(key => {
-      const p = objProgress[key];
-      const done = p.current >= p.required;
-      return `<div style="font-size:11px;color:${done ? '#5cb85c' : '#eee'};">${done ? '✅' : '⬜'} ${p.description || key} (${p.current}/${p.required})</div>`;
+  const questDefinition = getExplorationQuest(quest.questId);
+  const stageObjectives = questDefinition?.stages?.[quest.stageIndex]?.objectives || [];
+  if (stageObjectives.length > 0) {
+    const items = stageObjectives.map(objective => {
+      const rawProgress = objProgress[objective.id];
+      const target = objective.count || 1;
+      const current = typeof rawProgress === 'number'
+        ? rawProgress
+        : rawProgress === true ? target : 0;
+      const done = current >= target;
+      const progressText = target > 1 ? ` (${current}/${target})` : '';
+      return `<div style="font-size:11px;color:${done ? '#5cb85c' : '#eee'};">${done ? '✅' : '⬜'} ${objective.description || objective.id}${progressText}</div>`;
     }).join('');
     objectiveHtml = items;
   }
