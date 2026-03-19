@@ -9,202 +9,203 @@ export const ELEMENT_ICONS = {
   fire: "🔥",
   ice: "❄️",
   lightning: "⚡",
-  shadow: "🌑",
-  nature: "🌿",
-  holy: "✨",
+  earth: "🌿",
+  light: "✨",
+  dark: "🌑",
+  arcane: "🔮",
 };
 
 export const ENEMY_SHIELD_DATABASE = {
-  slime: { shieldCount: 2, weaknesses: ["fire", "lightning"] },
-  goblin: { shieldCount: 2, weaknesses: ["fire", "holy"] },
-  goblin_chief: { shieldCount: 5, weaknesses: ["fire", "holy"] },
-  cave_bat: { shieldCount: 1, weaknesses: ["fire", "lightning", "holy"] },
+  slime: { shieldCount: 2, weaknesses: ["lightning", "fire"] },
+  goblin: { shieldCount: 2, weaknesses: ["fire", "light"] },
+  goblin_chief: { shieldCount: 5, weaknesses: ["fire", "light"] },
+  cave_bat: { shieldCount: 1, weaknesses: ["fire", "lightning", "light"] },
   giant_spider: { shieldCount: 3, weaknesses: ["fire", "lightning"] },
   // Alias: some content uses a dashed id.
   "giant-spider": { shieldCount: 3, weaknesses: ["fire", "lightning"] },
   training_dummy: {
     shieldCount: 2,
-    weaknesses: ["physical", "fire", "ice", "lightning", "shadow", "nature", "holy"],
+    weaknesses: ["physical", "fire", "ice", "lightning", "earth", "light", "dark"],
     breakImmune: true,
   },
   wolf: { shieldCount: 2, weaknesses: ["fire", "ice"] },
-  skeleton: { shieldCount: 3, weaknesses: ["holy", "fire"], immunities: ["shadow"] },
-  orc: { shieldCount: 4, weaknesses: ["fire", "holy"] },
+  skeleton: { shieldCount: 3, weaknesses: ["light", "fire"], immunities: ["dark"] },
+  orc: { shieldCount: 4, weaknesses: ["fire", "light"] },
   "fire-spirit": {
     shieldCount: 3,
-    weaknesses: ["ice", "holy"],
+    weaknesses: ["earth", "light"],
     immunities: ["fire"],
     absorbs: ["fire"],
   },
   "ice-spirit": {
     shieldCount: 3,
-    weaknesses: ["fire", "lightning"],
+    weaknesses: ["fire", "light"],
     immunities: ["ice"],
     absorbs: ["ice"],
   },
   "dark-cultist": {
     shieldCount: 3,
-    weaknesses: ["holy", "lightning"],
-    immunities: ["shadow"],
+    weaknesses: ["light", "lightning"],
+    immunities: ["dark"],
   },
-  bandit: { shieldCount: 2, weaknesses: ["fire", "holy"] },
+  bandit: { shieldCount: 2, weaknesses: ["fire", "light"] },
   wraith: {
     shieldCount: 4,
-    weaknesses: ["holy", "fire"],
-    immunities: ["physical", "shadow"],
-    absorbs: ["shadow"],
+    weaknesses: ["light", "fire"],
+    immunities: ["physical", "dark"],
+    absorbs: ["dark"],
   },
   "stone-golem": {
     shieldCount: 5,
-    weaknesses: ["ice", "nature"],
-    immunities: ["lightning"],
+    weaknesses: ["lightning", "ice"],
+    immunities: [],
   },
-  "thunder-hawk": { shieldCount: 2, weaknesses: ["ice", "fire"] },
-  dragon: { shieldCount: 8, weaknesses: ["ice", "holy"], immunities: ["fire"] },
+  "thunder-hawk": { shieldCount: 2, weaknesses: ["fire", "light"] },
+  dragon: { shieldCount: 8, weaknesses: ["earth", "light"], immunities: ["fire"] },
   abyss_overlord: {
     shieldCount: 10,
-    weaknesses: ["holy", "lightning"],
-    immunities: ["shadow", "fire"],
-    absorbs: ["shadow"],
+    weaknesses: ["light", "lightning"],
+    immunities: ["dark", "fire"],
+    absorbs: ["dark"],
   },
   "frost-revenant": {
     shieldCount: 4,
-    weaknesses: ["fire", "holy"],
+    weaknesses: ["fire", "light"],
     immunities: ["ice"],
     absorbs: ["ice"],
   },
   "blood-fiend": {
     shieldCount: 3,
-    weaknesses: ["holy", "fire"],
-    immunities: ["shadow"],
+    weaknesses: ["light", "fire"],
+    immunities: ["dark"],
   },
   "shadow-weaver": {
     shieldCount: 3,
-    weaknesses: ["holy", "lightning"],
-    immunities: ["shadow"],
-    absorbs: ["shadow"],
+    weaknesses: ["light", "lightning"],
+    immunities: ["dark"],
+    absorbs: ["dark"],
   },
   "storm-elemental": {
     shieldCount: 5,
-    weaknesses: ["ice", "nature"],
+    weaknesses: ["ice", "earth"],
     immunities: ["lightning"],
     absorbs: ["lightning"],
   },
   "plague-bearer": {
     shieldCount: 5,
-    weaknesses: ["fire", "holy"],
-    immunities: ["nature"],
+    weaknesses: ["lightning", "light"],
+    immunities: ["earth"],
   },
   "infernal-knight": {
     shieldCount: 6,
-    weaknesses: ["ice", "holy"],
+    weaknesses: ["earth", "light"],
     immunities: ["fire"],
   },
   "glacial-wyrm": {
     shieldCount: 7,
-    weaknesses: ["fire", "lightning"],
+    weaknesses: ["fire", "light"],
     immunities: ["ice"],
     absorbs: ["ice"],
   },
   "void-stalker": {
     shieldCount: 4,
-    weaknesses: ["holy", "lightning"],
-    immunities: ["shadow", "physical"],
+    weaknesses: ["light", "lightning"],
+    immunities: ["dark", "physical"],
   },
   // F11: Twilight Sanctum
   "crystal-sentinel": {
     shieldCount: 5,
-    weaknesses: ["lightning", "nature"],
+    weaknesses: ["lightning", "earth"],
     immunities: ["physical"],
   },
   "ember-drake": {
     shieldCount: 5,
-    weaknesses: ["ice", "holy"],
+    weaknesses: ["earth", "light"],
     immunities: ["fire"],
     absorbs: ["fire"],
   },
   "phantom-assassin": {
     shieldCount: 4,
-    weaknesses: ["holy", "lightning"],
-    immunities: ["shadow", "physical"],
+    weaknesses: ["light", "lightning"],
+    immunities: ["dark", "physical"],
   },
   // F12: Arcane Labyrinth
   "arcane-guardian": {
     shieldCount: 6,
-    weaknesses: ["shadow", "lightning"],
-    immunities: ["holy"],
+    weaknesses: ["dark", "lightning"],
+    immunities: ["light"],
   },
   "crimson-berserker": {
     shieldCount: 5,
-    weaknesses: ["ice", "holy"],
+    weaknesses: ["ice", "light"],
     immunities: ["physical"],
   },
   "frost-archon": {
     shieldCount: 6,
-    weaknesses: ["fire", "lightning"],
+    weaknesses: ["fire", "light"],
     immunities: ["ice"],
     absorbs: ["ice"],
   },
   // F13: Void Threshold
   "void-knight": {
     shieldCount: 7,
-    weaknesses: ["holy", "fire"],
-    immunities: ["shadow", "physical"],
-    absorbs: ["shadow"],
+    weaknesses: ["light", "fire"],
+    immunities: ["dark", "physical"],
+    absorbs: ["dark"],
   },
   "thunder-titan": {
     shieldCount: 6,
-    weaknesses: ["ice", "nature"],
+    weaknesses: ["ice", "earth"],
     immunities: ["lightning"],
     absorbs: ["lightning"],
   },
   "infernal-sorcerer": {
     shieldCount: 6,
-    weaknesses: ["ice", "holy"],
+    weaknesses: ["earth", "light"],
     immunities: ["fire"],
   },
   // F14: Celestial Ruins
   "abyssal-warden": {
     shieldCount: 8,
-    weaknesses: ["holy", "lightning"],
-    immunities: ["shadow", "fire"],
-    absorbs: ["shadow"],
+    weaknesses: ["light", "lightning"],
+    immunities: ["dark", "fire"],
+    absorbs: ["dark"],
   },
   "celestial-wyrm": {
     shieldCount: 7,
-    weaknesses: ["shadow", "ice"],
-    immunities: ["holy", "lightning"],
-    absorbs: ["holy"],
+    weaknesses: ["dark", "ice"],
+    immunities: ["light", "lightning"],
+    absorbs: ["light"],
   },
   "chaos-spawn": {
     shieldCount: 6,
-    weaknesses: ["holy", "ice"],
-    immunities: ["shadow"],
+    weaknesses: ["light", "ice"],
+    immunities: ["dark"],
   },
   // F15: Oblivion Throne
   "oblivion-lord": {
     shieldCount: 12,
-    weaknesses: ["holy", "lightning"],
-    immunities: ["shadow", "fire", "ice"],
-    absorbs: ["shadow"],
+    weaknesses: ["light", "lightning"],
+    immunities: ["dark", "fire", "ice"],
+    absorbs: ["dark"],
     breakImmune: false,
   },
   "eternal-guardian": {
     shieldCount: 9,
-    weaknesses: ["lightning", "nature"],
+    weaknesses: ["lightning", "earth"],
     immunities: ["physical", "fire"],
   },
   "primordial-phoenix": {
     shieldCount: 8,
-    weaknesses: ["ice", "shadow"],
+    weaknesses: ["earth", "dark"],
     immunities: ["fire"],
     absorbs: ["fire"],
   },
   "lich-king": {
     shieldCount: 10,
-    weaknesses: ["holy", "fire"],
-    immunities: ["shadow", "ice"],
-    absorbs: ["shadow"],
+    weaknesses: ["light", "fire"],
+    immunities: ["dark", "ice"],
+    absorbs: ["dark"],
   }
 };
 
@@ -221,11 +222,23 @@ function normalizeElement(value) {
   return value.trim().toLowerCase();
 }
 
+// Map legacy element names to canonical names
+const ELEMENT_ALIASES = {
+  holy: 'light',
+  shadow: 'dark',
+  nature: 'earth',
+};
+
+function canonicalElement(value) {
+  const norm = normalizeElement(value);
+  return ELEMENT_ALIASES[norm] || norm;
+}
+
 export function checkWeakness(element, weaknesses) {
   if (!element || !Array.isArray(weaknesses) || weaknesses.length === 0) return false;
-  const normalized = normalizeElement(element);
-  if (!normalized) return false;
-  return weaknesses.some((entry) => normalizeElement(entry) === normalized);
+  const canonical = canonicalElement(element);
+  if (!canonical) return false;
+  return weaknesses.some((entry) => canonicalElement(entry) === canonical);
 }
 
 export function applyShieldDamage(enemy, amount) {

@@ -92,15 +92,15 @@ test('renderShieldInfo shows weakness icons for slime (fire, lightning)', () => 
   assert.ok(result.includes(ELEMENT_ICONS.lightning), 'Should show lightning icon');
 });
 
-test('renderShieldInfo shows weakness icons for dragon (ice, holy)', () => {
+test('renderShieldInfo shows weakness icons for dragon (earth, light)', () => {
   const result = renderShieldInfo('dragon');
-  assert.ok(result.includes(ELEMENT_ICONS.ice), 'Should show ice icon');
-  assert.ok(result.includes(ELEMENT_ICONS.holy), 'Should show holy icon');
+  assert.ok(result.includes(ELEMENT_ICONS.earth), 'Should show earth icon');
+  assert.ok(result.includes(ELEMENT_ICONS.light), 'Should show light icon');
 });
 
-test('renderShieldInfo shows weakness icons for skeleton (holy, fire)', () => {
+test('renderShieldInfo shows weakness icons for skeleton (light, fire)', () => {
   const result = renderShieldInfo('skeleton');
-  assert.ok(result.includes(ELEMENT_ICONS.holy), 'Should show holy icon');
+  assert.ok(result.includes(ELEMENT_ICONS.light), 'Should show holy icon');
   assert.ok(result.includes(ELEMENT_ICONS.fire), 'Should show fire icon');
 });
 
@@ -111,10 +111,10 @@ test('renderShieldInfo weakness section contains Weak: label', () => {
 
 // ── Immunity rendering ──
 
-test('renderShieldInfo shows immunity for skeleton (shadow)', () => {
+test('renderShieldInfo shows immunity for skeleton (dark)', () => {
   const result = renderShieldInfo('skeleton');
   assert.ok(result.includes('Immune:'), 'Should contain Immune: label');
-  assert.ok(result.includes(`title="shadow"`), 'Should show shadow immunity');
+  assert.ok(result.includes(`title="dark"`), 'Should show shadow immunity');
 });
 
 test('renderShieldInfo shows immunity for dragon (fire)', () => {
@@ -123,10 +123,10 @@ test('renderShieldInfo shows immunity for dragon (fire)', () => {
   assert.ok(result.includes(`title="fire"`), 'Should show fire immunity');
 });
 
-test('renderShieldInfo shows multiple immunities for wraith (physical, shadow)', () => {
+test('renderShieldInfo shows multiple immunities for wraith (physical, dark)', () => {
   const result = renderShieldInfo('wraith');
   assert.ok(result.includes(`title="physical"`), 'Should show physical immunity');
-  assert.ok(result.includes(`title="shadow"`), 'Should show shadow immunity');
+  assert.ok(result.includes(`title="dark"`), 'Should show shadow immunity');
 });
 
 test('renderShieldInfo does NOT show Immune: for slime (no immunities)', () => {
@@ -151,7 +151,7 @@ test('renderShieldInfo shows absorb for ice-spirit (ice)', () => {
   assert.ok(result.includes('Absorbs:'), 'Should contain Absorbs: label');
 });
 
-test('renderShieldInfo shows absorb for wraith (shadow)', () => {
+test('renderShieldInfo shows absorb for wraith (dark)', () => {
   const result = renderShieldInfo('wraith');
   assert.ok(result.includes('Absorbs:'), 'Should contain Absorbs: label');
 });
@@ -216,7 +216,7 @@ test('renderBestiaryPanel includes weakness icons for encountered skeleton', () 
   bestiary = recordEncounter(bestiary, 'skeleton');
   const html = renderBestiaryPanel({ bestiary });
   assert.ok(html.includes('Weak:'), 'Panel should include Weak: label');
-  assert.ok(html.includes(ELEMENT_ICONS.holy), 'Panel should show holy weakness icon');
+  assert.ok(html.includes(ELEMENT_ICONS.light), 'Panel should show light weakness icon');
 });
 
 test('renderBestiaryPanel includes immunity info for encountered dragon', () => {

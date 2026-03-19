@@ -36,11 +36,27 @@ const ELEMENT_CHART = {
   arcane:    { physical: 1.5, light: 0.5, arcane: 0.5 },
 };
 
+// Map legacy element names to canonical chart names
+const ELEMENT_ALIASES = {
+  holy: 'light',
+  shadow: 'dark',
+  nature: 'earth',
+};
+
+function canonicalElement(el) {
+  if (!el) return el;
+  const lower = el.trim().toLowerCase();
+  return ELEMENT_ALIASES[lower] || lower;
+}
+
 export function getElementMultiplier(attackElement, targetElement) {
   if (!attackElement || !targetElement || attackElement === 'physical') return 1.0;
-  const chart = ELEMENT_CHART[attackElement];
+  const atk = canonicalElement(attackElement);
+  const tgt = canonicalElement(targetElement);
+  if (atk === 'physical') return 1.0;
+  const chart = ELEMENT_CHART[atk];
   if (!chart) return 1.0;
-  return chart[targetElement] ?? 1.0;
+  return chart[tgt] ?? 1.0;
 }
 
 // ── Damage Formula ───────────────────────────────────────────────────
