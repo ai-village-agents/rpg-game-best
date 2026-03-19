@@ -87,9 +87,9 @@ console.log('\n--- checkLevelUps: multiple party members ---');
 {
   const warrior = makeMember('Hero', 'warrior', 0);
   const mage = makeMember('Sage', 'mage', 0);
-  const rogue = makeMember('Shadow', 'rogue', 90);
+  const rogue = makeMember('Shadow', 'rogue', 40);
 
-  // 100 XP: warrior 0→100 (lv2), mage 0→100 (lv2), rogue 90→190 (lv2 at 100)
+  // 100 XP: warrior 0→100 (lv2), mage 0→100 (lv2), rogue 40→140 (lv2)
   const results = checkLevelUps([warrior, mage, rogue], 100);
   assert(results.length === 3, 'all three level up');
   assert(results[0].name === 'Hero', 'Hero levels up');
@@ -332,8 +332,8 @@ console.log('\n--- formatStatName ---');
 console.log('\n--- xpForNextLevel ---');
 
 {
-  assert(xpForNextLevel(1) === 100, 'level 1 → need 100 XP for level 2');
-  assert(xpForNextLevel(2) === 250, 'level 2 → need 250 total for level 3');
+  assert(xpForNextLevel(1) === 50, 'level 1 → need 100 XP for level 2');
+  assert(xpForNextLevel(2) === 200, 'level 2 → need 250 total for level 3');
   assert(xpForNextLevel(19) === 10450, 'level 19 → need 10450 for level 20');
   assert(xpForNextLevel(20) === 0, 'level 20 → max level, 0 needed');
   assert(xpForNextLevel(99) === 0, 'beyond max → 0');

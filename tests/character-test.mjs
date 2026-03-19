@@ -23,11 +23,11 @@ function assert(condition, msg) {
 
 console.log('\n--- Stats ---');
 assert(calcLevel(0) === 1, 'Level 1 at XP 0');
-assert(calcLevel(100) === 2, 'Level 2 at XP 100');
-assert(calcLevel(99) === 1, 'Still level 1 at XP 99');
+assert(calcLevel(50) === 2, 'Level 2 at XP 100');
+assert(calcLevel(49) === 1, 'Still level 1 at XP 49');
 assert(calcLevel(10450) === 20, 'Level 20 at max XP');
 assert(calcLevel(99999) === 20, 'Capped at level 20');
-assert(xpToNextLevel(0) === 100, 'Need 100 XP for level 2');
+assert(xpToNextLevel(0) === 50, 'Need 50 XP for level 2');
 assert(xpToNextLevel(10450) === 0, 'No XP needed at max level');
 
 console.log('\n--- Classes ---');

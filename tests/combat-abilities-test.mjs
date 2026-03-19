@@ -78,10 +78,10 @@ console.log('\n--- playerUseAbility: damage abilities ---');
 }
 
 {
-  // Mage: fireball (1.8x fire, 6 MP, single-enemy)
+  // Mage: fireball (1.8x fire, 3 MP, single-enemy)
   const state = makeCombatState('mage');
   const result = playerUseAbility(state, 'fireball');
-  assert(result.player.mp === state.player.mp - 6, 'fireball deducts 6 MP');
+  assert(result.player.mp === state.player.mp - 3, 'fireball deducts 3 MP');
   assert(result.enemy.hp < state.enemy.hp, 'fireball damages enemy');
   assert(result.log.some(l => l.includes('fire damage')), 'fireball logs fire damage');
 }
@@ -95,10 +95,10 @@ console.log('\n--- playerUseAbility: damage abilities ---');
 }
 
 {
-  // Cleric: smite (1.5x light, 6 MP, single-enemy)
+  // Cleric: smite (1.5x light, 4 MP, single-enemy)
   const state = makeCombatState('cleric');
   const result = playerUseAbility(state, 'smite');
-  assert(result.player.mp === state.player.mp - 6, 'smite deducts 6 MP');
+  assert(result.player.mp === state.player.mp - 4, 'smite deducts 4 MP');
   assert(result.enemy.hp < state.enemy.hp, 'smite damages enemy');
   assert(result.log.some(l => l.includes('light damage')), 'smite logs light damage');
 }
@@ -175,10 +175,10 @@ console.log('\n--- playerUseAbility: healing abilities ---');
 console.log('\n--- playerUseAbility: status effects on enemies ---');
 
 {
-  // Warrior: shield-bash (0.8x + stun, 6 MP)
+  // Warrior: shield-bash (0.8x + stun, 4 MP)
   const state = makeCombatState('warrior');
   const result = playerUseAbility(state, 'shield-bash');
-  assert(result.player.mp === state.player.mp - 6, 'shield-bash deducts 6 MP');
+  assert(result.player.mp === state.player.mp - 4, 'shield-bash deducts 4 MP');
   assert(result.enemy.hp < state.enemy.hp, 'shield-bash deals damage');
   const stunEffect = result.enemy.statusEffects.find(e => e.type === 'stun');
   assert(stunEffect !== undefined, 'shield-bash applies stun to enemy');
@@ -187,7 +187,7 @@ console.log('\n--- playerUseAbility: status effects on enemies ---');
 }
 
 {
-  // Rogue: poison-blade (1.0x + poison 3 turns, 6 MP)
+  // Rogue: poison-blade (1.0x + poison 3 turns, 4 MP)
   const state = makeCombatState('rogue');
   const result = playerUseAbility(state, 'poison-blade');
   const poisonEffect = result.enemy.statusEffects.find(e => e.type === 'poison');
@@ -396,12 +396,12 @@ console.log('\n--- getAbility and getAbilityDisplayInfo ---');
 }
 
 {
-  const displayInfos = getAbilityDisplayInfo(['power-strike', 'shield-bash'], 5);
+  const displayInfos = getAbilityDisplayInfo(['fireball', 'shield-bash'], 3);
   assert(displayInfos.length === 2, 'getAbilityDisplayInfo returns info for both abilities');
-  assert(displayInfos[0].name === 'Power Strike', 'first ability has correct name');
-  assert(displayInfos[0].canUse === true, 'power-strike (4 MP) can be used with 5 MP');
+  assert(displayInfos[0].name === 'Fireball', 'first ability has correct name');
+  assert(displayInfos[0].canUse === true, 'fireball (3 MP) can be used with 3 MP');
   assert(displayInfos[1].name === 'Shield Bash', 'second ability has correct name');
-  assert(displayInfos[1].canUse === false, 'shield-bash (6 MP) cannot be used with 5 MP');
+  assert(displayInfos[1].canUse === false, 'shield-bash (4 MP) cannot be used with 3 MP');
 }
 
 {
