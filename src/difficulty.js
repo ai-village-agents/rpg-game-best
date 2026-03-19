@@ -28,10 +28,10 @@ export const DIFFICULTY_NAMES = {
  * Difficulty level descriptions
  */
 export const DIFFICULTY_DESCRIPTIONS = {
-  [DIFFICULTY_LEVELS.EASY]: 'Enemies deal 25% less damage and have 20% less HP. Perfect for enjoying the story.',
-  [DIFFICULTY_LEVELS.NORMAL]: 'The standard experience. Balanced challenge and rewards.',
-  [DIFFICULTY_LEVELS.HARD]: 'Enemies deal 25% more damage and have 25% more HP. XP and gold rewards increased by 20%.',
-  [DIFFICULTY_LEVELS.NIGHTMARE]: 'Enemies deal 50% more damage and have 50% more HP. XP and gold rewards increased by 50%. Not for the faint of heart!',
+  [DIFFICULTY_LEVELS.EASY]: 'Enemies deal 15% less damage and have 15% less HP. A forgiving experience.',
+  [DIFFICULTY_LEVELS.NORMAL]: 'The standard experience. A fair but noticeable challenge.',
+  [DIFFICULTY_LEVELS.HARD]: 'Enemies deal 35% more damage and have 40% more HP. XP and gold rewards increased by 25%.',
+  [DIFFICULTY_LEVELS.NIGHTMARE]: 'Enemies deal 75% more damage and have 80% more HP. XP and gold rewards increased by 60%. Pure suffering!',
 };
 
 /**
@@ -40,8 +40,8 @@ export const DIFFICULTY_DESCRIPTIONS = {
  */
 export const DIFFICULTY_MULTIPLIERS = {
   [DIFFICULTY_LEVELS.EASY]: {
-    enemyDamage: 0.75,
-    enemyHp: 0.80,
+    enemyDamage: 0.85,
+    enemyHp: 0.85,
     xpReward: 1.0,
     goldReward: 1.0,
   },
@@ -52,16 +52,16 @@ export const DIFFICULTY_MULTIPLIERS = {
     goldReward: 1.0,
   },
   [DIFFICULTY_LEVELS.HARD]: {
-    enemyDamage: 1.25,
-    enemyHp: 1.25,
-    xpReward: 1.20,
-    goldReward: 1.20,
+    enemyDamage: 1.35,
+    enemyHp: 1.40,
+    xpReward: 1.25,
+    goldReward: 1.25,
   },
   [DIFFICULTY_LEVELS.NIGHTMARE]: {
-    enemyDamage: 1.50,
-    enemyHp: 1.50,
-    xpReward: 1.50,
-    goldReward: 1.50,
+    enemyDamage: 1.75,
+    enemyHp: 1.80,
+    xpReward: 1.60,
+    goldReward: 1.60,
   },
 };
 

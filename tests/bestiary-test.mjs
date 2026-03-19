@@ -175,12 +175,12 @@ describe('Bestiary', () => {
       assert.equal(entry.encountered, true);
       assert.equal(entry.isBoss, false);
       assert.equal(entry.element, 'earth');
-      assert.equal(entry.maxHp, 18);
-      assert.equal(entry.atk, 5);
-      assert.equal(entry.def, 2);
+      assert.equal(entry.maxHp, 25);
+      assert.equal(entry.atk, 8);
+      assert.equal(entry.def, 4);
       assert.equal(entry.spd, 4);
-      assert.equal(entry.xpReward, 5);
-      assert.equal(entry.goldReward, 3);
+      assert.equal(entry.xpReward, 8);
+      assert.equal(entry.goldReward, 5);
     });
 
     it('should show defeat count for defeated enemy', () => {
