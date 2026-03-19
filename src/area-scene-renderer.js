@@ -29,6 +29,30 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
+
+const NPC_EMOJI = {
+  elder: '👴',
+  healer: '🧑‍⚕️',
+  captain: '🫡',
+  blacksmith: '⚒️',
+  merchant: '🧔',
+  alchemist: '🧪',
+  innkeeper: '🍺',
+  guard: '💂',
+  farmer_male: '👨‍🌾',
+  farmer_female: '👩‍🌾',
+  child_male: '👦',
+  warrior_female: '⚔️',
+  mage_female: '🧙‍♀️',
+  warrior_male: '🗡️',
+  goblin_chief: '👹',
+  void_merchant: '🌀',
+};
+
+function getNpcEmoji(npc) {
+  return NPC_EMOJI[npc.sprite] || '🧑';
+}
+
 function getPlayerPositionStyles(state) {
   const roomWidth = state?.worldData?.roomWidth ?? DEFAULT_WORLD_DATA.roomWidth;
   const roomHeight = state?.worldData?.roomHeight ?? DEFAULT_WORLD_DATA.roomHeight;
@@ -48,7 +72,7 @@ function renderNpcIcons(roomId) {
     .map((npc, index) => {
       const left = clamp(baseLeft + index * gap, 8, 90);
       return (
-        `<div class="area-scene-npc" style="left: ${left}%; bottom: 10px;" title="${esc(npc.name)}">🧑</div>`
+        `<div class="area-scene-npc" style="left: ${left}%; bottom: 10px;" title="${esc(npc.name)}">${getNpcEmoji(npc)}</div>`
       );
     })
     .join('');
@@ -217,12 +241,13 @@ export function getAreaSceneStyles() {
   return `
     .area-scene-collision-cell {
       position: absolute;
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(0, 0, 0, 0.4);
+      background: linear-gradient(135deg, rgba(80, 60, 40, 0.65) 0%, rgba(50, 35, 20, 0.75) 100%);
+      border: 1px solid rgba(90, 70, 45, 0.6);
       box-sizing: border-box;
       pointer-events: none;
       z-index: 4;
       border-radius: 2px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
     }
 
     .area-scene {
