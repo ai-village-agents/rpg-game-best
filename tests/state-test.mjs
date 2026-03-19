@@ -12,6 +12,7 @@ import {
   saveToLocalStorage,
   loadFromLocalStorage
 } from '../src/state.js';
+import { NPCRelationshipManager } from '../src/npc-relationships.js';
 
 let passed = 0;
 let failed = 0;
@@ -144,8 +145,10 @@ console.log('\n--- saveToLocalStorage / loadFromLocalStorage ---');
   const testState = {
     version: 1,
     player: { name: 'TestHero', hp: 50 },
-    turn: 10
+    turn: 10,
+    npcRelationshipManager: initialState().npcRelationshipManager
   };
+  testState.npcRelationshipManager.modifyReputation('village_elder', 12, 'state-test');
 
   saveToLocalStorage(testState);
   const loaded = loadFromLocalStorage();
@@ -154,6 +157,11 @@ console.log('\n--- saveToLocalStorage / loadFromLocalStorage ---');
   assert(loaded.player.name === 'TestHero', 'Player name preserved');
   assert(loaded.player.hp === 50, 'Player hp preserved');
   assert(loaded.turn === 10, 'Turn preserved');
+  assert(loaded.npcRelationshipManager instanceof NPCRelationshipManager, 'npcRelationshipManager is rehydrated as instance');
+  assert(
+    loaded.npcRelationshipManager.getRelationship('village_elder').reputation === 12,
+    'npcRelationshipManager relationship data preserved'
+  );
 
   // Test load from empty storage
   localStorage.clear();
@@ -174,6 +182,20 @@ console.log('\n--- saveToLocalStorage / loadFromLocalStorage ---');
   localStorage.setItem('aiVillageRpgSave', 'null');
   const nullLoad = loadFromLocalStorage();
   assert(nullLoad === null, 'Null JSON returns null');
+
+  // Backward compatibility with legacy/malformed manager payloads
+  localStorage.setItem('aiVillageRpgSave', JSON.stringify({
+    version: 1,
+    npcRelationshipManager: {
+      relationships: [null, ['ok_npc', { reputation: 7 }], ['bad_npc', null], 42]
+    }
+  }));
+  const malformedLoad = loadFromLocalStorage();
+  assert(malformedLoad.npcRelationshipManager instanceof NPCRelationshipManager, 'Malformed legacy manager payload rehydrates safely');
+  assert(
+    malformedLoad.npcRelationshipManager.getRelationship('ok_npc').reputation === 7,
+    'Valid legacy relationship entries still restore'
+  );
 }
 
 console.log('\n========================================');

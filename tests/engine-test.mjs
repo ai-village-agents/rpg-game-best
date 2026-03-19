@@ -17,6 +17,8 @@ import {
   setGameState,
   initEngine
 } from '../src/engine.js';
+import { initialState } from '../src/state.js';
+import { NPCRelationshipManager } from '../src/npc-relationships.js';
 
 let passed = 0;
 let failed = 0;
@@ -129,11 +131,11 @@ console.log('\n--- Save System ---');
 {
   localStorage.clear();
 
-  const testState = {
-    player: { name: 'TestHero', hp: 50 },
-    turn: 5,
-    version: 1
-  };
+  const testState = initialState();
+  testState.player = { name: 'TestHero', hp: 50 };
+  testState.turn = 5;
+  testState.version = 1;
+  testState.npcRelationshipManager.modifyReputation('inn_keeper', 9, 'engine-test');
 
   // Test valid save
   const saved = saveToSlot(testState, 0);
@@ -146,6 +148,11 @@ console.log('\n--- Save System ---');
   assert(loaded.player.hp === 50, 'Player hp preserved');
   assert(loaded.turn === 5, 'Turn preserved');
   assert(loaded.savedAt !== undefined, 'SavedAt timestamp added');
+  assert(loaded.npcRelationshipManager instanceof NPCRelationshipManager, 'npcRelationshipManager is rehydrated as instance');
+  assert(
+    loaded.npcRelationshipManager.getRelationship('inn_keeper').reputation === 9,
+    'npcRelationshipManager relationship data preserved'
+  );
 
   // Test invalid slot index
   const badSave = callWithoutConsoleError(() => saveToSlot(testState, -1));
@@ -163,6 +170,21 @@ console.log('\n--- Save System ---');
   // Test empty slot load
   const emptyLoad = loadFromSlot(4);
   assert(emptyLoad === null, 'Load returns null for empty slot');
+
+  // Backward compatibility with legacy/malformed manager payloads
+  localStorage.setItem('aiVillageRpg_slot_3', JSON.stringify({
+    player: { name: 'LegacyHero' },
+    turn: 1,
+    npcRelationshipManager: {
+      relationships: [null, ['legacy_npc', { reputation: 6 }], ['broken_npc', null]]
+    }
+  }));
+  const malformedLoad = loadFromSlot(3);
+  assert(malformedLoad.npcRelationshipManager instanceof NPCRelationshipManager, 'Malformed legacy manager slot payload rehydrates safely');
+  assert(
+    malformedLoad.npcRelationshipManager.getRelationship('legacy_npc').reputation === 6,
+    'Valid legacy slot relationship entries still restore'
+  );
 }
 
 console.log('\n--- Save Slots Info ---');

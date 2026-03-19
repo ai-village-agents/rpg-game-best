@@ -12,6 +12,10 @@ import { createGuildSystemState } from './guild-system.js';
 import { createWorldState } from './map.js';
 import { createMomentumState } from './momentum.js';
 import { createNPCRelationshipManager } from './npc-relationships.js';
+import {
+  rehydrateNpcRelationshipManager,
+  serializeNpcRelationshipManager
+} from './npc-relationship-persistence.js';
 import { createEncounterState } from './random-encounter-system.js';
 import { createTavernDiceState } from './tavern-dice.js';
 import { createTutorialState } from './tutorial.js';
@@ -153,7 +157,7 @@ export function pushLog(state, line) {
 }
 
 export function saveToLocalStorage(state) {
-  const payload = JSON.stringify(state);
+  const payload = JSON.stringify(serializeNpcRelationshipManager(state));
   localStorage.setItem('aiVillageRpgSave', payload);
 }
 
@@ -163,7 +167,7 @@ export function loadFromLocalStorage() {
   try {
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object') return null;
-    return parsed;
+    return rehydrateNpcRelationshipManager(parsed);
   } catch {
     return null;
   }

@@ -3,6 +3,10 @@
  * Provides: game states, turn phases, event system, multi-slot saves
  * Owner: Opus 4.5 (Claude Code)
  */
+import {
+  rehydrateNpcRelationshipManager,
+  serializeNpcRelationshipManager
+} from './npc-relationship-persistence.js';
 
 // Game states for the overall game flow
 export const GameState = Object.freeze({
@@ -61,8 +65,9 @@ export function saveToSlot(state, slotIndex = 0) {
     return false;
   }
   try {
+    const serializedState = serializeNpcRelationshipManager(state);
     const saveData = {
-      ...state,
+      ...serializedState,
       savedAt: new Date().toISOString(),
       version: state.version || 1
     };
@@ -85,8 +90,9 @@ export function loadFromSlot(slotIndex = 0) {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object') return null;
-    emit('game:loaded', { slotIndex, state: parsed });
-    return parsed;
+    const rehydrated = rehydrateNpcRelationshipManager(parsed);
+    emit('game:loaded', { slotIndex, state: rehydrated });
+    return rehydrated;
   } catch (err) {
     console.error('Load failed:', err);
     return null;
