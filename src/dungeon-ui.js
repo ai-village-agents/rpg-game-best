@@ -70,9 +70,10 @@ export function renderDungeonPanel(state) {
         <div>Theme</div><div><b>${theme.replace(/_/g, ' ')}</b></div>
         <div>Difficulty</div><div><b>${floor.difficultyMultiplier}x</b></div>
         <div>Encounter Rate</div><div><b>${Math.round(floor.encounterRate * 100)}%</b></div>
+        
         <div>Stairs Found</div><div><b>${ds.stairsFound ? '✅ Yes' : '❌ No'}</b></div>
-        <div>Floor Cleared</div><div><b>${cleared ? '✅ Yes' : '❌ No'}</b></div>
-        ${floor.bossFloor ? `<div>Boss</div><div><b>${bossId || 'Unknown'} ${cleared ? '(Defeated)' : '(Alive)'}</b></div>` : ''}
+        ${floor.bossFloor ? `<div>Boss Defeated</div><div><b>${cleared ? '✅ Yes' : '❌ No'} (${bossId || 'Unknown'})</b></div>` : ''}
+
       </div>
       <div class="dungeon-floor-list">${floorListHtml}</div>
       ${progressBar}
