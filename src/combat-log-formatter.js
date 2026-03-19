@@ -24,6 +24,7 @@ const LOG_TYPES = {
   'defeat':          { icon: '\u{1F480}', cssClass: 'log-defeat' },
   'victory':         { icon: '\u{1F3C6}', cssClass: 'log-victory' },
   'flee':            { icon: '\u{1F3C3}', cssClass: 'log-flee' },
+  'flee-fail':       { icon: '\u274C',    cssClass: 'log-flee-fail' },
   'healing':         { icon: '\u{1F49A}', cssClass: 'log-healing' },
   'shield':          { icon: '\u{1F6E1}', cssClass: 'log-shield' },
   'companion':       { icon: '\u{1F91D}', cssClass: 'log-companion' },
@@ -77,6 +78,9 @@ export function classifyLogEntry(line) {
   }
 
   // Flee / escape
+  if (/failed to flee/i.test(lower)) {
+    return { type: 'flee-fail', ...LOG_TYPES['flee-fail'] };
+  }
   if (/\bflee\b|\bfled\b|\bescaped?\b|\bran away\b|\bretreated?\b/i.test(lower)) {
     return { type: 'flee', ...LOG_TYPES['flee'] };
   }
@@ -174,6 +178,7 @@ export function getLogStyles() {
     .log-shield { color: #9C27B0; }
     .log-ability { color: #E91E63; }
     .log-flee { color: #FFC107; }
+    .log-flee-fail { color: #ff4444; font-weight: bold; font-size: 1.1em; background: rgba(255, 68, 68, 0.1); border-left: 3px solid #ff4444; padding-left: 8px; margin: 4px 0; }
     .log-victory { color: #FFD700; font-weight: bold; }
     .log-defeat { color: #B71C1C; font-weight: bold; }
     .log-companion { color: #00BCD4; }
