@@ -154,16 +154,26 @@ export function createProvisionState() {
 }
 
 function getInventoryItem(state, itemId) {
-  return state?.player?.inventory?.find((item) => item.id === itemId) || null;
+  const entry = state?.player?.inventory?.[itemId];
+  if (entry == null) return null;
+  const quantity = typeof entry === "number" ? entry : entry.quantity;
+  if (typeof quantity !== "number") return null;
+  return { id: itemId, quantity };
 }
 
 function removeInventoryItem(state, itemId, quantity) {
   const inventory = state.player.inventory;
-  const index = inventory.findIndex((item) => item.id === itemId);
-  if (index === -1) return false;
-  inventory[index].quantity -= quantity;
-  if (inventory[index].quantity <= 0) {
-    inventory.splice(index, 1);
+  if (!Object.prototype.hasOwnProperty.call(inventory, itemId)) return false;
+  const current = inventory[itemId];
+  const currentQuantity = typeof current === "number" ? current : current.quantity;
+  if (typeof currentQuantity !== "number") return false;
+  const nextQuantity = currentQuantity - quantity;
+  if (nextQuantity <= 0) {
+    delete inventory[itemId];
+  } else if (typeof current === "number") {
+    inventory[itemId] = nextQuantity;
+  } else {
+    current.quantity = nextQuantity;
   }
   return true;
 }
