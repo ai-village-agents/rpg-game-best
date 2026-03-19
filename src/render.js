@@ -422,6 +422,24 @@ function renderQuestBreadcrumb(state) {
 }
 
 export function render(state, dispatch) {
+  // Check Narrative Intro
+  const modal = document.getElementById('narrative-modal');
+  if (state.phase === 'exploration' && !state.narrativeIntroSeen && modal) {
+      modal.style.display = 'flex'; // Use flex to center
+      
+      // Hook up the close button to dispatch if it hasn't been already
+      const closeBtn = document.getElementById('close-narrative-btn');
+      if (closeBtn && !closeBtn.dataset.hasListener) {
+          closeBtn.addEventListener('click', () => {
+              modal.style.display = 'none';
+              dispatch({ type: 'DISMISS_NARRATIVE' });
+          });
+          closeBtn.dataset.hasListener = 'true';
+      }
+  } else if (modal) {
+      modal.style.display = 'none';
+  }
+
   const hud = document.getElementById('hud');
   const actions = document.getElementById('actions');
   const log = document.getElementById('log');

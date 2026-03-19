@@ -19,6 +19,11 @@ function getRoomDescription(worldState) {
 
 export function handleSystemAction(state, action) {
   const type = action.type;
+  
+  if (type === 'DISMISS_NARRATIVE') {
+      return { ...state, narrativeIntroSeen: true };
+  }
+
 
   if (type === 'GO_BACK' && state.phase === 'save-slots') {
     return handleSystemAction(state, { type: 'CLOSE_SAVE_SLOTS' });
@@ -104,17 +109,12 @@ export function handleSystemAction(state, action) {
       log: [
         `You have chosen the path of the ${className}.`,
         `You carry the experience of a ${background.name}.`,
-        `--- THE COMING OBLIVION ---`,
-        `The Elder Scrolls foretold of a time when the Oblivion Lord would awaken... and that time is now.`,
-        `Darkness seeps across the land. The realms are fracturing.`,
-        `As a humble adventurer, you have been chosen by the Fates to descend into the perilous dungeons, slay the Oblivion Lord, and restore peace to the realm.`,
-        `Your journey begins here. Steel your resolve.`,
-        `---------------------------`,
-        `${getRoomDescription(state.world)} You may explore in any direction.`,
+                                                        `${getRoomDescription(state.world)} You may explore in any direction.`,
       ],
       visitedRooms: initVisitedRooms(1, 1),
       gameStats: createGameStats(),
       statistics: createEmptyStatistics(),
+      narrativeIntroSeen: false,
     };
 
     return next;
@@ -170,6 +170,8 @@ export function handleSystemAction(state, action) {
       log: [
         `New Game+ ${ngPlusCount} begins! Your power carries forward, but the dungeon grows stronger...`,
         'The Oblivion Lord has reformed. The cycle continues.',
+        `Your ultimate goal remains: descend into the dungeon, find the Oblivion Lord on floor 15, and defeat him.`,
+        `Only then will peace truly be restored.`
       ],
       newGamePlus: true,
       newGamePlusCount: ngPlusCount,

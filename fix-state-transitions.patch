@@ -1,0 +1,10 @@
+--- src/state-transitions.js
++++ src/state-transitions.js
+@@ -48,6 +48,7 @@
+               def: lu.newStats.def,
+               spd: lu.newStats.spd,
+               int: lu.newStats.int,
++              stats: { ...lu.newStats },
+             },
+             talentState: newTalentState,
+             pendingLevelUps: levelUps,

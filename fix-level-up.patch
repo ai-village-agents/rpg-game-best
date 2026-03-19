@@ -1,0 +1,10 @@
+--- src/state.js
++++ src/state.js
+@@ -107,6 +107,7 @@
+       def: character.stats.def,
+       spd: character.stats.spd,
+       int: character.stats.int,
++      stats: { ...character.stats },
+       classId,
+       abilities: classDef.abilities,
+       level: 1,

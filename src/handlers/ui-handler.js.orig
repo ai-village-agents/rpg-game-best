@@ -1,0 +1,1198 @@
+import { applyTheme } from '../data/themes.js';
+import { applyReducedMotion } from '../accessibility.js';
+import { toggleForecast } from '../enemy-intent.js';
+import { startTavernDice, guessTavernDice, cashOutTavernDice } from '../tavern-dice.js';
+import { generateBounties, acceptBounty } from '../bounty-board.js';
+import { updateAudioSettings } from '../audio-system.js';
+import { createInventoryState, handleInventoryAction } from '../inventory.js';
+import { markAllRead } from '../journal.js';
+import { createLevelUpState, advanceLevelUp } from '../level-up.js';
+import { acceptQuest, onRoomEnter } from '../quest-integration.js';
+import { buildPendingRewards, claimAllQuestRewards, hasPendingRewards } from '../quest-rewards.js';
+import { createGameStats, recordBattleFled, recordBattleWon, recordEnemyDefeated, recordXPEarned, recordGoldEarned } from '../game-stats.js';
+import { pushLog } from '../state.js';
+import { getCurrentRoom, getRoomExits } from '../map.js';
+import { getCurrentRoomId } from '../minimap.js';
+import { advanceDialog } from '../npc-dialog.js';
+import { renderAchievementsPanel } from '../achievements-ui.js';
+import { loadSettings, updateSetting, resetSettings, saveSettings } from '../settings.js';
+import { createShopState, buyItem, sellItem } from '../shop.js';
+import { createCraftingState, craftItem, autoDiscoverRecipes } from '../crafting.js';
+import { createTalentState, allocateTalent, deallocateTalent, resetAllTalents } from '../talents.js';
+import { recruitCompanion, dismissCompanion } from '../companions.js';
+import { shouldShowSpecialization, createSpecializationState, applySpecialization } from '../specialization-ui.js';
+import { clearFloor as clearDungeonFloor, TOTAL_FLOORS } from '../dungeon-floors.js';
+import { handleProvisionAction } from './provisions-handler.js';
+import { handleEncounterAction, shouldCheckForEncounter } from './encounter-handler.js';
+import { BESTIARY_FILTER_DEFAULT, BESTIARY_SORT_DEFAULT } from '../bestiary-ui.js';
+import { completeTutorialStep, dismissCurrentHint, showHint, createTutorialState, resetTutorial } from '../tutorial.js';
+import { getAllStandings, modifyReputation, getFactionStanding, claimReward } from '../faction-reputation-system.js';
+import { renderReputationPanel } from '../faction-reputation-system-ui.js';
+import { createGuild, addMember, removeMember, changeMemberRank, depositGold, withdrawGold, unlockPerk, disbandGuild, getGuildStats } from '../guild-system.js';
+import { renderGuildPanel, renderCreateGuildForm, renderGuildBrowser, renderGuildHud } from '../guild-system-ui.js';
+import { processMatchResult, createTournament, recordTournamentMatchResult, getTournamentRewards, resetSeason, generateOpponent } from '../arena-tournament-system.js';
+import { createMomentumState } from '../momentum.js';
+import { createComboState } from '../combo-system.js';
+import { initIntentState } from '../enemy-intent.js';
+import { initCombatBattleLog } from '../combat-battle-log-integration.js';
+import { dismissSporeling } from '../sporeling-integration.js';
+import { canAccessTavern, canAccessVillageSquareActivity } from '../tavern-access.js';
+import {
+  recordEnemyDefeated as recordDashboardEnemyDefeated,
+  recordGoldEarned as recordDashboardGoldEarned,
+  recordGoldSpent as recordDashboardGoldSpent,
+  recordHealing as recordDashboardHealing,
+  recordConsumableUsed as recordDashboardConsumableUsed,
+} from '../statistics-dashboard.js';
+
+function getRoomDescription(worldState) {
+  const room = getCurrentRoom(worldState);
+  if (!room) return 'You stand in an unknown place.';
+  return room.name || 'An unremarkable area.';
+}
+
+function getEnemyTier(enemy) {
+  if (!enemy) return 'normal';
+  if (enemy.isBoss) return 'boss';
+  if (enemy.isElite) return 'elite';
+  if (enemy.isMinion) return 'minion';
+  return 'normal';
+}
+
+function recordBattleRewardsInStatistics(state) {
+  let next = state;
+  if (state.enemy?.name) {
+    next = recordDashboardEnemyDefeated(next, state.enemy.name, getEnemyTier(state.enemy));
+  }
+  if ((state.goldGained ?? 0) > 0) {
+    next = recordDashboardGoldEarned(next, state.goldGained, 'combat');
+  }
+  return next;
+}
+
+export function handleUIAction(state, action) {
+  const type = action.type;
+  const isPreAdventure = state.phase === 'class-select' || state.phase === 'background-select';
+
+  if (type === 'GO_BACK') {
+    if (state.phase === 'inventory') {
+      return handleInventoryAction(state, { type: 'CLOSE_INVENTORY' });
+    }
+
+    if (state.phase === 'provisions') {
+      return handleProvisionAction(state, { type: 'CLOSE_PROVISIONS' });
+    }
+
+    const closeActionByPhase = {
+      journal: 'CLOSE_JOURNAL',
+      settings: 'CLOSE_SETTINGS',
+      achievements: 'CLOSE_ACHIEVEMENTS',
+      quests: 'CLOSE_QUESTS',
+      stats: 'CLOSE_STATS',
+      'statistics-dashboard': 'CLOSE_STATISTICS_DASHBOARD',
+      dialog: 'DIALOG_CLOSE',
+      shop: 'CLOSE_SHOP',
+      crafting: 'CLOSE_CRAFTING',
+      talents: 'CLOSE_TALENTS',
+      sporeling: 'CLOSE_SPORELING',
+      companions: 'CLOSE_COMPANIONS',
+      factions: 'CLOSE_FACTIONS',
+      arena: 'CLOSE_ARENA',
+      guilds: 'CLOSE_GUILDS',
+      bestiary: 'CLOSE_BESTIARY',
+      'bounty-board': 'CLOSE_BOUNTY_BOARD',
+      'tavern-dice': 'CLOSE_TAVERN',
+    };
+
+    const closeActionType = closeActionByPhase[state.phase];
+    if (!closeActionType) return null;
+    return handleUIAction(state, { type: closeActionType });
+  }
+
+  if (type === "TOGGLE_HELP") {
+    return { ...state, showHelp: !state.showHelp };
+  }
+
+  if (type === "CLOSE_HELP") {
+    return { ...state, showHelp: false };
+  }
+
+  if (type === 'DISMISS_WORLD_EVENT') {
+    if (!state.worldEvent) return null;
+    return { ...state, worldEventDismissed: true };
+  }
+
+  // Journal
+  if (type === 'OPEN_JOURNAL') {
+    if (isPreAdventure) return null;
+    const next = markAllRead(state);
+    return { ...next, phase: 'journal', previousPhase: state.phase };
+  }
+
+  if (type === 'CLOSE_JOURNAL') {
+    if (state.phase !== 'journal') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  // Settings
+  if (type === 'VIEW_SETTINGS') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'settings', previousPhase: state.phase, settings: loadSettings() };
+  }
+
+  if (type === 'CLOSE_SETTINGS') {
+    if (state.phase !== 'settings') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  // Achievements
+  if (type === 'VIEW_ACHIEVEMENTS') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'achievements', previousPhase: state.phase };
+  }
+
+  if (type === 'CLOSE_ACHIEVEMENTS') {
+    if (state.phase !== 'achievements') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  if (type === 'UPDATE_SETTING') {
+    if (state.phase !== 'settings') return null;
+    const newSettings = updateSetting(state.settings || {}, action.path, action.value);
+    saveSettings(newSettings);
+    updateAudioSettings(newSettings);
+    if (action.path === 'display.theme') applyTheme(action.value);
+    if (action.path === 'display.reducedMotion') applyReducedMotion(action.value);
+    return { ...state, settings: newSettings };
+  }
+
+  if (type === 'RESET_SETTINGS') {
+    if (state.phase !== 'settings') return null;
+    const newSettings = resetSettings();
+    updateAudioSettings(newSettings);
+    applyTheme(newSettings.display?.theme || 'midnight');
+    applyReducedMotion(newSettings.display?.reducedMotion || false);
+    return pushLog({ ...state, settings: newSettings }, 'Settings reset to defaults.');
+  }
+
+
+  // Inventory
+  if (type === 'VIEW_INVENTORY') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'inventory', inventoryState: createInventoryState(state.phase) };
+  }
+
+  const inventoryActions = ['CLOSE_INVENTORY', 'INVENTORY_USE', 'INVENTORY_EQUIP', 'INVENTORY_UNEQUIP', 'INVENTORY_VIEW_DETAILS', 'INVENTORY_BACK', 'INVENTORY_SET_SORT', 'INVENTORY_SET_FILTER'];
+  if (inventoryActions.includes(type) && state.phase === 'inventory') {
+    return handleInventoryAction(state, action);
+  }
+
+  // Quests / Quest Log
+  if (type === 'VIEW_QUESTS' || type === 'VIEW_QUEST_LOG') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'quests', previousPhase: state.phase };
+  }
+
+  if (type === 'VIEW_STATS' || type === 'SHOW_STATS') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'stats', previousPhase: state.phase };
+  }
+
+  if (type === 'CLOSE_QUESTS' || type === 'CLOSE_QUEST_LOG') {
+    if (state.phase !== 'quests') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  if (type === 'CLOSE_STATS') {
+    if (state.phase !== 'stats') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  // Statistics Dashboard
+  if (type === 'OPEN_STATISTICS_DASHBOARD') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'statistics-dashboard', previousPhase: state.phase };
+  }
+
+  if (type === 'CLOSE_STATISTICS_DASHBOARD') {
+    if (state.phase !== 'statistics-dashboard') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  if (type === 'ACCEPT_QUEST') {
+    if (!state.questState) return pushLog(state, 'Quest system not initialized.');
+    const result = acceptQuest(state.questState, action.questId);
+    let next = { ...state, questState: result.questState };
+
+    if (result.accepted) {
+      const roomId = getCurrentRoomId(state.world);
+      if (roomId) {
+        const questResult = onRoomEnter(next.questState, roomId);
+        next = { ...next, questState: questResult.questState };
+
+        const newRewards = buildPendingRewards(questResult.completedQuests);
+        if (newRewards.length > 0) {
+          const existing = next.pendingQuestRewards || [];
+          next = { ...next, pendingQuestRewards: [...existing, ...newRewards] };
+        }
+      }
+    }
+
+    return pushLog(next, result.message);
+  }
+
+  // Level Up
+  if (type === 'VIEW_LEVEL_UPS') {
+    if (!state.pendingLevelUps || state.pendingLevelUps.length === 0) return null;
+    const luState = createLevelUpState(state.pendingLevelUps, 'victory');
+    return { ...state, phase: 'level-up', levelUpState: luState };
+  }
+
+  if (type === 'LEVEL_UP_CONTINUE') {
+    if (state.phase !== 'level-up' || !state.levelUpState) return null;
+    const { levelUpState: nextLuState, done } = advanceLevelUp(state.levelUpState);
+    if (done) {
+      const returnPhase = state.levelUpState.returnPhase || 'victory';
+      if (returnPhase === 'battle-summary-done') {
+        // Check if player needs to choose a specialization
+        if (shouldShowSpecialization(state.player)) {
+          const specState = createSpecializationState(state.player);
+          let next2 = {
+            ...state,
+            phase: 'specialization',
+            specializationState: specState,
+            levelUpState: undefined,
+          };
+          next2 = pushLog(next2, 'You have reached the level of mastery! Choose your specialization path.');
+          return next2;
+        }
+
+        // Track battle stats
+        let gs = state.gameStats || createGameStats();
+        gs = recordBattleWon(gs);
+        if (state.enemy?.name) gs = recordEnemyDefeated(gs, state.enemy.name);
+        if ((state.xpGained ?? 0) > 0) gs = recordXPEarned(gs, state.xpGained);
+        if ((state.goldGained ?? 0) > 0) gs = recordGoldEarned(gs, state.goldGained);
+
+        // Return to dungeon if in dungeon combat
+        if (state.inDungeonCombat && state.dungeonState?.inDungeon) {
+          let dungeonState = state.dungeonState;
+          const wasBossFight = state.dungeonBossFight;
+          if (wasBossFight) {
+            dungeonState = clearDungeonFloor(dungeonState);
+          }
+          const { inDungeonCombat, dungeonBossFight, ...rest } = state;
+
+          const isFinalBossCleared = wasBossFight
+            && dungeonState.currentFloor === TOTAL_FLOORS
+            && dungeonState.floorsCleared.includes(TOTAL_FLOORS);
+
+          let next2 = {
+            ...rest,
+            dungeonState,
+            phase: isFinalBossCleared ? 'game-complete' : 'dungeon',
+            player: { ...state.player, defending: false },
+            battleSummary: undefined,
+            levelUpState: undefined,
+            pendingLevelUps: undefined,
+            gameStats: gs,
+          };
+          next2 = recordBattleRewardsInStatistics(next2);
+          next2 = pushLog(next2, isFinalBossCleared
+            ? 'The Oblivion Lord is vanquished! Light returns to the realm!'
+            : 'You continue exploring the dungeon.');
+          return next2;
+        }
+
+        // Return to exploration
+        const exits = getRoomExits(state.world);
+        let next2 = {
+          ...state,
+          phase: 'exploration',
+          player: { ...state.player, defending: false },
+          battleSummary: undefined,
+          levelUpState: undefined,
+          pendingLevelUps: undefined,
+          gameStats: gs,
+        };
+        next2 = recordBattleRewardsInStatistics(next2);
+        next2 = pushLog(next2, 'You gather yourself and continue your journey.');
+        next2 = pushLog(next2, `${getRoomDescription(state.world)} Exits: ${exits.join(', ') || 'none'}.`);
+        return next2;
+      }
+      return { ...state, phase: returnPhase, levelUpState: undefined };
+    }
+    return { ...state, levelUpState: nextLuState };
+  }
+
+  // Battle Summary & Continuation
+  if (type === 'CONTINUE_AFTER_BATTLE') {
+    if (state.phase !== 'battle-summary') return null;
+    
+    // Pending Level Ups Check
+    if (state.pendingLevelUps && state.pendingLevelUps.length > 0) {
+      const luState = createLevelUpState(state.pendingLevelUps, 'battle-summary-done');
+      return { ...state, phase: 'level-up', levelUpState: luState };
+    }
+    
+    // Check if player needs to choose a specialization (reached level 5+ without pending level-ups)
+    if (shouldShowSpecialization(state.player)) {
+      const specState = createSpecializationState(state.player);
+      let next = {
+        ...state,
+        phase: 'specialization',
+        specializationState: specState,
+        battleSummary: undefined,
+        pendingLevelUps: undefined,
+      };
+      next = pushLog(next, 'You have reached the level of mastery! Choose your specialization path.');
+      return next;
+    }
+
+    // Track battle stats
+    let gs = state.gameStats || createGameStats();
+    gs = recordBattleWon(gs);
+    if (state.enemy?.name) gs = recordEnemyDefeated(gs, state.enemy.name);
+    if ((state.xpGained ?? 0) > 0) gs = recordXPEarned(gs, state.xpGained);
+    if ((state.goldGained ?? 0) > 0) gs = recordGoldEarned(gs, state.goldGained);
+
+    // Return to dungeon if in dungeon combat
+    if (state.inDungeonCombat && state.dungeonState?.inDungeon) {
+      let dungeonState = state.dungeonState;
+      const wasBossFight = state.dungeonBossFight;
+      if (wasBossFight) {
+        dungeonState = clearDungeonFloor(dungeonState);
+      }
+      const { inDungeonCombat, dungeonBossFight, ...rest } = state;
+
+      // Check if the final floor boss was just defeated → game complete!
+      const isFinalBossCleared = wasBossFight
+        && dungeonState.currentFloor === TOTAL_FLOORS
+        && dungeonState.floorsCleared.includes(TOTAL_FLOORS);
+
+      let next = {
+        ...rest,
+        dungeonState,
+        phase: isFinalBossCleared ? 'game-complete' : 'dungeon',
+        player: { ...state.player, defending: false },
+        battleSummary: undefined,
+        pendingLevelUps: undefined,
+        gameStats: gs,
+      };
+      next = recordBattleRewardsInStatistics(next);
+      next = pushLog(next, isFinalBossCleared
+        ? 'The Oblivion Lord is vanquished! Light returns to the realm!'
+        : 'You continue exploring the dungeon.');
+      return next;
+    }
+
+    // Return to exploration
+    const exits = getRoomExits(state.world);
+    
+    let next = {
+      ...state,
+      phase: 'exploration',
+      player: { ...state.player, defending: false },
+      battleSummary: undefined,
+      pendingLevelUps: undefined,
+      gameStats: gs,
+    };
+    next = recordBattleRewardsInStatistics(next);
+    next = pushLog(next, 'You gather yourself and continue your journey.');
+    next = pushLog(next, `${getRoomDescription(state.world)} Exits: ${exits.join(', ') || 'none'}.`);
+    return next;
+  }
+
+  if (type === 'CONTINUE_AFTER_FLEE') {
+    if (state.phase !== 'fled') return null;
+    const exits = getRoomExits(state.world);
+    let gs = state.gameStats || createGameStats();
+    gs = recordBattleFled(gs);
+    let next = {
+      ...state,
+      phase: state.isArenaMatch ? 'arena' : 'exploration',
+      player: { ...state.player, defending: false },
+      enemy: undefined,
+      battleSummary: undefined,
+      pendingLevelUps: undefined,
+      gameStats: gs,
+    };
+    if (state.isArenaMatch) {
+      next = pushLog(next, 'You forfeited the match and returned to the arena desk.');
+      next.isArenaMatch = false;
+      next.arenaOpponentRating = undefined;
+    } else {
+      next = pushLog(next, 'You slip away and return to safety.');
+      next = pushLog(next, `${getRoomDescription(state.world)} Exits: ${exits.join(', ') || 'none'}.`);
+    }
+    return next;
+  }
+
+  if (type === 'CONTINUE_EXPLORING') {
+    if (state.phase !== 'victory' && state.phase !== 'post-victory' && state.phase !== 'battle-summary-done') return null;
+    const exits = getRoomExits(state.world);
+    let next = {
+      ...state,
+      phase: 'exploration',
+      player: { ...state.player, defending: false },
+      levelUpState: undefined,
+      pendingLevelUps: undefined,
+    };
+    next = pushLog(next, `You gather yourself and continue your journey.`);
+    next = pushLog(next, `${getRoomDescription(state.world)} Exits: ${exits.join(', ') || 'none'}.`);
+    return next;
+  }
+
+  if (type === 'LOG') {
+    return pushLog(state, action.line ?? '(log)');
+  }
+  
+  // Dialog Actions
+  if (type === 'DIALOG_NEXT') {
+    if (state.phase !== 'dialog' || !state.dialogState) return null;
+    const next = advanceDialog(state.dialogState);
+    if (next.done) {
+      const returnPhase = state.preDialogPhase || 'exploration';
+      const { dialogState: _ds, preDialogPhase: _pdp, ...rest } = state;
+      return pushLog({ ...rest, phase: returnPhase }, `${state.dialogState.npcName}: Farewell, traveler.`);
+    }
+    return { ...state, dialogState: next };
+  }
+  
+  if (type === 'DIALOG_CLOSE') {
+    if (state.phase !== 'dialog') return null;
+    const returnPhase = state.preDialogPhase || 'exploration';
+    const { dialogState: _ds, preDialogPhase: _pdp, ...rest } = state;
+    return { ...rest, phase: returnPhase };
+  }
+
+  if (type === 'INN_REST') {
+    if (state.player.gold >= 20) {
+      let next = {
+        ...state,
+        player: {
+          ...state.player,
+          gold: state.player.gold - 20,
+          hp: state.player.maxHp,
+          mp: state.player.maxMp,
+        },
+      };
+      next = recordDashboardGoldSpent(next, 20, 'services');
+      const hpHealing = Math.max(0, (state.player.maxHp ?? 0) - (state.player.hp ?? 0));
+      const mpHealing = Math.max(0, (state.player.maxMp ?? 0) - (state.player.mp ?? 0));
+      if (hpHealing > 0) next = recordDashboardHealing(next, hpHealing, true);
+      if (mpHealing > 0) next = recordDashboardHealing(next, mpHealing, true);
+      return pushLog(next, 'You rest at the inn and restore all HP and MP. (-20g)');
+    }
+    return pushLog(state, 'Not enough gold to rest.');
+  }
+
+  if (type === 'INN_FOOD') {
+    if (state.player.gold >= 10) {
+      let next = {
+        ...state,
+        player: {
+          ...state.player,
+          gold: state.player.gold - 10,
+          hp: Math.min(state.player.maxHp, state.player.hp + 25),
+        },
+      };
+      next = recordDashboardGoldSpent(next, 10, 'services');
+      next = recordDashboardConsumableUsed(next, 'food');
+      const healing = Math.max(0, (next.player?.hp ?? 0) - (state.player?.hp ?? 0));
+      if (healing > 0) next = recordDashboardHealing(next, healing, true);
+      return pushLog(next, 'You eat a hearty meal and restore 25 HP. (-10g)');
+    }
+    return pushLog(state, 'Not enough gold for food.');
+  }
+
+  if (type === 'INN_RUMORS') {
+    return pushLog(state, '"Folk say there\'s something stirring in the old mines. Strange lights at night..."');
+  }
+
+  if (type === 'CLAIM_QUEST_REWARDS') {
+    if (state.phase !== 'quest-reward') return null;
+    const pendingRewards = state.pendingQuestRewards || [];
+    const { playerState, messages } = claimAllQuestRewards(state.player, pendingRewards);
+    const returnPhase = state.preRewardPhase || 'exploration';
+    let next = {
+      ...state,
+      phase: returnPhase,
+      player: playerState,
+      pendingQuestRewards: [],
+      preRewardPhase: undefined,
+    };
+    for (const msg of messages) {
+      next = pushLog(next, msg);
+    }
+    return next;
+  }
+
+  // Shop Actions
+  if (type === 'VIEW_SHOP') {
+    if (!action.npcId) return null;
+    const shopState = createShopState(action.npcId, state.preDialogPhase || state.phase);
+    if (!shopState) return pushLog(state, 'This person has nothing to sell.');
+    return { ...state, phase: 'shop', shopState };
+  }
+
+  if (type === 'BUY_ITEM') {
+    if (state.phase !== 'shop' || !state.shopState) return null;
+    const quantity = action.quantity || 1;
+    const result = buyItem(state.player, state.shopState, action.itemId, quantity, state.worldEvent || null);
+    let next = { ...state, player: result.player, shopState: result.shopState };
+    if (result.success) {
+      const spent = Math.max(0, (state.player?.gold ?? 0) - (result.player?.gold ?? 0));
+      if (spent > 0) next = recordDashboardGoldSpent(next, spent, 'items');
+    }
+    return next;
+  }
+
+  if (type === 'SELL_ITEM') {
+    if (state.phase !== 'shop' || !state.shopState) return null;
+    const quantity = action.quantity || 1;
+    const result = sellItem(state.player, state.shopState, action.itemId, quantity);
+    let next = { ...state, player: result.player, shopState: result.shopState };
+    if (result.success) {
+      const earned = Math.max(0, (result.player?.gold ?? 0) - (state.player?.gold ?? 0));
+      if (earned > 0) next = recordDashboardGoldEarned(next, earned, 'selling');
+    }
+    return next;
+  }
+
+  if (type === 'SHOP_SWITCH_TAB') {
+    if (state.phase !== 'shop' || !state.shopState) return null;
+    return { ...state, shopState: { ...state.shopState, tab: action.tab || 'buy', message: null, messageType: null } };
+  }
+
+  if (type === 'CLOSE_SHOP') {
+    if (state.phase !== 'shop') return null;
+    const returnPhase = state.shopState?.previousPhase || 'exploration';
+    const { shopState: _ss, ...rest } = state;
+    return { ...rest, phase: returnPhase };
+  }
+
+
+  // Crafting Actions
+  if (type === 'VIEW_CRAFTING') {
+    if (isPreAdventure) return null;
+    if (!state.crafting) {
+      state = { ...state, crafting: createCraftingState() };
+    }
+    state = autoDiscoverRecipes(state);
+    return {
+      ...state,
+      phase: 'crafting',
+      previousPhase: state.phase,
+      craftingUI: { selectedCategory: 'all', selectedRecipeId: null, lastMessage: null },
+    };
+  }
+
+  if (type === 'CLOSE_CRAFTING') {
+    if (state.phase !== 'crafting') return null;
+    const returnPhase = state.previousPhase || 'exploration';
+    return { ...state, phase: returnPhase, craftingUI: undefined };
+  }
+
+  if (type === 'CRAFTING_SET_CATEGORY') {
+    if (state.phase !== 'crafting') return null;
+    return {
+      ...state,
+      craftingUI: { ...state.craftingUI, selectedCategory: action.category || 'all', selectedRecipeId: null, lastMessage: null },
+    };
+  }
+
+  if (type === 'CRAFTING_SELECT_RECIPE') {
+    if (state.phase !== 'crafting') return null;
+    return {
+      ...state,
+      craftingUI: { ...state.craftingUI, selectedRecipeId: action.recipeId || null, lastMessage: null },
+    };
+  }
+
+  if (type === 'CRAFT_ITEM') {
+    if (state.phase !== 'crafting' || !action.recipeId) return null;
+    const result = craftItem(state, action.recipeId);
+    return {
+      ...state,
+      craftingUI: { ...state.craftingUI, lastMessage: result.message },
+    };
+  }
+
+  // Talents
+  if (type === 'VIEW_TALENTS') {
+    if (isPreAdventure) return null;
+    if (!state.talentState) {
+      state = { ...state, talentState: createTalentState() };
+    }
+    return {
+      ...state,
+      phase: 'talents',
+      previousPhase: state.phase,
+      talentUiState: state.talentUiState || { sortMethod: 'tier', filterText: '' },
+    };
+  }
+
+  if (type === 'SET_TALENT_SORT_METHOD') {
+    if (state.phase !== 'talents') return null;
+    return {
+      ...state,
+      talentUiState: {
+        ...(state.talentUiState || {}),
+        sortMethod: action.sortMethod || 'tier',
+      },
+    };
+  }
+
+  if (type === 'SET_TALENT_FILTER_TEXT') {
+    if (state.phase !== 'talents') return null;
+    return {
+      ...state,
+      talentUiState: {
+        ...(state.talentUiState || {}),
+        filterText: action.filterText || '',
+      },
+    };
+  }
+
+  if (type === 'ALLOCATE_TALENT') {
+    if (state.phase !== 'talents' || !action.talentId || !state.talentState) return null;
+    const result = allocateTalent(state.talentState, action.talentId);
+    if (result.success) {
+      return pushLog({ ...state, talentState: result.newState }, 'Allocated talent point.');
+    }
+    return pushLog(state, result.error || 'Unable to allocate talent.');
+  }
+
+  if (type === 'DEALLOCATE_TALENT') {
+    if (state.phase !== 'talents' || !action.talentId || !state.talentState) return null;
+    const result = deallocateTalent(state.talentState, action.talentId);
+    if (result.success) {
+      return pushLog({ ...state, talentState: result.newState }, 'Deallocated talent point.');
+    }
+    return pushLog(state, result.error || 'Unable to deallocate talent.');
+  }
+
+  if (type === 'RESET_TALENTS') {
+    if (state.phase !== 'talents' || !state.talentState) return null;
+    const talentState = resetAllTalents(state.talentState);
+    return pushLog({ ...state, talentState }, 'All talents have been reset.');
+  }
+
+  if (type === 'CLOSE_TALENTS') {
+    if (state.phase !== 'talents') return null;
+    const returnPhase = state.previousPhase || 'exploration';
+    return { ...state, phase: returnPhase };
+  }
+
+  // Sporeling Evolution
+  if (type === 'OPEN_SPORELING') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'sporeling', previousPhase: state.phase };
+  }
+
+  if (type === 'CLOSE_SPORELING') {
+    if (state.phase !== 'sporeling') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  if (type === 'DISMISS_SPORELING') {
+    return dismissSporeling(state);
+  }
+
+  // Companions
+  if (type === 'OPEN_COMPANIONS') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'companions', previousPhase: state.phase };
+  }
+
+  if (type === 'CLOSE_COMPANIONS') {
+    if (state.phase !== 'companions') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  // Factions and Reputation
+  if (type === 'OPEN_FACTIONS') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'factions', previousPhase: state.phase };
+  }
+
+  if (type === 'CLOSE_FACTIONS') {
+    if (state.phase !== 'factions') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  if (type === 'MODIFY_REPUTATION') {
+    if (!action.factionId || action.amount === undefined) return null;
+    const result = modifyReputation(state.factionReputation, action.factionId, action.amount, action.multiplier);
+    if (result.error) return null;
+    return { ...state, factionReputation: result.state };
+  }
+
+  if (type === 'CLAIM_FACTION_REWARD') {
+    if (!action.factionId || !action.level) return null;
+    const result = claimReward(state.factionReputation, action.factionId, action.level);
+    if (result.error) return null;
+    return { ...state, factionReputation: result.state };
+  }
+
+
+  // Arena & Tournament
+  if (type === 'OPEN_ARENA') {
+    if (isPreAdventure || !canAccessVillageSquareActivity(state)) return null;
+    return { ...state, phase: 'arena' };
+  }
+
+  if (type === 'CLOSE_ARENA') {
+    if (state.phase !== 'arena') return null;
+    return { ...state, phase: 'exploration' };
+  }
+
+  if (type === 'START_ARENA_MATCH') {
+    if (isPreAdventure || !state.arenaState) return null;
+    const playerLevel = state.player.level || 1;
+    const opponent = generateOpponent(playerLevel);
+    
+    // Convert generated opponent to enemy format for combat
+    // Arena opponents store combat values in a nested `stats` object using
+    // attack/defense/speed keys, while the combat engine expects flat
+    // atk/def/spd fields on `state.enemy`. Normalize both shapes here.
+    const arenaEnemy = {
+      ...opponent,
+      hp: opponent.stats?.hp ?? opponent.hp ?? 1,
+      maxHp: opponent.stats?.maxHp ?? opponent.maxHp ?? opponent.stats?.hp ?? opponent.hp ?? 1,
+      atk: opponent.stats?.attack ?? opponent.atk ?? 1,
+      def: opponent.stats?.defense ?? opponent.def ?? 0,
+      spd: opponent.stats?.speed ?? opponent.spd ?? 0,
+      displayName: opponent.name,
+      xpReward: opponent.rewards.xp,
+      goldReward: opponent.rewards.gold
+    };
+
+    let next = {
+      ...state,
+      enemy: arenaEnemy,
+      phase: 'player-turn',
+      turn: 1,
+      combatStats: null,
+      combatStatsSummary: null,
+      comboState: createComboState(),
+      player: { ...state.player, defending: false, statusEffects: [] },
+      momentumState: state.momentumState ? createMomentumState() : undefined,
+      intentState: initIntentState(),
+      isArenaMatch: true, // Flag for combat logic routing
+      arenaOpponentRating: Math.max(0, (state.arenaState.rating || 1000) + ((opponent.level - playerLevel) * 25))
+    };
+
+    initCombatBattleLog();
+    next = pushLog(next, 'Welcome to the Arena!');
+    next = pushLog(next, 'You are facing ' + opponent.name + ' (Level ' + opponent.level + ')!');
+    return pushLog(next, 'Your turn.');
+  }
+
+  if (type === 'ENTER_TOURNAMENT') {
+    if (!action.tournamentId || !state.arenaState) return null;
+    const tournament = createTournament(action.tournamentId, {
+      name: state.player.name,
+      level: state.player.level || 1,
+      rating: state.arenaState.rating
+    });
+    if (tournament.error) {
+      let next = pushLog(state, tournament.error);
+      return { ...next, phase: 'arena' };
+    }
+    const arenaState = {
+      ...state.arenaState,
+      tournaments: {
+        ...state.arenaState.tournaments,
+        [action.tournamentId]: tournament
+      },
+      activeTournament: action.tournamentId
+    };
+    const next = { ...state, arenaState, phase: 'exploration' };
+    return pushLog(next, `You enter the ${tournament.name}.`);
+  }
+
+  if (type === 'ARENA_CLAIM_REWARDS') {
+    const activeId = state.arenaState?.activeTournament;
+    const activeTournament = activeId ? state.arenaState.tournaments?.[activeId] : null;
+    if (!activeTournament || activeTournament.status !== 'completed') return null;
+    const rewards = getTournamentRewards(activeTournament);
+    if (!rewards) return null;
+    const next = {
+      ...state,
+      player: {
+        ...state.player,
+        gold: (state.player.gold || 0) + (rewards.gold || 0)
+      }
+    };
+    return pushLog(next, `Claimed tournament rewards: ${rewards.gold} gold!`);
+  }
+
+  if (type === 'RESET_ARENA_SEASON') {
+    if (!state.arenaState) return null;
+    const arenaState = resetSeason(state.arenaState);
+    return { ...state, arenaState };
+  }
+
+  // Guilds
+  if (type === 'OPEN_GUILDS') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'guilds', previousPhase: state.phase };
+  }
+
+  if (type === 'CLOSE_GUILDS') {
+    if (state.phase !== 'guilds') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  if (type === 'CREATE_GUILD') {
+    const guildSystemState = state.guildSystemState || {};
+    const guilds = guildSystemState.guilds || [];
+    const result = createGuild(action.name, state.player, {});
+    if (result.error) return pushLog(state, result.error);
+    const updatedPlayer = typeof result.cost === 'number'
+      ? { ...state.player, gold: Math.max(0, (state.player.gold || 0) - result.cost) }
+      : state.player;
+    const nextGuildState = {
+      ...guildSystemState,
+      guilds: [...guilds, result.guild],
+      currentGuild: result.guild,
+    };
+    let next = { ...state, player: updatedPlayer, guildSystemState: nextGuildState };
+    next = pushLog(next, `You founded the guild ${result.guild.name}.`);
+    return next;
+  }
+
+  if (type === 'JOIN_GUILD') {
+    const guildSystemState = state.guildSystemState || {};
+    const guilds = guildSystemState.guilds || [];
+    const targetGuild = guilds.find(g => g.id === action.guildId);
+    if (!targetGuild) return pushLog(state, 'Guild not found.');
+    const result = addMember(targetGuild, state.player, state.player.id);
+    if (result.error) return pushLog(state, result.error);
+    const updatedGuilds = guilds.map(g => g.id === targetGuild.id ? result.guild : g);
+    const nextGuildState = { ...guildSystemState, guilds: updatedGuilds, currentGuild: result.guild };
+    let next = { ...state, guildSystemState: nextGuildState };
+    next = pushLog(next, `You joined ${result.guild.name}.`);
+    return next;
+  }
+
+  if (type === 'LEAVE_GUILD') {
+    const guildSystemState = state.guildSystemState || {};
+    const guilds = guildSystemState.guilds || [];
+    const activeGuild = (guildSystemState.currentGuild && guilds.find(g => g.id === guildSystemState.currentGuild.id))
+      || guilds.find(g => g.members?.some(m => m.id === state.player.id));
+    if (!activeGuild) return pushLog(state, 'You are not in a guild.');
+    const member = activeGuild.members.find(m => m.id === state.player.id);
+    if (!member) return pushLog(state, 'You are not in a guild.');
+    if (member.rank === 'leader') {
+      return pushLog(state, 'Guild leaders must disband the guild to leave.');
+    }
+    const removerId = activeGuild.members.find(m => m.rank === 'leader')?.id || state.player.id;
+    const result = removeMember(activeGuild, state.player.id, removerId);
+    if (result.error) return pushLog(state, result.error);
+    const updatedGuilds = guilds.map(g => g.id === activeGuild.id ? result.guild : g);
+    const nextGuildState = {
+      ...guildSystemState,
+      guilds: updatedGuilds,
+      currentGuild: guildSystemState.currentGuild?.id === activeGuild.id ? null : guildSystemState.currentGuild
+    };
+    let next = { ...state, guildSystemState: nextGuildState };
+    next = pushLog(next, `You left ${activeGuild.name}.`);
+    return next;
+  }
+
+  if (type === 'GUILD_DEPOSIT') {
+    const guildSystemState = state.guildSystemState || {};
+    const guilds = guildSystemState.guilds || [];
+    const activeGuild = (guildSystemState.currentGuild && guilds.find(g => g.id === guildSystemState.currentGuild.id))
+      || guilds.find(g => g.members?.some(m => m.id === state.player.id));
+    if (!activeGuild) return pushLog(state, 'You are not in a guild.');
+    const amount = Number(action.amount) || 0;
+    if (amount <= 0) return pushLog(state, 'Invalid deposit amount.');
+    const playerGold = state.player.gold ?? 0;
+    if (playerGold < amount) return pushLog(state, 'Not enough gold to deposit.');
+    const result = depositGold(activeGuild, state.player.id, amount);
+    if (result.error) return pushLog(state, result.error);
+    const updatedGuilds = guilds.map(g => g.id === activeGuild.id ? result.guild : g);
+    const nextGuildState = {
+      ...guildSystemState,
+      guilds: updatedGuilds,
+      currentGuild: result.guild,
+    };
+    let next = {
+      ...state,
+      player: { ...state.player, gold: playerGold - amount },
+      guildSystemState: nextGuildState,
+    };
+    next = pushLog(next, `Deposited ${amount} gold into the guild bank.`);
+    return next;
+  }
+
+  if (type === 'GUILD_WITHDRAW') {
+    const guildSystemState = state.guildSystemState || {};
+    const guilds = guildSystemState.guilds || [];
+    const activeGuild = (guildSystemState.currentGuild && guilds.find(g => g.id === guildSystemState.currentGuild.id))
+      || guilds.find(g => g.members?.some(m => m.id === state.player.id));
+    if (!activeGuild) return pushLog(state, 'You are not in a guild.');
+    const amount = Number(action.amount) || 0;
+    if (amount <= 0) return pushLog(state, 'Invalid withdrawal amount.');
+    const result = withdrawGold(activeGuild, state.player.id, amount);
+    if (result.error) return pushLog(state, result.error);
+    const updatedGuilds = guilds.map(g => g.id === activeGuild.id ? result.guild : g);
+    const nextGuildState = {
+      ...guildSystemState,
+      guilds: updatedGuilds,
+      currentGuild: result.guild,
+    };
+    let next = {
+      ...state,
+      player: { ...state.player, gold: (state.player.gold || 0) + amount },
+      guildSystemState: nextGuildState,
+    };
+    next = pushLog(next, `Withdrew ${amount} gold from the guild bank.`);
+    return next;
+  }
+
+  if (type === 'UNLOCK_PERK') {
+    const guildSystemState = state.guildSystemState || {};
+    const guilds = guildSystemState.guilds || [];
+    const activeGuild = (guildSystemState.currentGuild && guilds.find(g => g.id === guildSystemState.currentGuild.id))
+      || guilds.find(g => g.members?.some(m => m.id === state.player.id));
+    if (!activeGuild) return pushLog(state, 'You are not in a guild.');
+    const result = unlockPerk(activeGuild, action.perkId, state.player.id);
+    if (result.error) return pushLog(state, result.error);
+    const updatedGuilds = guilds.map(g => g.id === activeGuild.id ? result.guild : g);
+    const nextGuildState = {
+      ...guildSystemState,
+      guilds: updatedGuilds,
+      currentGuild: result.guild,
+    };
+    let next = { ...state, guildSystemState: nextGuildState };
+    next = pushLog(next, `Unlocked guild perk: ${result.perk?.name || action.perkId}.`);
+    return next;
+  }
+
+  if (type === 'RECRUIT_COMPANION') {
+    if (!action.companionId) return null;
+    const result = recruitCompanion(state, action.companionId);
+    return result;
+  }
+
+  if (type === 'DISMISS_COMPANION') {
+    if (!action.companionId) return null;
+    const result = dismissCompanion(state, action.companionId);
+    return result;
+  }
+
+  // Bestiary
+  if (type === 'VIEW_BESTIARY') {
+    if (isPreAdventure) return null;
+    return { ...state, phase: 'bestiary', previousPhase: state.phase };
+  }
+  if (type === 'CLOSE_BESTIARY') {
+    if (state.phase !== 'bestiary') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+  if (type === 'SORT_BESTIARY') {
+    const sort = action.sort || BESTIARY_SORT_DEFAULT;
+    return {
+      ...state,
+      bestiaryUiState: {
+        ...(state.bestiaryUiState || {}),
+        sort,
+      },
+    };
+  }
+  if (type === 'FILTER_BESTIARY') {
+    const filter = action.filter || BESTIARY_FILTER_DEFAULT;
+    return {
+      ...state,
+      bestiaryUiState: {
+        ...(state.bestiaryUiState || {}),
+        filter,
+      },
+    };
+  }
+  if (type === 'SEARCH_BESTIARY') {
+    const search = action.search ?? '';
+    return {
+      ...state,
+      bestiaryUiState: {
+        ...(state.bestiaryUiState || {}),
+        search,
+      },
+    };
+  }
+  
+  
+  if (type === 'VIEW_BOUNTY_BOARD') {
+    if (isPreAdventure || !canAccessVillageSquareActivity(state)) return null;
+    return generateBounties({ ...state, phase: 'bounty-board', previousPhase: state.phase });
+  }
+
+  if (type === 'CLOSE_BOUNTY_BOARD') {
+    if (state.phase !== 'bounty-board') return null;
+    return { ...state, phase: state.previousPhase || 'town' };
+  }
+
+  if (type === 'REFRESH_BOUNTIES') {
+    if (state.phase !== 'bounty-board') return null;
+    return generateBounties({ ...state, bountyBoard: { ...state.bountyBoard, lastRefreshTime: 0 } });
+  }
+
+  if (type === 'ACCEPT_BOUNTY') {
+    if (state.phase !== 'bounty-board') return null;
+    return acceptBounty(state, action.id);
+  }
+
+  if (type === 'VIEW_TAVERN') {
+    if (isPreAdventure || !canAccessTavern(state)) return null;
+    return { ...state, phase: 'tavern-dice', previousPhase: state.phase };
+  }
+  if (type === 'CLOSE_TAVERN') {
+    if (state.phase !== 'tavern-dice') return null;
+    return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+  if (type === 'TAVERN_START') {
+    return startTavernDice(state, parseInt(action.wager, 10));
+  }
+  if (type === 'TAVERN_GUESS') {
+    return guessTavernDice(state, action.guess);
+  }
+  if (type === 'TAVERN_CASH_OUT') {
+    return cashOutTavernDice(state);
+  }
+
+  // --- Provisions actions ---
+  const provisionActions = [
+    'OPEN_PROVISIONS', 'CLOSE_PROVISIONS', 'PROVISIONS_SELECT',
+    'PROVISIONS_SWITCH_TAB', 'USE_PROVISION', 'COOK_PROVISION',
+    'TICK_PROVISIONS'
+  ];
+  if (provisionActions.includes(type)) {
+    const result = handleProvisionAction(state, action);
+    if (result) return result;
+  }
+
+  // Specialization Choice
+  if (type === 'CHOOSE_SPECIALIZATION') {
+    if (state.phase !== 'specialization') return null;
+    const specId = action.specId;
+    if (!specId) return null;
+    
+    const updatedPlayer = applySpecialization(state.player, specId);
+    if (!updatedPlayer) return null;
+    
+    const exits = getRoomExits(state.world);
+    let gs = state.gameStats || createGameStats();
+    gs = recordBattleWon(gs);
+    if (state.enemy?.name) gs = recordEnemyDefeated(gs, state.enemy.name);
+    if ((state.xpGained ?? 0) > 0) gs = recordXPEarned(gs, state.xpGained);
+    if ((state.goldGained ?? 0) > 0) gs = recordGoldEarned(gs, state.goldGained);
+    
+    let next = {
+      ...state,
+      phase: 'exploration',
+      player: { ...updatedPlayer, defending: false },
+      specializationState: undefined,
+      battleSummary: undefined,
+      pendingLevelUps: undefined,
+      gameStats: gs,
+    };
+    next = recordBattleRewardsInStatistics(next);
+    const specName = action.specName || specId;
+    next = pushLog(next, 'You have chosen the path of the ' + specName + '!');
+    next = pushLog(next, 'New abilities and stat bonuses have been applied.');
+    next = pushLog(next, `${getRoomDescription(state.world)} Exits: ${exits.join(', ') || 'none'}.`);
+    return next;
+  }
+
+  if (action.type === 'TUTORIAL_SHOW') {
+    if (!state.tutorialState) return null;
+    return {
+      ...state,
+      tutorialState: showHint(state.tutorialState, action.stepId),
+    };
+  }
+
+  if (action.type === 'TUTORIAL_DISMISS') {
+    if (!state.tutorialState || !state.tutorialState.currentHint) return null;
+    const stepId = state.tutorialState.currentHint.id;
+    return {
+      ...state,
+      tutorialState: completeTutorialStep(
+        dismissCurrentHint(state.tutorialState),
+        stepId
+      ),
+    };
+  }
+
+  if (action.type === 'TUTORIAL_DISABLE') {
+    if (!state.tutorialState) return null;
+    try { localStorage.setItem('aiVillageRpg_hintsEnabled', 'false'); } catch(e) {}
+    return {
+      ...state,
+      tutorialState: {
+        ...dismissCurrentHint(state.tutorialState),
+        hintsEnabled: false,
+      },
+    };
+  }
+
+  if (action.type === 'VIEW_TUTORIAL_PROGRESS') {
+    if (!state.tutorialState) return null;
+    return {
+      ...state,
+      ui: {
+        ...state.ui,
+        tutorialProgressVisible: true,
+      },
+    };
+  }
+
+  if (action.type === 'CLOSE_TUTORIAL_PROGRESS') {
+    return {
+      ...state,
+      ui: {
+        ...state.ui,
+        tutorialProgressVisible: false,
+      },
+    };
+  }
+
+  if (action.type === 'TUTORIAL_REENABLE_HINTS') {
+    if (!state.tutorialState) return null;
+    try { localStorage.setItem('aiVillageRpg_hintsEnabled', 'true'); } catch(e) {}
+    return {
+      ...state,
+      tutorialState: {
+        ...state.tutorialState,
+        hintsEnabled: true,
+      },
+    };
+  }
+
+  if (action.type === 'TUTORIAL_RESET') {
+    if (!state.tutorialState) return null;
+    return {
+      ...state,
+      tutorialState: resetTutorial(),
+    };
+  }
+
+
+  if (type === 'TOGGLE_INTENT_FORECAST') {
+    if (!state.intentState) return null;
+    return { ...state, intentState: toggleForecast(state.intentState) };
+  }
+
+
+  // Random Encounter System actions
+  const encounterResult = handleEncounterAction(state, action);
+  if (encounterResult) return encounterResult;
+
+
+  return null;
+}

@@ -1,0 +1,21 @@
+--- src/handlers/ui-handler.js
++++ src/handlers/ui-handler.js
+@@ -32,6 +32,18 @@
+         }
+     });
+ 
++    // Close Narrative Modal
++    const closeNarrativeBtn = document.getElementById('close-narrative-btn');
++    if (closeNarrativeBtn) {
++        closeNarrativeBtn.addEventListener('click', () => {
++            const modal = document.getElementById('narrative-modal');
++            if (modal) {
++                modal.style.display = 'none';
++            }
++            window.dispatchEvent(new CustomEvent('narrative-closed'));
++        });
++    }
++
+     // Main UI Tabs
+     setupTabListeners();
+ 

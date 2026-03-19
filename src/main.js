@@ -191,6 +191,12 @@ if (IS_BROWSER) {
 
   function dispatch(action) {
     console.log('[DISPATCH]', action.type, 'direction:', action.direction, 'phase:', state.phase);
+    
+    if (action.type === 'DISMISS_NARRATIVE') {
+      setState({ ...state, narrativeIntroSeen: true }, action);
+      return;
+    }
+
     if (action.type === 'OPEN_DAILY_CHALLENGES') {
       setState({ ...state, showDailyChallenges: true }, action);
       return;

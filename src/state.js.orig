@@ -12,10 +12,6 @@ import { createGuildSystemState } from './guild-system.js';
 import { createWorldState } from './map.js';
 import { createMomentumState } from './momentum.js';
 import { createNPCRelationshipManager } from './npc-relationships.js';
-import {
-  rehydrateNpcRelationshipManager,
-  serializeNpcRelationshipManager
-} from './npc-relationship-persistence.js';
 import { createEncounterState } from './random-encounter-system.js';
 import { createTavernDiceState } from './tavern-dice.js';
 import { createTutorialState } from './tutorial.js';
@@ -31,7 +27,6 @@ export function initialState() {
 
   return {
     version: 1,
-    narrativeIntroSeen: false,
     difficulty: DEFAULT_DIFFICULTY,
     rngSeed: Date.now() % 2147483647,
     phase: 'player-turn', // player-turn | enemy-turn | victory | defeat
@@ -109,7 +104,6 @@ export function initialStateWithClass(classId, characterName = '', difficulty = 
       def: character.stats.def,
       spd: character.stats.spd,
       int: character.stats.int,
-      stats: { ...character.stats },
       classId,
       abilities: classDef.abilities,
       level: 1,
@@ -158,7 +152,7 @@ export function pushLog(state, line) {
 }
 
 export function saveToLocalStorage(state) {
-  const payload = JSON.stringify(serializeNpcRelationshipManager(state));
+  const payload = JSON.stringify(state);
   localStorage.setItem('aiVillageRpgSave', payload);
 }
 
@@ -168,7 +162,7 @@ export function loadFromLocalStorage() {
   try {
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object') return null;
-    return rehydrateNpcRelationshipManager(parsed);
+    return parsed;
   } catch {
     return null;
   }
