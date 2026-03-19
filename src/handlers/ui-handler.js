@@ -193,7 +193,7 @@ export function handleUIAction(state, action) {
     return { ...state, phase: 'quests', previousPhase: state.phase };
   }
 
-  if (type === 'VIEW_STATS') {
+  if (type === 'VIEW_STATS' || type === 'SHOW_STATS') {
     if (isPreAdventure) return null;
     return { ...state, phase: 'stats', previousPhase: state.phase };
   }
