@@ -11,7 +11,7 @@ import { getCurrentLevelUp, getStatDiffs, formatStatName, xpForNextLevel } from 
 import { xpToNextLevel, XP_THRESHOLDS } from './characters/stats.js';
 import { formatAbilityName } from './specialization-ui.js';
 import { getNPCsInRoom, getCurrentDialogLine, getDialogProgress, isLastDialogLine } from './npc-dialog.js';
-import { getActiveQuestsSummary, getCompletedQuestsSummary, getAvailableQuestsInRoom } from './quest-integration.js';
+import { getActiveQuestsSummary, getCompletedQuestsSummary, getAvailableQuestsInRoom, getQuestProgress } from './quest-integration.js';
 import { getAbility, getAbilityDisplayInfo } from './combat/abilities.js';
 import { items as itemsData } from './data/items.js';
 import { getRarityMeta } from './ui/rarity-util.js';
@@ -341,6 +341,58 @@ function renderMapPanel(state, dispatch) {
 }
 
 const RENDER_ROOM_ID_MAP = [['nw', 'n', 'ne'], ['w', 'center', 'e'], ['sw', 's', 'se']];
+
+
+function renderQuestBreadcrumb(state) {
+  const questState = state.questState || { activeQuests: [], completedQuests: [], questProgress: {} };
+  const activeQuests = getActiveQuestsSummary(questState);
+  
+  if (activeQuests.length === 0) {
+    // No active quests - show a hint about where to find quests
+    const roomId = state.world?.roomId || 'center';
+    const availableQuests = getAvailableQuestsInRoom(questState, roomId, state);
+    if (availableQuests.length > 0) {
+      return `<div class="card quest-breadcrumb" style="border-left:3px solid #f0ad4e;background:#2a2518;">
+        <h3 style="margin:0 0 4px 0;font-size:13px;color:#f0ad4e;">📋 Quests Available Here!</h3>
+        <div style="font-size:12px;color:#ccc;">Talk to NPCs or press <b>Quests 📜</b> to see ${availableQuests.length} available quest${availableQuests.length > 1 ? 's' : ''}.</div>
+      </div>`;
+    }
+    // If no quests anywhere, hint to talk to Village Elder
+    if (questState.completedQuests.length === 0) {
+      return `<div class="card quest-breadcrumb" style="border-left:3px solid #5bc0de;background:#1a2530;">
+        <h3 style="margin:0 0 4px 0;font-size:13px;color:#5bc0de;">💡 Getting Started</h3>
+        <div style="font-size:12px;color:#ccc;">Visit the <b>Village Square</b> and talk to the <b>Village Elder</b> to begin your adventure. Press <b>Quests 📜</b> to see available quests.</div>
+      </div>`;
+    }
+    return '';
+  }
+  
+  // Show the first active quest's current objective
+  const quest = activeQuests[0];
+  const stageProgress = quest.stageIndex + 1;
+  const stageName = quest.currentStage || 'In Progress';
+  
+  // Build objective detail if available
+  let objectiveHtml = '';
+  const objProgress = quest.objectiveProgress || {};
+  const objKeys = Object.keys(objProgress);
+  if (objKeys.length > 0) {
+    const items = objKeys.map(key => {
+      const p = objProgress[key];
+      const done = p.current >= p.required;
+      return `<div style="font-size:11px;color:${done ? '#5cb85c' : '#eee'};">${done ? '✅' : '⬜'} ${p.description || key} (${p.current}/${p.required})</div>`;
+    }).join('');
+    objectiveHtml = items;
+  }
+  
+  const moreQuests = activeQuests.length > 1 ? ` <span style="color:#888;font-size:11px;">+${activeQuests.length - 1} more</span>` : '';
+  
+  return `<div class="card quest-breadcrumb" style="border-left:3px solid #5cb85c;background:#1a2a1a;">
+    <h3 style="margin:0 0 4px 0;font-size:13px;color:#5cb85c;">🎯 ${quest.questName}${moreQuests}</h3>
+    <div style="font-size:12px;color:#ccc;margin-bottom:2px;">Stage ${stageProgress}/${quest.totalStages}: <b>${stageName}</b></div>
+    ${objectiveHtml}
+  </div>`;
+}
 
 export function render(state, dispatch) {
   const hud = document.getElementById('hud');

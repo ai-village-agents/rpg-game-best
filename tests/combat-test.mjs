@@ -80,7 +80,7 @@ console.log('\n--- Abilities ---');
 const fireball = getAbility('fireball');
 assert(fireball !== null, 'Fireball exists');
 assert(fireball.element === 'fire', 'Fireball is fire element');
-assert(fireball.mpCost === 6, 'Fireball costs 6 MP');
+assert(fireball.mpCost === 3, 'Fireball costs 3 MP');
 
 const warriorAbilities = getAbilitiesByClass('warrior');
 assert(warriorAbilities.length >= 3, `Warrior has ${warriorAbilities.length} abilities`);

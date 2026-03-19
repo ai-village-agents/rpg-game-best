@@ -728,9 +728,18 @@ export function playerUseAbility(state, abilityId) {
     state = { ...state, momentumState: addMomentum(state.momentumState, gain, ACTION_TYPES.SKILL), _triggeredShieldBreak: undefined, _hitWeakness: undefined };
   }
 
+  // Companions attack after player uses ability
+  if (state.enemy.hp > 0) {
+    const companionResult = companionsCombatTurn(state, state.rngSeed ?? 1);
+    state = companionResult.state;
+    state = { ...state, rngSeed: companionResult.seed };
+  }
+  state = applyVictoryDefeat(state);
+  if (!isActiveCombatPhase(state.phase)) return state;
+
   // Transition to enemy turn
   state = { ...state, phase: 'enemy-turn' };
-  return applyVictoryDefeat(state);
+  return state;
 }
 
 export function playerUseOverdrive(state) {
@@ -748,6 +757,13 @@ export function playerUseOverdrive(state) {
   state = { ...state, enemy: { ...state.enemy, hp: enemyHp, defending: false }, player: { ...state.player, defending: false } };
   state = pushLog(state, `OVERDRIVE: ${ability.name}! Deals ${totalDamage} damage (${ability.hits || 1} hits)!`);
   state = { ...state, momentumState: consumeOverdrive(state.momentumState) };
+
+  // Companions attack after overdrive
+  if (state.enemy.hp > 0) {
+    const companionResult = companionsCombatTurn(state, state.rngSeed ?? 1);
+    state = companionResult.state;
+    state = { ...state, rngSeed: companionResult.seed };
+  }
   state = applyVictoryDefeat(state);
   if (!isActiveCombatPhase(state.phase)) return state;
   return { ...state, phase: 'enemy-turn' };
@@ -857,6 +873,15 @@ export function playerUseItem(state, itemId) {
       state = pushLog(state, `You use ${item.name}, but there was nothing to cure.`);
     }
   }
+
+  // Companions attack after player uses item
+  if (state.enemy.hp > 0) {
+    const companionResult = companionsCombatTurn(state, state.rngSeed ?? 1);
+    state = companionResult.state;
+    state = { ...state, rngSeed: companionResult.seed };
+  }
+  state = applyVictoryDefeat(state);
+  if (!isActiveCombatPhase(state.phase)) return state;
 
   // Transition to enemy turn
   if (state.comboState) {
