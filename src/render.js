@@ -8,6 +8,7 @@ import { DEFAULT_WORLD_DATA, getRoomExits, getExitPreviews } from './map.js';
 import { getCategorizedInventory, getEquipmentDisplay, getItemDetails, getEquipmentComparison, INVENTORY_SCREENS, EQUIPMENT_SLOTS, getEquipmentBonuses } from './inventory.js';
 import { getEffectiveCombatStats, getEquipmentBonusDisplay, hasEquipmentBonuses } from './combat/equipment-bonuses.js';
 import { getCurrentLevelUp, getStatDiffs, formatStatName, xpForNextLevel } from './level-up.js';
+import { xpToNextLevel, XP_THRESHOLDS } from './characters/stats.js';
 import { formatAbilityName } from './specialization-ui.js';
 import { getNPCsInRoom, getCurrentDialogLine, getDialogProgress, isLastDialogLine } from './npc-dialog.js';
 import { getActiveQuestsSummary, getCompletedQuestsSummary, getAvailableQuestsInRoom } from './quest-integration.js';
@@ -63,6 +64,7 @@ import { createRewardsState, renderRewardsHtml, getRewardsStyles } from './comba
 import { renderStatsDashboardPhase, renderStatsDashboardActions, attachStatsDashboardHandlers, initStatsDashboard, getStatsDashboardIntegrationStyles } from './statistics-dashboard-integration.js';
 import { renderEncounterPopup, getEncounterStyles } from './random-encounter-system-ui.js';
 import { renderDefeatScreen, renderDefeatActions, getDefeatScreenStyles } from './defeat-screen-ui.js';
+import { loadFromSlot } from './engine.js';
 let _victoryAnimStartTime = 0;
 
 /** Track previous log for floating text diff */
@@ -251,6 +253,7 @@ function renderCompactCharacterSummary(player) {
     <div>SPD</div><div><b>${effectiveStats.spd}</b></div>
     <div>${intStat.label}</div><div><b>${finalIntValue}</b></div>
     <div>Gold</div><div><b>${player?.gold ?? 0}</b></div>
+    <div>XP</div><div><b>${player?.xp ?? 0} / ${XP_THRESHOLDS[player?.level ?? 1] || 'MAX'}</b></div>
   `;
 }
 
@@ -601,6 +604,16 @@ export function render(state, dispatch) {
         </select>
       </div>
       <div class="row">${cards}</div>`;
+    // Check for existing saves and show Load Game button
+    {
+      let hasSaves = false;
+      for (let i = 0; i <= 4; i++) {
+        try { if (loadFromSlot(i)) { hasSaves = true; break; } } catch (e) {}
+      }
+      if (hasSaves) {
+        hud.innerHTML += '<div class="card" style="margin-top:12px;text-align:center;"><h2>📂 Continue Adventure</h2><p>You have saved games available.</p><button id="btnTitleLoadGame" style="width:100%;padding:12px;font-size:16px;">Load Game</button></div>';
+      }
+    }
     actions.innerHTML = '';
 
     const nameInput = hud.querySelector('#class-select-name');
@@ -616,6 +629,10 @@ export function render(state, dispatch) {
         difficulty: document.getElementById('difficulty-select')?.value || 'normal',
       });
     });
+    const loadBtn = hud.querySelector('#btnTitleLoadGame');
+    if (loadBtn) {
+      loadBtn.onclick = () => dispatch({ type: 'LOAD_SLOTS' });
+    }
 
     log.innerHTML = state.log
       .slice()

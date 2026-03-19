@@ -17,6 +17,7 @@ import { handleStateTransitions } from './state-transitions.js';
 import { initAudio } from './audio-system.js';
 import { createTutorialState } from './tutorial.js';
 import { createEncounterState } from './random-encounter-system.js';
+import { triggerAutoSave } from './save-system.js';
 import {
   createDailyChallengeState,
   initializeDailyChallenges,
@@ -40,6 +41,7 @@ if (IS_BROWSER) {
     showDailyChallenges: false,
     encounterState: createEncounterState(),
   };
+  let lastAutoSaveTime = 0;
 
   function appendLogLine(nextState, line) {
     const currentLog = Array.isArray(nextState.log) ? nextState.log : [];
@@ -127,6 +129,34 @@ if (IS_BROWSER) {
     transitionedState = applyDailyProgressFromTransition(state, transitionedState, action);
     
     state = transitionedState; window.state = state;
+    // --- Autosave on key transitions ---
+    if (state.player) {
+      const prevPhase = arguments.length > 0 && typeof next === 'object' ? (next._prevPhase || '') : '';
+      const curPhase = state.phase;
+      const shouldAutoSave = (
+        curPhase === 'exploration' ||
+        curPhase === 'battle-summary' ||
+        (state.pendingLevelUps && state.pendingLevelUps.length > 0)
+      );
+      const now = Date.now();
+      if (shouldAutoSave && (now - lastAutoSaveTime > 5000)) {
+        lastAutoSaveTime = now;
+        try {
+          const result = triggerAutoSave(state, curPhase === 'battle-summary' ? 'combat_victory' : 'room_change');
+          if (result.success) {
+            // Show brief autosave toast
+            const toast = document.createElement('div');
+            toast.textContent = '💾 Autosaved';
+            toast.style.cssText = 'position:fixed;top:12px;right:12px;background:rgba(46,204,113,0.9);color:#fff;padding:8px 16px;border-radius:6px;font-size:14px;z-index:9999;transition:opacity 0.5s;pointer-events:none;';
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; }, 1500);
+            setTimeout(() => { toast.remove(); }, 2200);
+          }
+        } catch (e) {
+          console.warn('Autosave failed:', e);
+        }
+      }
+    }
     window.render = render; window.dispatch = dispatch; render(state, dispatch);
     renderDailyChallengesUI(state, dispatch);
 

@@ -9,6 +9,7 @@ import { saveToSlot, loadFromSlot, getSaveSlots, deleteSaveSlot } from '../engin
 import { createSaveMetadata } from '../save-system.js';
 import { consumeAchievementNotifications } from '../achievements.js';
 import { DIFFICULTY_LEVELS } from '../difficulty.js';
+import { createEmptyStatistics } from '../statistics-dashboard.js';
 
 function getRoomDescription(worldState) {
   const room = getCurrentRoom(worldState);
@@ -107,13 +108,14 @@ export function handleSystemAction(state, action) {
       ],
       visitedRooms: initVisitedRooms(1, 1),
       gameStats: createGameStats(),
+      statistics: createEmptyStatistics(),
     };
 
     return next;
   }
 
   if (type === 'NEW') {
-    return { ...initialState(), gameStats: createGameStats() };
+    return { ...initialState(), gameStats: createGameStats(), statistics: createEmptyStatistics() };
   }
 
   if (type === 'LOAD') {
