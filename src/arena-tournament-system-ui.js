@@ -72,7 +72,7 @@ export function renderArenaPanel(state, options = {}) {
       </div>
 
       ${options.showQuickMatch ? renderQuickMatchButton() : ''}
-      ${options.showTournaments ? renderTournamentList(state) : ''}
+      ${options.showTournaments ? renderTournamentList(state, options.playerData) : ''}
     </div>
   `;
 
@@ -154,9 +154,9 @@ function renderQuickMatchButton() {
  * @param {Object} state - Arena state
  * @returns {string} HTML string
  */
-function renderTournamentList(state) {
+function renderTournamentList(state, playerData) {
   const tournamentHtml = Object.values(TOURNAMENTS).map(tournament => {
-    return renderTournamentCard(tournament, state);
+    return renderTournamentCard(tournament, state, playerData);
   }).join('');
 
   return `
@@ -173,8 +173,16 @@ function renderTournamentList(state) {
  * @param {Object} state - Arena state
  * @returns {string} HTML string
  */
-function renderTournamentCard(tournament, state) {
-  const canEnter = state && state.rating >= 0;
+function renderTournamentCard(tournament, state, playerData) {
+  const playerLevel = playerData?.level || 1;
+  const playerGold = playerData?.gold || 0;
+  const meetsLevel = playerLevel >= tournament.minLevel;
+  const meetsGold = playerGold >= tournament.entryFee;
+  const canEnter = meetsLevel && meetsGold;
+  const reasons = [];
+  if (!meetsLevel) reasons.push(`Need level ${tournament.minLevel} (you are ${playerLevel})`);
+  if (!meetsGold) reasons.push(`Need ${tournament.entryFee} gold (you have ${playerGold})`);
+  const reasonText = reasons.length > 0 ? reasons.join(', ') : '';
 
   return `
     <div class="tournament-card" data-tournament="${escapeHtml(tournament.id)}">
@@ -184,16 +192,17 @@ function renderTournamentCard(tournament, state) {
       </div>
       <p class="tournament-desc">${escapeHtml(tournament.description)}</p>
       <div class="tournament-info">
-        <span class="tournament-fee">Entry: ${tournament.entryFee} gold</span>
-        <span class="tournament-level">Min Level: ${tournament.minLevel}</span>
+        <span class="tournament-fee ${meetsGold ? '' : 'requirement-unmet'}">Entry: ${tournament.entryFee} gold</span>
+        <span class="tournament-level ${meetsLevel ? '' : 'requirement-unmet'}">Min Level: ${tournament.minLevel}</span>
       </div>
+      ${reasonText ? `<div class="tournament-requirements-warning">⚠️ ${escapeHtml(reasonText)}</div>` : ''}
       <button
         class="arena-btn ${canEnter ? 'arena-btn-secondary' : 'arena-btn-disabled'}"
         data-action="enter-tournament"
         data-tournament-id="${escapeHtml(tournament.id)}"
         ${canEnter ? '' : 'disabled'}
       >
-        Enter Tournament
+        ${canEnter ? 'Enter Tournament' : '🔒 Requirements Not Met'}
       </button>
     </div>
   `;

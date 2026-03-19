@@ -265,6 +265,45 @@ export function handleUIAction(state, action) {
           next2 = pushLog(next2, 'You have reached the level of mastery! Choose your specialization path.');
           return next2;
         }
+
+        // Track battle stats
+        let gs = state.gameStats || createGameStats();
+        gs = recordBattleWon(gs);
+        if (state.enemy?.name) gs = recordEnemyDefeated(gs, state.enemy.name);
+        if ((state.xpGained ?? 0) > 0) gs = recordXPEarned(gs, state.xpGained);
+        if ((state.goldGained ?? 0) > 0) gs = recordGoldEarned(gs, state.goldGained);
+
+        // Return to dungeon if in dungeon combat
+        if (state.inDungeonCombat && state.dungeonState?.inDungeon) {
+          let dungeonState = state.dungeonState;
+          const wasBossFight = state.dungeonBossFight;
+          if (wasBossFight) {
+            dungeonState = clearDungeonFloor(dungeonState);
+          }
+          const { inDungeonCombat, dungeonBossFight, ...rest } = state;
+
+          const isFinalBossCleared = wasBossFight
+            && dungeonState.currentFloor === TOTAL_FLOORS
+            && dungeonState.floorsCleared.includes(TOTAL_FLOORS);
+
+          let next2 = {
+            ...rest,
+            dungeonState,
+            phase: isFinalBossCleared ? 'game-complete' : 'dungeon',
+            player: { ...state.player, defending: false },
+            battleSummary: undefined,
+            levelUpState: undefined,
+            pendingLevelUps: undefined,
+            gameStats: gs,
+          };
+          next2 = recordBattleRewardsInStatistics(next2);
+          next2 = pushLog(next2, isFinalBossCleared
+            ? 'The Oblivion Lord is vanquished! Light returns to the realm!'
+            : 'You continue exploring the dungeon.');
+          return next2;
+        }
+
+        // Return to exploration
         const exits = getRoomExits(state.world);
         let next2 = {
           ...state,
@@ -273,7 +312,9 @@ export function handleUIAction(state, action) {
           battleSummary: undefined,
           levelUpState: undefined,
           pendingLevelUps: undefined,
+          gameStats: gs,
         };
+        next2 = recordBattleRewardsInStatistics(next2);
         next2 = pushLog(next2, 'You gather yourself and continue your journey.');
         next2 = pushLog(next2, `${getRoomDescription(state.world)} Exits: ${exits.join(', ') || 'none'}.`);
         return next2;
@@ -756,7 +797,8 @@ export function handleUIAction(state, action) {
       rating: state.arenaState.rating
     });
     if (tournament.error) {
-      return pushLog(state, tournament.error);
+      let next = pushLog(state, tournament.error);
+      return { ...next, phase: 'arena' };
     }
     const arenaState = {
       ...state.arenaState,
