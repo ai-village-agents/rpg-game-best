@@ -22,8 +22,8 @@ export function getSummoningStyles() {
 .summon-container {
   padding: 10px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border: 1px solid #0f3460;
+  background: linear-gradient(135deg, var(--card) 0%, var(--panel) 100%);
+  border: 1px solid var(--border);
   margin-bottom: 10px;
 }
 
@@ -46,12 +46,12 @@ export function getSummoningStyles() {
 .summon-name {
   font-size: 14px;
   font-weight: bold;
-  color: #e8e8e8;
+  color: var(--text);
 }
 
 .summon-tier {
   font-size: 10px;
-  color: #888;
+  color: var(--dim-text);
   text-transform: uppercase;
 }
 
@@ -69,15 +69,15 @@ export function getSummoningStyles() {
   background: rgba(255,255,255,0.1);
 }
 
-.summon-stat.hp { color: #8f8; }
-.summon-stat.atk { color: #f88; }
-.summon-stat.def { color: #88f; }
-.summon-stat.spd { color: #ff8; }
+.summon-stat.hp { color: var(--good); }
+.summon-stat.atk { color: var(--bad); }
+.summon-stat.def { color: var(--accent); }
+.summon-stat.spd { color: var(--gold-text); }
 
 .summon-hp-bar {
   width: 100%;
   height: 6px;
-  background: #2a2a2a;
+  background: var(--card);
   border-radius: 3px;
   overflow: hidden;
   margin-top: 6px;
@@ -85,17 +85,17 @@ export function getSummoningStyles() {
 
 .summon-hp-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4a8 0%, #8f8 100%);
+  background: linear-gradient(90deg, var(--good) 0%, var(--good) 100%);
   transition: width 0.3s ease;
 }
 
 .summon-hp-fill.low {
-  background: linear-gradient(90deg, #a44 0%, #f88 100%);
+  background: linear-gradient(90deg, var(--bad) 0%, var(--bad) 100%);
 }
 
 .summon-duration {
   font-size: 10px;
-  color: #aaa;
+  color: var(--muted);
   margin-top: 4px;
 }
 
@@ -139,34 +139,34 @@ export function getSummoningStyles() {
 .summon-option-name {
   font-size: 13px;
   font-weight: bold;
-  color: #e8e8e8;
+  color: var(--text);
 }
 
 .summon-option-desc {
   font-size: 10px;
-  color: #888;
+  color: var(--dim-text);
 }
 
 .summon-option-cost {
   font-size: 12px;
-  color: #88f;
+  color: var(--accent);
   font-weight: bold;
 }
 
 /* Tier colors */
-.tier-minor { border-left: 3px solid #888; }
-.tier-standard { border-left: 3px solid #4a8; }
-.tier-greater { border-left: 3px solid #84f; }
-.tier-legendary { border-left: 3px solid #fa4; }
+.tier-minor { border-left: 3px solid var(--dim-text); }
+.tier-standard { border-left: 3px solid var(--good); }
+.tier-greater { border-left: 3px solid var(--accent); }
+.tier-legendary { border-left: 3px solid var(--gold-text); }
 
 /* Element colors */
-.element-fire { color: #f84; }
-.element-ice { color: #8df; }
-.element-lightning { color: #ff8; }
-.element-nature { color: #8f8; }
-.element-shadow { color: #a8f; }
-.element-holy { color: #ffa; }
-.element-physical { color: #ccc; }
+.element-fire { color: var(--bad); }
+.element-ice { color: var(--accent); }
+.element-lightning { color: var(--gold-text); }
+.element-nature { color: var(--good); }
+.element-shadow { color: var(--accent); }
+.element-holy { color: var(--gold-text); }
+.element-physical { color: var(--muted); }
 
 /* Behavior indicators */
 .behavior-tag {
@@ -176,10 +176,10 @@ export function getSummoningStyles() {
   margin-left: 6px;
 }
 
-.behavior-aggressive { background: #622; color: #f88; }
-.behavior-defensive { background: #226; color: #88f; }
-.behavior-support { background: #262; color: #8f8; }
-.behavior-balanced { background: #442; color: #ff8; }
+.behavior-aggressive { background: var(--bad); color: var(--bad); }
+.behavior-defensive { background: var(--accent); color: var(--accent); }
+.behavior-support { background: var(--good); color: var(--good); }
+.behavior-balanced { background: var(--gold-text); color: var(--gold-text); }
 
 /* Active summons panel */
 .active-summons {
@@ -194,8 +194,8 @@ export function getSummoningStyles() {
   max-width: 180px;
   padding: 8px;
   border-radius: 6px;
-  background: linear-gradient(135deg, #1a2a3a 0%, #0f1f2f 100%);
-  border: 1px solid #2a4a6a;
+  background: linear-gradient(135deg, var(--panel) 0%, var(--bg) 100%);
+  border: 1px solid var(--border);
   position: relative;
 }
 
@@ -212,7 +212,7 @@ export function getSummoningStyles() {
   border-radius: 50%;
   background: rgba(200,50,50,0.5);
   border: none;
-  color: #fff;
+  color: var(--text);
   font-size: 10px;
   cursor: pointer;
   line-height: 1;
@@ -225,7 +225,7 @@ export function getSummoningStyles() {
 /* Summon action display */
 .summon-action {
   font-size: 11px;
-  color: #aaa;
+  color: var(--muted);
   margin-top: 6px;
   padding: 4px 6px;
   background: rgba(0,0,0,0.3);
@@ -296,7 +296,7 @@ export function renderSummonMenu(availableSummons, state) {
             <span class="behavior-tag behavior-${data.behavior}">${capitalize(data.behavior)}</span>
           </div>
           <div class="summon-option-desc">${escapeHtml(data.description)}</div>
-          ${!check.canSummon ? `<div class="summon-option-desc" style="color:#f88">${escapeHtml(check.reason)}</div>` : ''}
+          ${!check.canSummon ? `<div class="summon-option-desc" style="color:var(--bad)">${escapeHtml(check.reason)}</div>` : ''}
         </div>
         <span class="summon-option-cost">${data.mpCost} MP</span>
       </div>
@@ -348,7 +348,7 @@ export function renderActiveSummon(summon) {
  */
 export function renderActiveSummons(summons) {
   if (!summons || summons.length === 0) {
-    return '<div class="active-summons"><p style="color:#888">No active summons</p></div>';
+    return '<div class="active-summons"><p style="color:var(--dim-text)">No active summons</p></div>';
   }
 
   const cards = summons.map(s => renderActiveSummon(s)).join('');
@@ -403,7 +403,7 @@ export function renderSummonCatalog() {
           <span class="summon-stat def">DEF: ${data.stats.defense}</span>
           <span class="summon-stat spd">SPD: ${data.stats.speed}</span>
         </div>
-        <p style="font-size:11px;color:#888;margin-top:6px">${escapeHtml(data.description)}</p>
+        <p style="font-size:11px;color:var(--dim-text);margin-top:6px">${escapeHtml(data.description)}</p>
       </div>
     `;
   });

@@ -46,27 +46,27 @@ export function getStatusEffectsStyles() {
 }
 
 .status-effect-icon.buff {
-  border-color: #4a8;
+  border-color: var(--good);
   background: rgba(68, 170, 136, 0.2);
 }
 
 .status-effect-icon.debuff {
-  border-color: #a44;
+  border-color: var(--bad);
   background: rgba(170, 68, 68, 0.2);
 }
 
 .status-effect-icon.control {
-  border-color: #a8a;
+  border-color: var(--accent);
   background: rgba(170, 136, 170, 0.2);
 }
 
 .status-effect-icon.shield {
-  border-color: #48a;
+  border-color: var(--accent);
   background: rgba(68, 136, 170, 0.2);
 }
 
 .status-effect-icon.special {
-  border-color: #aa8;
+  border-color: var(--gold-text);
   background: rgba(170, 170, 136, 0.2);
 }
 
@@ -74,8 +74,8 @@ export function getStatusEffectsStyles() {
   position: absolute;
   bottom: -2px;
   right: -2px;
-  background: #222;
-  color: #fff;
+  background: var(--card);
+  color: var(--text);
   font-size: 10px;
   padding: 1px 4px;
   border-radius: 8px;
@@ -87,7 +87,7 @@ export function getStatusEffectsStyles() {
   position: absolute;
   top: -2px;
   right: -2px;
-  background: #aa4;
+  background: var(--gold-text);
   color: #000;
   font-size: 10px;
   padding: 1px 4px;
@@ -101,8 +101,8 @@ export function getStatusEffectsStyles() {
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: #1a1a2e;
-  border: 1px solid #444;
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 6px;
   padding: 8px 12px;
   min-width: 150px;
@@ -124,13 +124,13 @@ export function getStatusEffectsStyles() {
 
 .status-tooltip-desc {
   font-size: 10px;
-  color: #aaa;
+  color: var(--muted);
   margin-bottom: 4px;
 }
 
 .status-tooltip-duration {
   font-size: 10px;
-  color: #888;
+  color: var(--dim-text);
 }
 
 /* Status bar display */
@@ -169,22 +169,22 @@ export function getStatusEffectsStyles() {
 
 .status-notification.applied {
   background: linear-gradient(90deg, rgba(68, 170, 136, 0.3), transparent);
-  border-left: 3px solid #4a8;
+  border-left: 3px solid var(--good);
 }
 
 .status-notification.removed {
   background: linear-gradient(90deg, rgba(136, 136, 136, 0.3), transparent);
-  border-left: 3px solid #888;
+  border-left: 3px solid var(--dim-text);
 }
 
 .status-notification.damage {
   background: linear-gradient(90deg, rgba(170, 68, 68, 0.3), transparent);
-  border-left: 3px solid #a44;
+  border-left: 3px solid var(--bad);
 }
 
 .status-notification.heal {
   background: linear-gradient(90deg, rgba(68, 170, 68, 0.3), transparent);
-  border-left: 3px solid #4a4;
+  border-left: 3px solid var(--good);
 }
 
 .status-notification-icon {
@@ -193,13 +193,13 @@ export function getStatusEffectsStyles() {
 
 .status-notification-text {
   font-size: 11px;
-  color: #ddd;
+  color: var(--text);
 }
 
 /* Detailed status panel */
 .status-panel {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border: 1px solid #0f3460;
+  background: linear-gradient(135deg, var(--card) 0%, var(--panel) 100%);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 12px;
 }
@@ -207,7 +207,7 @@ export function getStatusEffectsStyles() {
 .status-panel-title {
   font-size: 14px;
   font-weight: bold;
-  color: #e8e8e8;
+  color: var(--text);
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -220,7 +220,7 @@ export function getStatusEffectsStyles() {
 
 .status-panel-section-title {
   font-size: 11px;
-  color: #888;
+  color: var(--dim-text);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 6px;
@@ -246,17 +246,17 @@ export function getStatusEffectsStyles() {
 
 .status-list-item .name {
   font-size: 12px;
-  color: #e8e8e8;
+  color: var(--text);
 }
 
 .status-list-item .desc {
   font-size: 10px;
-  color: #888;
+  color: var(--dim-text);
 }
 
 .status-list-item .duration {
   font-size: 11px;
-  color: #aaa;
+  color: var(--muted);
   padding: 2px 6px;
   background: rgba(0,0,0,0.3);
   border-radius: 4px;
@@ -280,22 +280,22 @@ export function getStatusEffectsStyles() {
 
 .tick-result.damage {
   background: rgba(170, 68, 68, 0.2);
-  color: #f88;
+  color: var(--bad);
 }
 
 .tick-result.heal {
   background: rgba(68, 170, 68, 0.2);
-  color: #8f8;
+  color: var(--good);
 }
 
 .tick-result.mana {
   background: rgba(68, 68, 170, 0.2);
-  color: #88f;
+  color: var(--accent);
 }
 
 .tick-result.expired {
   background: rgba(136, 136, 136, 0.2);
-  color: #aaa;
+  color: var(--muted);
 }
 `;
 }
@@ -522,7 +522,7 @@ export function renderStatusPanel(entity) {
       </div>
       ${buffsHtml || ''}
       ${debuffsHtml || ''}
-      ${!buffsHtml && !debuffsHtml ? '<div style="color: #888; font-size: 11px;">No active status effects</div>' : ''}
+      ${!buffsHtml && !debuffsHtml ? '<div style="color: var(--dim-text); font-size: 11px;">No active status effects</div>' : ''}
     </div>
   `.trim();
 }

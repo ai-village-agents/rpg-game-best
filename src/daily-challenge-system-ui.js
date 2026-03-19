@@ -23,8 +23,8 @@ import {
 export function getDailyChallengeStyles() {
   return `
 .daily-challenge-panel {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border: 1px solid #0f3460;
+  background: linear-gradient(135deg, var(--card) 0%, var(--panel) 100%);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 15px;
 }
@@ -35,13 +35,13 @@ export function getDailyChallengeStyles() {
   justify-content: space-between;
   margin-bottom: 15px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--border);
 }
 
 .daily-challenge-header h2 {
   margin: 0;
   font-size: 18px;
-  color: #e8e8e8;
+  color: var(--text);
 }
 
 .daily-challenge-timer {
@@ -49,7 +49,7 @@ export function getDailyChallengeStyles() {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #888;
+  color: var(--dim-text);
 }
 
 .daily-challenge-timer-icon {
@@ -77,21 +77,21 @@ export function getDailyChallengeStyles() {
 }
 
 .daily-stat-label {
-  color: #888;
+  color: var(--dim-text);
 }
 
 .daily-stat-value {
-  color: #e8e8e8;
+  color: var(--text);
   font-weight: bold;
 }
 
 .streak-stat {
-  border: 1px solid #ffd700;
+  border: 1px solid var(--gold-text);
   background: rgba(255, 215, 0, 0.1);
 }
 
 .streak-stat .daily-stat-value {
-  color: #ffd700;
+  color: var(--gold-text);
 }
 
 .daily-challenge-list {
@@ -105,7 +105,7 @@ export function getDailyChallengeStyles() {
   gap: 12px;
   padding: 12px;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid #333;
+  border: 1px solid var(--border);
   border-radius: 8px;
   transition: all 0.2s ease;
 }
@@ -115,7 +115,7 @@ export function getDailyChallengeStyles() {
 }
 
 .challenge-card.completed {
-  border-color: #4a8;
+  border-color: var(--good);
   background: rgba(74, 170, 136, 0.1);
 }
 
@@ -159,7 +159,7 @@ export function getDailyChallengeStyles() {
 .challenge-name {
   font-size: 14px;
   font-weight: bold;
-  color: #e8e8e8;
+  color: var(--text);
 }
 
 .challenge-difficulty {
@@ -169,20 +169,20 @@ export function getDailyChallengeStyles() {
   text-transform: uppercase;
 }
 
-.challenge-difficulty.easy { background: rgba(100, 200, 100, 0.3); color: #8f8; }
-.challenge-difficulty.medium { background: rgba(255, 200, 100, 0.3); color: #fc8; }
-.challenge-difficulty.hard { background: rgba(255, 100, 100, 0.3); color: #f88; }
-.challenge-difficulty.expert { background: rgba(200, 100, 255, 0.3); color: #c8f; }
+.challenge-difficulty.easy { background: rgba(100, 200, 100, 0.3); color: var(--good); }
+.challenge-difficulty.medium { background: rgba(255, 200, 100, 0.3); color: var(--gold-text); }
+.challenge-difficulty.hard { background: rgba(255, 100, 100, 0.3); color: var(--bad); }
+.challenge-difficulty.expert { background: rgba(200, 100, 255, 0.3); color: var(--accent); }
 
 .challenge-description {
   font-size: 11px;
-  color: #888;
+  color: var(--dim-text);
   margin-bottom: 8px;
 }
 
 .challenge-progress-bar {
   height: 6px;
-  background: #333;
+  background: var(--border);
   border-radius: 3px;
   overflow: hidden;
   margin-bottom: 6px;
@@ -190,12 +190,12 @@ export function getDailyChallengeStyles() {
 
 .challenge-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4a8 0%, #8f8 100%);
+  background: linear-gradient(90deg, var(--good) 0%, var(--good) 100%);
   transition: width 0.3s ease;
 }
 
 .challenge-progress-fill.complete {
-  background: linear-gradient(90deg, #ffd700 0%, #ffaa00 100%);
+  background: linear-gradient(90deg, var(--gold-text) 0%, var(--gold-text) 100%);
 }
 
 .challenge-footer {
@@ -206,7 +206,7 @@ export function getDailyChallengeStyles() {
 
 .challenge-progress-text {
   font-size: 10px;
-  color: #666;
+  color: var(--dim-text);
 }
 
 .challenge-rewards {
@@ -222,13 +222,13 @@ export function getDailyChallengeStyles() {
   gap: 3px;
 }
 
-.challenge-reward-xp { color: #8af; }
-.challenge-reward-gold { color: #ffd700; }
-.challenge-reward-item { color: #c8f; }
+.challenge-reward-xp { color: var(--accent); }
+.challenge-reward-gold { color: var(--gold-text); }
+.challenge-reward-item { color: var(--accent); }
 
 .claim-button {
   padding: 4px 10px;
-  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+  background: linear-gradient(135deg, var(--gold-text) 0%, var(--gold-text) 100%);
   border: none;
   border-radius: 4px;
   color: #000;
@@ -243,8 +243,8 @@ export function getDailyChallengeStyles() {
 }
 
 .claim-button:disabled {
-  background: #555;
-  color: #888;
+  background: var(--dim-text);
+  color: var(--dim-text);
   cursor: not-allowed;
   transform: none;
 }
@@ -255,8 +255,8 @@ export function getDailyChallengeStyles() {
   top: 20px;
   right: 20px;
   padding: 15px 20px;
-  background: linear-gradient(135deg, #2a4a2e 0%, #1a2a1e 100%);
-  border: 2px solid #4a8;
+  background: linear-gradient(135deg, var(--card) 0%, var(--bg) 100%);
+  border: 2px solid var(--good);
   border-radius: 10px;
   box-shadow: 0 4px 20px rgba(74, 170, 136, 0.3);
   z-index: 1000;
@@ -271,7 +271,7 @@ export function getDailyChallengeStyles() {
 
 .challenge-notification-header {
   font-size: 10px;
-  color: #4a8;
+  color: var(--good);
   text-transform: uppercase;
   margin-bottom: 8px;
 }
@@ -300,19 +300,19 @@ export function getDailyChallengeStyles() {
 .challenge-notification-name {
   font-size: 14px;
   font-weight: bold;
-  color: #fff;
+  color: var(--text);
 }
 
 .challenge-notification-reward {
   font-size: 11px;
-  color: #aaa;
+  color: var(--muted);
 }
 
 /* Streak display */
 .streak-display {
   padding: 12px;
   background: rgba(255, 215, 0, 0.1);
-  border: 1px solid #ffd700;
+  border: 1px solid var(--gold-text);
   border-radius: 8px;
   margin-bottom: 15px;
   display: flex;
@@ -338,12 +338,12 @@ export function getDailyChallengeStyles() {
 .streak-count {
   font-size: 16px;
   font-weight: bold;
-  color: #ffd700;
+  color: var(--gold-text);
 }
 
 .streak-label {
   font-size: 10px;
-  color: #888;
+  color: var(--dim-text);
 }
 
 .streak-bonus {
@@ -351,7 +351,7 @@ export function getDailyChallengeStyles() {
   background: rgba(255, 215, 0, 0.2);
   border-radius: 4px;
   font-size: 11px;
-  color: #ffd700;
+  color: var(--gold-text);
 }
 
 /* Completion summary */
@@ -371,25 +371,25 @@ export function getDailyChallengeStyles() {
 
 .completion-title {
   font-size: 12px;
-  color: #888;
+  color: var(--dim-text);
 }
 
 .completion-percent {
   font-size: 14px;
   font-weight: bold;
-  color: #4a8;
+  color: var(--good);
 }
 
 .completion-bar {
   height: 6px;
-  background: #333;
+  background: var(--border);
   border-radius: 3px;
   overflow: hidden;
 }
 
 .completion-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4a8 0%, #8f8 100%);
+  background: linear-gradient(90deg, var(--good) 0%, var(--good) 100%);
   transition: width 0.5s ease;
 }
 
@@ -417,18 +417,18 @@ export function getDailyChallengeStyles() {
 .challenge-hud-progress {
   flex: 1;
   height: 4px;
-  background: #333;
+  background: var(--border);
   border-radius: 2px;
   overflow: hidden;
 }
 
 .challenge-hud-fill {
   height: 100%;
-  background: #4a8;
+  background: var(--good);
 }
 
 .challenge-hud-text {
-  color: #888;
+  color: var(--dim-text);
   min-width: 40px;
   text-align: right;
 }
@@ -513,11 +513,11 @@ export function renderDailyChallengePanel(state) {
 export function renderStreakDisplay(streak, bonus) {
   if (streak === 0) {
     return `
-      <div class="streak-display" style="border-color: #555; background: rgba(100, 100, 100, 0.1);">
+      <div class="streak-display" style="border-color: var(--dim-text); background: rgba(100, 100, 100, 0.1);">
         <div class="streak-info">
           <span class="streak-icon">\uD83D\uDD25</span>
           <div class="streak-text">
-            <span class="streak-count" style="color: #888;">No Streak</span>
+            <span class="streak-count" style="color: var(--dim-text);">No Streak</span>
             <span class="streak-label">Complete challenges to start!</span>
           </div>
         </div>
@@ -593,14 +593,14 @@ export function renderChallengeCard(challenge, streak = 0) {
   }
 
   if (streakBonus > 0 && !challenge.claimed) {
-    rewardsHtml += `<span class="challenge-reward" style="color: #ffd700;">+${Math.floor(streakBonus * 100)}%</span>`;
+    rewardsHtml += `<span class="challenge-reward" style="color: var(--gold-text);">+${Math.floor(streakBonus * 100)}%</span>`;
   }
 
   let actionHtml = '';
   if (challenge.completed && !challenge.claimed) {
     actionHtml = `<button class="claim-button" data-challenge="${escapeHtml(challenge.id)}">Claim</button>`;
   } else if (challenge.claimed) {
-    actionHtml = `<span style="color: #4a8; font-size: 10px;">\u2714 Claimed</span>`;
+    actionHtml = `<span style="color: var(--good); font-size: 10px;">\u2714 Claimed</span>`;
   }
 
   return `
@@ -668,7 +668,7 @@ export function renderChallengeHud(state, limit = 3) {
     if (claimable.length > 0) {
       return `
         <div class="challenge-hud">
-          <div class="challenge-hud-item" style="color: #ffd700;">
+          <div class="challenge-hud-item" style="color: var(--gold-text);">
             <span class="challenge-hud-icon">\uD83C\uDF81</span>
             <span>${claimable.length} reward${claimable.length > 1 ? 's' : ''} to claim!</span>
           </div>
@@ -677,7 +677,7 @@ export function renderChallengeHud(state, limit = 3) {
     }
     return `
       <div class="challenge-hud">
-        <div class="challenge-hud-item" style="color: #4a8;">
+        <div class="challenge-hud-item" style="color: var(--good);">
           <span class="challenge-hud-icon">\u2714</span>
           <span>All challenges complete!</span>
         </div>
@@ -731,7 +731,7 @@ export function renderDailyStats(state) {
         <div class="daily-stat">
           <span class="daily-stat-icon">\u2B50</span>
           <span class="daily-stat-label">Bonus:</span>
-          <span class="daily-stat-value" style="color: #ffd700;">+${Math.floor(streakBonus * 100)}%</span>
+          <span class="daily-stat-value" style="color: var(--gold-text);">+${Math.floor(streakBonus * 100)}%</span>
         </div>
       ` : ''}
       <div class="daily-stat">
@@ -754,14 +754,14 @@ export function renderAllCompleteMessage(state) {
   return `
     <div class="all-complete-message" style="text-align: center; padding: 20px;">
       <div style="font-size: 48px; margin-bottom: 10px;">\uD83C\uDF89</div>
-      <div style="font-size: 16px; font-weight: bold; color: #4a8; margin-bottom: 5px;">
+      <div style="font-size: 16px; font-weight: bold; color: var(--good); margin-bottom: 5px;">
         All Challenges Complete!
       </div>
-      <div style="font-size: 12px; color: #888;">
+      <div style="font-size: 12px; color: var(--dim-text);">
         New challenges in ${timeUntilReset.hours}h ${timeUntilReset.minutes}m
       </div>
       ${state.streak > 0 ? `
-        <div style="margin-top: 10px; font-size: 11px; color: #ffd700;">
+        <div style="margin-top: 10px; font-size: 11px; color: var(--gold-text);">
           \uD83D\uDD25 ${state.streak} day streak!
         </div>
       ` : ''}

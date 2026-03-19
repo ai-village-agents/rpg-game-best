@@ -21,8 +21,8 @@ export function getEncounterStyles() {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border: 2px solid #333;
+  background: linear-gradient(135deg, var(--card) 0%, var(--panel) 100%);
+  border: 2px solid var(--border);
   border-radius: 12px;
   padding: 20px;
   min-width: 320px;
@@ -65,13 +65,13 @@ export function getEncounterStyles() {
   font-size: 32px;
 }
 
-.encounter-icon.combat { background: rgba(255, 100, 100, 0.2); border: 1px solid #f66; }
-.encounter-icon.treasure { background: rgba(255, 200, 100, 0.2); border: 1px solid #fc8; }
-.encounter-icon.event { background: rgba(100, 200, 255, 0.2); border: 1px solid #8cf; }
-.encounter-icon.merchant { background: rgba(100, 255, 200, 0.2); border: 1px solid #8f8; }
-.encounter-icon.rest { background: rgba(100, 200, 100, 0.2); border: 1px solid #8c8; }
+.encounter-icon.combat { background: rgba(255, 100, 100, 0.2); border: 1px solid var(--bad); }
+.encounter-icon.treasure { background: rgba(255, 200, 100, 0.2); border: 1px solid var(--gold-text); }
+.encounter-icon.event { background: rgba(100, 200, 255, 0.2); border: 1px solid var(--accent); }
+.encounter-icon.merchant { background: rgba(100, 255, 200, 0.2); border: 1px solid var(--good); }
+.encounter-icon.rest { background: rgba(100, 200, 100, 0.2); border: 1px solid var(--good); }
 .encounter-icon.trap { background: rgba(255, 100, 255, 0.2); border: 1px solid #f8f; }
-.encounter-icon.npc { background: rgba(200, 200, 100, 0.2); border: 1px solid #cc8; }
+.encounter-icon.npc { background: rgba(200, 200, 100, 0.2); border: 1px solid var(--gold-text); }
 
 .encounter-title-block {
   flex: 1;
@@ -80,7 +80,7 @@ export function getEncounterStyles() {
 .encounter-title {
   font-size: 20px;
   font-weight: bold;
-  color: #e8e8e8;
+  color: var(--text);
   margin: 0 0 4px 0;
 }
 
@@ -93,14 +93,14 @@ export function getEncounterStyles() {
   font-weight: bold;
 }
 
-.encounter-rarity.common { background: rgba(150, 150, 150, 0.3); color: #aaa; }
-.encounter-rarity.uncommon { background: rgba(100, 200, 100, 0.3); color: #8f8; }
-.encounter-rarity.rare { background: rgba(100, 150, 255, 0.3); color: #8af; }
-.encounter-rarity.legendary { background: rgba(255, 200, 50, 0.3); color: #ffd700; }
+.encounter-rarity.common { background: rgba(150, 150, 150, 0.3); color: var(--muted); }
+.encounter-rarity.uncommon { background: rgba(100, 200, 100, 0.3); color: var(--good); }
+.encounter-rarity.rare { background: rgba(100, 150, 255, 0.3); color: var(--accent); }
+.encounter-rarity.legendary { background: rgba(255, 200, 50, 0.3); color: var(--gold-text); }
 
 .encounter-description {
   font-size: 14px;
-  color: #aaa;
+  color: var(--muted);
   line-height: 1.5;
   margin-bottom: 20px;
 }
@@ -130,11 +130,11 @@ export function getEncounterStyles() {
 }
 
 .encounter-detail-label {
-  color: #888;
+  color: var(--dim-text);
 }
 
 .encounter-detail-value {
-  color: #e8e8e8;
+  color: var(--text);
   margin-left: auto;
 }
 
@@ -161,28 +161,28 @@ export function getEncounterStyles() {
 }
 
 .encounter-btn-fight {
-  background: linear-gradient(135deg, #d44 0%, #a33 100%);
+  background: linear-gradient(135deg, var(--bad) 0%, var(--bad) 100%);
   color: #fff;
 }
 
 .encounter-btn-flee {
-  background: linear-gradient(135deg, #555 0%, #333 100%);
-  color: #aaa;
+  background: linear-gradient(135deg, var(--dim-text) 0%, var(--border) 100%);
+  color: var(--muted);
 }
 
 .encounter-btn-collect {
-  background: linear-gradient(135deg, #fc8 0%, #c96 100%);
+  background: linear-gradient(135deg, var(--gold-text) 0%, var(--gold-text) 100%);
   color: #000;
 }
 
 .encounter-btn-accept {
-  background: linear-gradient(135deg, #4a8 0%, #386 100%);
+  background: linear-gradient(135deg, var(--good) 0%, var(--good) 100%);
   color: #fff;
 }
 
 .encounter-btn-decline {
-  background: linear-gradient(135deg, #555 0%, #333 100%);
-  color: #aaa;
+  background: linear-gradient(135deg, var(--dim-text) 0%, var(--border) 100%);
+  color: var(--muted);
 }
 
 /* Encounter notification (mini) */
@@ -192,8 +192,8 @@ export function getEncounterStyles() {
   left: 50%;
   transform: translateX(-50%);
   padding: 12px 20px;
-  background: linear-gradient(135deg, #2a2a4e 0%, #1a1a2e 100%);
-  border: 2px solid #555;
+  background: linear-gradient(135deg, var(--card) 0%, var(--card) 100%);
+  border: 2px solid var(--dim-text);
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   z-index: 1000;
@@ -217,13 +217,13 @@ export function getEncounterStyles() {
 
 .encounter-notification-text {
   font-size: 14px;
-  color: #e8e8e8;
+  color: var(--text);
 }
 
 /* Encounter result */
 .encounter-result {
   padding: 20px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: linear-gradient(135deg, var(--card) 0%, var(--panel) 100%);
   border-radius: 10px;
   text-align: center;
 }
@@ -239,10 +239,10 @@ export function getEncounterStyles() {
   margin-bottom: 5px;
 }
 
-.encounter-result-title.victory { color: #4a8; }
-.encounter-result-title.defeat { color: #f66; }
-.encounter-result-title.fled { color: #888; }
-.encounter-result-title.collected { color: #fc8; }
+.encounter-result-title.victory { color: var(--good); }
+.encounter-result-title.defeat { color: var(--bad); }
+.encounter-result-title.fled { color: var(--dim-text); }
+.encounter-result-title.collected { color: var(--gold-text); }
 
 .encounter-result-rewards {
   margin-top: 15px;
@@ -264,9 +264,9 @@ export function getEncounterStyles() {
   margin-bottom: 0;
 }
 
-.reward-xp { color: #8af; }
-.reward-gold { color: #ffd700; }
-.reward-item-drop { color: #c8f; }
+.reward-xp { color: var(--accent); }
+.reward-gold { color: var(--gold-text); }
+.reward-item-drop { color: var(--accent); }
 
 /* Encounter stats panel */
 .encounter-stats-panel {
@@ -277,7 +277,7 @@ export function getEncounterStyles() {
 
 .encounter-stats-title {
   font-size: 14px;
-  color: #888;
+  color: var(--dim-text);
   text-transform: uppercase;
   margin-bottom: 10px;
 }
@@ -290,11 +290,11 @@ export function getEncounterStyles() {
 }
 
 .encounter-stat-label {
-  color: #888;
+  color: var(--dim-text);
 }
 
 .encounter-stat-value {
-  color: #e8e8e8;
+  color: var(--text);
   font-weight: bold;
 }
 
@@ -310,24 +310,24 @@ export function getEncounterStyles() {
 }
 
 .encounter-rate-label {
-  color: #888;
+  color: var(--dim-text);
 }
 
 .encounter-rate-bar {
   flex: 1;
   height: 6px;
-  background: #333;
+  background: var(--border);
   border-radius: 3px;
   overflow: hidden;
 }
 
 .encounter-rate-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4a8 0%, #fc8 50%, #f66 100%);
+  background: linear-gradient(90deg, var(--good) 0%, var(--gold-text) 50%, var(--bad) 100%);
 }
 
 .encounter-rate-value {
-  color: #e8e8e8;
+  color: #fff;
   min-width: 40px;
   text-align: right;
 }
@@ -423,7 +423,7 @@ function renderEncounterDetails(encounter) {
           <div class="encounter-detail-row">
             <span class="encounter-detail-icon">\uD83D\uDCA5</span>
             <span class="encounter-detail-label">Potential Damage:</span>
-            <span class="encounter-detail-value" style="color: #f66;">${encounter.scaledDamage}</span>
+            <span class="encounter-detail-value" style="color: var(--bad);">${encounter.scaledDamage}</span>
           </div>
         `;
       }
@@ -444,7 +444,7 @@ function renderEncounterDetails(encounter) {
           <div class="encounter-detail-row">
             <span class="encounter-detail-icon">\uD83D\uDCA4</span>
             <span class="encounter-detail-label">Rest Bonus:</span>
-            <span class="encounter-detail-value" style="color: #4a8;">x${encounter.restBonus}</span>
+            <span class="encounter-detail-value" style="color: var(--good);">x${encounter.restBonus}</span>
           </div>
         `;
       }
@@ -590,7 +590,7 @@ export function renderEncounterResult(encounter, rewards = null) {
       rewardItems += `<div class="reward-item reward-item-drop">\uD83C\uDF81 +${rewards.items.length} Item(s)</div>`;
     }
     if (rewards.damage) {
-      rewardItems += `<div class="reward-item" style="color: #f66;">\uD83D\uDCA5 -${rewards.damage} HP</div>`;
+      rewardItems += `<div class="reward-item" style="color: var(--bad);">\uD83D\uDCA5 -${rewards.damage} HP</div>`;
     }
 
     if (rewardItems) {
@@ -670,7 +670,7 @@ export function renderEncounterRateDisplay(state, location) {
  */
 export function renderEncounterList(encounters) {
   if (!encounters || encounters.length === 0) {
-    return '<div style="color: #888; text-align: center;">No encounters found.</div>';
+    return '<div style="color: var(--dim-text); text-align: center;">No encounters found.</div>';
   }
 
   const items = encounters.map(e => `

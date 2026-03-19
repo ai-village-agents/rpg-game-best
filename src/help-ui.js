@@ -6,35 +6,35 @@ export function getHelpStyles() {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.85);
+      background: var(--overlay-bg);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 1000;
     }
     .help-modal {
-      background: #1a1a1a;
-      border: 2px solid #444;
+      background: var(--bg);
+      border: 2px solid var(--border);
       padding: 20px;
       max-width: 600px;
       width: 90%;
       max-height: 90vh;
       overflow-y: auto;
-      color: #eee;
+      color: var(--text);
       font-family: monospace;
-      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      box-shadow: 0 0 20px var(--overlay-bg);
     }
     .help-modal h2 {
       margin-top: 0;
-      border-bottom: 1px solid #444;
+      border-bottom: 1px solid var(--border);
       padding-bottom: 10px;
-      color: #fff;
+      color: var(--text);
     }
     .help-section {
       margin-bottom: 20px;
     }
     .help-section h3 {
-      color: #aaa;
+      color: var(--muted);
       margin-bottom: 8px;
     }
     .key-list {
@@ -43,12 +43,12 @@ export function getHelpStyles() {
       gap: 8px 16px;
     }
     .key-badge {
-      background: #333;
-      border: 1px solid #555;
+      background: var(--border);
+      border: 1px solid var(--dim-text);
       padding: 2px 6px;
       border-radius: 4px;
       font-weight: bold;
-      color: #fff;
+      color: var(--text);
       display: inline-block;
       text-align: center;
       min-width: 20px;
@@ -56,22 +56,22 @@ export function getHelpStyles() {
     .close-help-btn {
       margin-top: 20px;
       padding: 8px 16px;
-      background: #444;
+      background: var(--border);
       color: white;
       border: none;
       cursor: pointer;
       width: 100%;
     }
     .close-help-btn:hover {
-      background: #555;
+      background: var(--dim-text);
     }
     .help-tip {
-      background: #2a2a3a;
-      border-left: 3px solid #6a6aff;
+      background: var(--card);
+      border-left: 3px solid var(--accent);
       padding: 8px 12px;
       margin-top: 15px;
       font-size: 0.9em;
-      color: #aaf;
+      color: var(--accent);
     }
   `;
 }
@@ -116,7 +116,7 @@ export function renderHelpModal() {
             <div><span class="key-badge">Click</span></div>
             <div>Select Actions & Targets</div>
           </div>
-          <p style="color:#888;font-size:0.9em;margin-top:8px;">
+          <p style="color:var(--dim-text);font-size:0.9em;margin-top:8px;">
             Hover over abilities to see damage, MP cost, and effects.
             Use the battle log to track combat events.
           </p>
@@ -124,7 +124,7 @@ export function renderHelpModal() {
 
         <div class="help-section">
           <h3>Game Systems</h3>
-          <p style="color:#ccc;font-size:0.9em;">
+          <p style="color:var(--muted);font-size:0.9em;">
             <b>Shield/Break:</b> Enemies have elemental shields. Hit weaknesses to break shields and deal bonus damage!<br><br>
             <b>Companions:</b> Recruit allies to fight alongside you. Build loyalty through combat and gifts.<br><br>
             <b>Crafting:</b> Combine materials to create powerful equipment and consumables.<br><br>
@@ -134,7 +134,7 @@ export function renderHelpModal() {
 
         <div class="help-section">
           <h3>Tutorial Progress</h3>
-          <p style="color:#ccc;font-size:0.9em;">
+          <p style="color:var(--muted);font-size:0.9em;">
             Track your tutorial progress, view completed steps, and re-enable hints.
           </p>
           <button id="btnViewTutorialProgress" class="close-help-btn">View Tutorial Progress</button>

@@ -16,10 +16,10 @@ import {
 const TIER_COLORS = {
   [ARENA_TIER.BRONZE]: '#cd7f32',
   [ARENA_TIER.SILVER]: '#c0c0c0',
-  [ARENA_TIER.GOLD]: '#ffd700',
+  [ARENA_TIER.GOLD]: 'var(--gold-text)',
   [ARENA_TIER.PLATINUM]: '#e5e4e2',
   [ARENA_TIER.DIAMOND]: '#b9f2ff',
-  [ARENA_TIER.CHAMPION]: '#ff4500'
+  [ARENA_TIER.CHAMPION]: 'var(--bad)'
 };
 
 // Tier icons
@@ -40,7 +40,7 @@ const TIER_ICONS = {
  */
 export function renderArenaPanel(state, options = {}) {
   const stats = getArenaStats(state);
-  const tierColor = TIER_COLORS[stats.tier] || '#ffffff';
+  const tierColor = TIER_COLORS[stats.tier] || 'var(--text)';
   const tierIcon = TIER_ICONS[stats.tier] || '';
 
   const html = `
@@ -145,7 +145,7 @@ function renderQuickMatchButton() {
       <button class="arena-btn arena-btn-primary" data-action="quick-match" title="Fight a random opponent of similar rating to earn Arena Rating">
         ⚔️ Quick Match (Ranked)
       </button>
-      <p class="arena-mode-desc" style="font-size: 0.8em; color: #aaa; text-align: center; margin-top: 5px; font-style: italic;">Fight a random opponent of similar rating.</p>
+      <p class="arena-mode-desc" style="font-size: 0.8em; color: var(--muted); text-align: center; margin-top: 5px; font-style: italic;">Fight a random opponent of similar rating.</p>
     </div>
   `;
 }
@@ -163,7 +163,7 @@ function renderTournamentList(state, playerData) {
   return `
     <div class="tournament-list">
       <h3>🏆 Tournaments</h3>
-      <p class="tournament-desc" style="font-size: 0.85em; color: #bbb; margin-bottom: 15px; font-style: italic;">Enter high-stakes tournaments for massive rewards! Requires specific levels and entry fees.</p>
+      <p class="tournament-desc" style="font-size: 0.85em; color: var(--muted); margin-bottom: 15px; font-style: italic;">Enter high-stakes tournaments for massive rewards! Requires specific levels and entry fees.</p>
       ${tournamentHtml}
     </div>
   `;
@@ -571,7 +571,7 @@ export function renderLeaderboard(leaderboard, playerName) {
   leaderboard.forEach((entry, index) => {
     const isPlayer = entry.name === playerName ? 'is-player' : '';
     const tierIcon = TIER_ICONS[entry.tier] || '';
-    const tierColor = TIER_COLORS[entry.tier] || '#ffffff';
+    const tierColor = TIER_COLORS[entry.tier] || 'var(--text)';
 
     html += `
       <tr class="${isPlayer}">
@@ -627,7 +627,7 @@ export function renderMatchHistory(history) {
  */
 export function renderArenaHud(state) {
   const tierIcon = TIER_ICONS[state.tier] || '';
-  const tierColor = TIER_COLORS[state.tier] || '#ffffff';
+  const tierColor = TIER_COLORS[state.tier] || 'var(--text)';
 
   return `
     <div class="arena-hud">
@@ -669,10 +669,10 @@ export function renderSeasonSummary(seasonStats) {
 export function getArenaStyles() {
   return `
     .arena-panel {
-      background: #1a1a2e;
+      background: var(--card);
       border-radius: 8px;
       padding: 16px;
-      color: #ffffff;
+      color: var(--text);
     }
 
     .arena-header {
@@ -700,11 +700,11 @@ export function getArenaStyles() {
 
     .rating-label {
       display: block;
-      color: #888;
+      color: var(--dim-text);
     }
 
     .tier-progress-bar {
-      background: #333;
+      background: var(--border);
       height: 8px;
       border-radius: 4px;
       overflow: hidden;
@@ -712,7 +712,7 @@ export function getArenaStyles() {
     }
 
     .tier-progress-fill {
-      background: linear-gradient(90deg, #4caf50, #8bc34a);
+      background: linear-gradient(90deg, var(--good), var(--good));
       height: 100%;
       transition: width 0.3s ease;
     }
@@ -721,12 +721,12 @@ export function getArenaStyles() {
       display: flex;
       justify-content: space-between;
       padding: 4px 0;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid var(--border);
     }
 
-    .stat-wins .stat-value { color: #4caf50; }
-    .stat-losses .stat-value { color: #f44336; }
-    .stat-draws .stat-value { color: #ff9800; }
+    .stat-wins .stat-value { color: var(--good); }
+    .stat-losses .stat-value { color: var(--bad); }
+    .stat-draws .stat-value { color: var(--gold-text); }
 
     .arena-btn {
       padding: 8px 16px;
@@ -738,28 +738,28 @@ export function getArenaStyles() {
     }
 
     .arena-btn-primary {
-      background: #4caf50;
+      background: var(--good);
       color: white;
     }
 
     .arena-btn-secondary {
-      background: #2196f3;
+      background: var(--accent);
       color: white;
     }
 
     .arena-btn-danger {
-      background: #f44336;
+      background: var(--bad);
       color: white;
     }
 
     .arena-btn-disabled {
-      background: #666;
-      color: #999;
+      background: var(--border);
+      color: var(--muted);
       cursor: not-allowed;
     }
 
     .tournament-card {
-      background: #252540;
+      background: var(--card);
       border-radius: 8px;
       padding: 12px;
       margin: 8px 0;
@@ -772,19 +772,19 @@ export function getArenaStyles() {
     }
 
     .bracket-match {
-      background: #252540;
+      background: var(--card);
       border-radius: 4px;
       padding: 8px;
       margin: 4px 0;
     }
 
     .match-participant.winner {
-      color: #4caf50;
+      color: var(--good);
       font-weight: bold;
     }
 
     .match-participant.is-player {
-      color: #2196f3;
+      color: var(--accent);
     }
 
     .match-result-popup {
@@ -792,14 +792,14 @@ export function getArenaStyles() {
       padding: 24px;
     }
 
-    .result-win .result-title { color: #4caf50; }
-    .result-loss .result-title { color: #f44336; }
+    .result-win .result-title { color: var(--good); }
+    .result-loss .result-title { color: var(--bad); }
 
-    .rating-up { color: #4caf50; }
-    .rating-down { color: #f44336; }
+    .rating-up { color: var(--good); }
+    .rating-down { color: var(--bad); }
 
     .tier-promotion {
-      background: linear-gradient(45deg, #ffd700, #ff8c00);
+      background: linear-gradient(45deg, var(--gold-text), var(--gold-text));
       padding: 8px 16px;
       border-radius: 8px;
       margin: 8px 0;
@@ -820,13 +820,13 @@ export function getArenaStyles() {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #333;
+      background: var(--border);
       border-radius: 50%;
     }
 
-    .round-won { background: #4caf50; }
-    .round-lost { background: #f44336; }
-    .round-current { background: #2196f3; animation: pulse 1s infinite; }
+    .round-won { background: var(--good); }
+    .round-lost { background: var(--bad); }
+    .round-current { background: var(--accent); animation: pulse 1s infinite; }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; }

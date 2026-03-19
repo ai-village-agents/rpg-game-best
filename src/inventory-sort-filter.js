@@ -228,22 +228,22 @@ export function renderSortFilterControls(currentSort, currentFilter, totalCount,
 
   const filterButtons = Object.entries(FILTER_LABELS)
     .map(([val, label]) => {
-      const active = val === currentFilter ? ' style="background:#4a9eff;color:#fff;border-color:#4a9eff;"' : '';
+      const active = val === currentFilter ? ' style="background:var(--accent);color:var(--text);border-color:var(--accent);"' : '';
       return `<button class="inv-filter-btn" data-filter="${val}"${active}>${label}</button>`;
     })
     .join(' ');
 
   const countText = totalCount !== filteredCount
-    ? `<span style="color:#aaa;font-size:0.85em;margin-left:8px;">Showing ${filteredCount} of ${totalCount}</span>`
-    : `<span style="color:#aaa;font-size:0.85em;margin-left:8px;">${totalCount} items</span>`;
+    ? `<span style="color:var(--muted);font-size:0.85em;margin-left:8px;">Showing ${filteredCount} of ${totalCount}</span>`
+    : `<span style="color:var(--muted);font-size:0.85em;margin-left:8px;">${totalCount} items</span>`;
 
   return `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px;padding:4px 0;">
-    <label style="color:#ccc;font-size:0.9em;">Sort:</label>
-    <select id="invSortSelect" style="background:#1a1a2e;color:#ccc;border:1px solid #444;border-radius:4px;padding:2px 6px;font-size:0.9em;">
+    <label style="color:var(--muted);font-size:0.9em;">Sort:</label>
+    <select id="invSortSelect" style="background:var(--card);color:var(--muted);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:0.9em;">
       ${sortOptions}
     </select>
-    <span style="color:#555;margin:0 4px;">|</span>
-    <label style="color:#ccc;font-size:0.9em;">Filter:</label>
+    <span style="color:var(--dim-text);margin:0 4px;">|</span>
+    <label style="color:var(--muted);font-size:0.9em;">Filter:</label>
     ${filterButtons}
     ${countText}
   </div>`;

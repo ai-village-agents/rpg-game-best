@@ -223,7 +223,7 @@ export function getMinimapStyles() {
 .minimap-cell {
   width: 44px;
   height: 44px;
-  border: 2px solid #444;
+  border: 2px solid var(--border);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -238,20 +238,20 @@ export function getMinimapStyles() {
   overflow: hidden;
 }
 .minimap-cell.current {
-  border-color: #4af;
-  background: #1a3a5c;
+  border-color: var(--accent);
+  background: var(--accent);
 }
 .minimap-cell.current .minimap-player {
   display: block;
 }
 .minimap-cell.visited {
-  border-color: #666;
-  background: #2a2a2a;
+  border-color: var(--dim-text);
+  background: var(--card);
 }
 .minimap-cell.unvisited {
-  border-color: #333;
-  background: #111;
-  color: #444;
+  border-color: var(--border);
+  background: var(--bg);
+  color: var(--border);
 }
 .minimap-cell-abbr {
   font-size: 9px;
@@ -260,13 +260,13 @@ export function getMinimapStyles() {
   color: inherit;
 }
 .minimap-cell.unvisited .minimap-cell-abbr {
-  color: #333;
+  color: var(--border);
 }
 .minimap-cell.visited .minimap-cell-abbr {
-  color: #aaa;
+  color: var(--muted);
 }
 .minimap-cell.current .minimap-cell-abbr {
-  color: #7cf;
+  color: var(--accent);
 }
 .minimap-danger-icon {
   font-size: 11px;
@@ -284,7 +284,7 @@ export function getMinimapStyles() {
 }
 .minimap-legend {
   font-size: 10px;
-  color: #888;
+  color: var(--dim-text);
   margin-top: 4px;
   display: flex;
   gap: 6px;
@@ -301,12 +301,12 @@ export function getMinimapStyles() {
   border-radius: 2px;
   display: inline-block;
 }
-.minimap-legend-dot.current { background: #1a3a5c; border: 1px solid #4af; }
-.minimap-legend-dot.visited { background: #2a2a2a; border: 1px solid #666; }
-.minimap-legend-dot.unvisited { background: #111; border: 1px solid #333; }
+.minimap-legend-dot.current { background: var(--accent); border: 1px solid var(--accent); }
+.minimap-legend-dot.visited { background: var(--card); border: 1px solid var(--dim-text); }
+.minimap-legend-dot.unvisited { background: var(--bg); border: 1px solid var(--border); }
 .minimap-room-info {
   font-size: 11px;
-  color: #ccc;
+  color: var(--muted);
   margin-top: 4px;
 }
 .minimap-room-info .danger-badge {
@@ -368,7 +368,7 @@ export function renderMinimap(worldState, visitedRooms) {
 
   return `
     <div class="card minimap-card">
-      <h2>Minimap <small style="font-size:11px;color:#888;">(${visitedCount}/9)</small></h2>
+      <h2>Minimap <small style="font-size:11px;color:var(--dim-text);">(${visitedCount}/9)</small></h2>
       <div class="minimap-grid">${gridHtml}</div>
       <div class="minimap-room-info">${currentRoomInfo}</div>
       ${legendHtml}

@@ -11,7 +11,7 @@ export function renderTavernDicePanel(state) {
     html += `<p>Pot: <strong>${td.pot}g</strong></p>`;
     html += `<p>Streak: <strong>${td.streak}</strong></p>`;
     if (td.streak >= 3) {
-      html += `<p class="bonus-text" style="color:#ffd700;">Win Streak Bonus Active! (1.5x on cash out)</p>`;
+      html += `<p class="bonus-text" style="color:var(--gold-text);">Win Streak Bonus Active! (1.5x on cash out)</p>`;
     }
     html += `</div>`;
     html += `<div class="buttons tavern-actions" style="margin-top:10px; display:flex; gap:10px;">`;
