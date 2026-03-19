@@ -342,6 +342,26 @@ function renderMapPanel(state, dispatch) {
 
 const RENDER_ROOM_ID_MAP = [['nw', 'n', 'ne'], ['w', 'center', 'e'], ['sw', 's', 'se']];
 
+function getUnlockedFeatures(state) {
+  const player = state.player || {};
+  const level = player.level || 1;
+  const completedQuests = (state.questState?.completedQuests || []).length;
+  const totalBattles = (state.combatStats?.totalBattles || state.statistics?.battlesWon || 0);
+  const roomsVisited = Object.keys(state.visitedRooms || {}).length;
+
+  return {
+    talents: level >= 3,
+    arena: level >= 3 && totalBattles >= 3,
+    factions: level >= 4 || completedQuests >= 2,
+    sporeling: level >= 2,
+    crafting: level >= 2 || roomsVisited >= 3,
+    dailyChallenges: level >= 3,
+    bountyBoard: level >= 2,
+    fastTravel: roomsVisited >= 3,
+    companions: level >= 2 || roomsVisited >= 4,
+    statisticsDashboard: totalBattles >= 1,
+  };
+}
 
 function renderQuestBreadcrumb(state) {
   const questState = state.questState || { activeQuests: [], completedQuests: [], questProgress: {} };
@@ -754,6 +774,7 @@ export function render(state, dispatch) {
       ${renderWorldEventBanner(state.worldEvent || null, state.worldEventDismissed)}
       ${renderAtmospherePanel(state)}
       ${renderAreaScene(state)}
+      ${renderQuestBreadcrumb(state)}
       <div class="row">
         <div class="card">
           <h2>${esc(state.player.name)}</h2>
@@ -792,6 +813,7 @@ export function render(state, dispatch) {
       worldEventDismissBtn.onclick = () => dispatch({ type: 'DISMISS_WORLD_EVENT' });
     }
 
+    const unlocked = getUnlockedFeatures(state);
     actions.innerHTML = `
       <div class="buttons">
         <div class="action-category">
@@ -803,7 +825,7 @@ export function render(state, dispatch) {
             <button id="btnEast"${movementTitle('east')}>East</button>
             <button id="btnSeek">Seek Battle</button>
             ${shouldShowDungeonEntrance(state) ? '<button id="btnEnterDungeon" class="dungeon-enter-btn">Enter Dungeon \u26CF\uFE0F</button>' : ''}
-            <button id="btnFastTravel">🗺️ Fast Travel</button>
+            ${unlocked.fastTravel ? '<button id="btnFastTravel">🗺️ Fast Travel</button>' : ''}
           </div>
         </div>
 
@@ -812,12 +834,12 @@ export function render(state, dispatch) {
           <div class="action-category-buttons">
             <button id="btnInventory">Inventory</button>
             <button id="btnViewStats">Character 👤</button>
-            <button id="btnTalents">Talents ⭐</button>
+            ${unlocked.talents ? '<button id="btnTalents">Talents ⭐</button>' : ''}
             <button id="btnQuests">Quests 📜</button>
             <button id="btnJournal">Journal 📔${renderJournalBadge(state)}</button>
-            <button id="btnCompanions">Companions 🤝${renderCompanionBadge(state)}</button>
+            ${unlocked.companions ? `<button id="btnCompanions">Companions 🤝${renderCompanionBadge(state)}</button>` : ''}
             <button id="btnProvisions">Provisions 🍖</button>
-            <button id="btnStatsDashboard">Statistics 📈</button>
+            ${unlocked.statisticsDashboard ? '<button id="btnStatsDashboard">Statistics 📈</button>' : ''}
           </div>
         </div>
 
@@ -825,12 +847,12 @@ export function render(state, dispatch) {
           <h3>ACTIVITIES</h3>
           <div class="action-category-buttons">
             ${showTavern ? '<button id="btnTavern">Tavern 🍺</button>' : ''}
-            ${showVillageSquareActivities ? '<button id="btnBountyBoard">Bounty Board 📜</button>' : ''}
-            ${showVillageSquareActivities ? '<button id="btnArena">Arena ⚔️</button>' : ''}
-            <button id="btnCrafting">Crafting 🔨</button>
-            <button id="btnDailyChallenges">Daily 📅</button>
-            <button id="btnFactions">Factions 👑</button>
-            <button id="btnSporeling">\uD83E\uDDA0 Sporeling</button>
+            ${showVillageSquareActivities && unlocked.bountyBoard ? '<button id="btnBountyBoard">Bounty Board 📜</button>' : ''}
+            ${showVillageSquareActivities && unlocked.arena ? '<button id="btnArena">Arena ⚔️</button>' : ''}
+            ${unlocked.crafting ? '<button id="btnCrafting">Crafting 🔨</button>' : ''}
+            ${unlocked.dailyChallenges ? '<button id="btnDailyChallenges">Daily 📅</button>' : ''}
+            ${unlocked.factions ? '<button id="btnFactions">Factions 👑</button>' : ''}
+            ${unlocked.sporeling ? '<button id="btnSporeling">\uD83E\uDDA0 Sporeling</button>' : ''}
           </div>
         </div>
 
@@ -857,24 +879,31 @@ export function render(state, dispatch) {
     document.getElementById('btnViewStats').onclick = () => dispatch({ type: 'VIEW_STATS' });
     document.getElementById('btnSaveSlots').onclick = () => dispatch({ type: 'SAVE_SLOTS' });
     document.getElementById('btnSettings').onclick = () => dispatch({ type: 'VIEW_SETTINGS' });
-    document.getElementById('btnCrafting').onclick = () => dispatch({ type: 'VIEW_CRAFTING' });
-    document.getElementById('btnTalents').onclick = () => dispatch({ type: 'VIEW_TALENTS' });
+    const btnCrafting = document.getElementById('btnCrafting');
+    if (btnCrafting) btnCrafting.onclick = () => dispatch({ type: 'VIEW_CRAFTING' });
+    const btnTalents = document.getElementById('btnTalents');
+    if (btnTalents) btnTalents.onclick = () => dispatch({ type: 'VIEW_TALENTS' });
     document.getElementById('btnHelp').onclick = () => dispatch({ type: 'TOGGLE_HELP' });
     const tavernBtn = document.getElementById('btnTavern');
     if (tavernBtn) tavernBtn.onclick = () => dispatch({ type: 'VIEW_TAVERN' });
     const bountyBoardBtn = document.getElementById('btnBountyBoard');
     if (bountyBoardBtn) bountyBoardBtn.onclick = () => dispatch({ type: 'VIEW_BOUNTY_BOARD' });
     document.getElementById('btnJournal').onclick = () => dispatch({ type: 'OPEN_JOURNAL' });
-    document.getElementById('btnFactions').onclick = () => dispatch({ type: 'OPEN_FACTIONS' });
+    const btnFactions = document.getElementById('btnFactions');
+    if (btnFactions) btnFactions.onclick = () => dispatch({ type: 'OPEN_FACTIONS' });
     const arenaBtn = document.getElementById('btnArena');
     if (arenaBtn) arenaBtn.onclick = () => dispatch({ type: 'OPEN_ARENA' });
-    document.getElementById('btnCompanions').onclick = () => dispatch({ type: 'OPEN_COMPANIONS' });
+    const btnCompanions = document.getElementById('btnCompanions');
+    if (btnCompanions) btnCompanions.onclick = () => dispatch({ type: 'OPEN_COMPANIONS' });
     const btnSporeling = document.getElementById('btnSporeling');
     if (btnSporeling) btnSporeling.onclick = () => dispatch({ type: 'OPEN_SPORELING' });
     document.getElementById('btnProvisions').onclick = () => dispatch({ type: 'OPEN_PROVISIONS' });
-    document.getElementById('btnFastTravel').onclick = () => dispatch({ type: 'OPEN_FAST_TRAVEL' });
-    document.getElementById('btnDailyChallenges').onclick = () => dispatch({ type: 'OPEN_DAILY_CHALLENGES' });
-    document.getElementById('btnStatsDashboard').onclick = () => dispatch({ type: 'OPEN_STATISTICS_DASHBOARD' });
+    const btnFastTravel = document.getElementById('btnFastTravel');
+    if (btnFastTravel) btnFastTravel.onclick = () => dispatch({ type: 'OPEN_FAST_TRAVEL' });
+    const btnDailyChallenges = document.getElementById('btnDailyChallenges');
+    if (btnDailyChallenges) btnDailyChallenges.onclick = () => dispatch({ type: 'OPEN_DAILY_CHALLENGES' });
+    const btnStatsDashboard = document.getElementById('btnStatsDashboard');
+    if (btnStatsDashboard) btnStatsDashboard.onclick = () => dispatch({ type: 'OPEN_STATISTICS_DASHBOARD' });
 
     hud.querySelectorAll('.npc-talk-btn').forEach((btn) => {
       btn.onclick = () => dispatch({ type: 'TALK_TO_NPC', npcId: btn.dataset.npcid });

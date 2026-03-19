@@ -890,7 +890,7 @@ describe('Arena Tournament System - UI Rendering', () => {
   it('should render quick match button when option set', () => {
     const state = createArenaState();
     const html = renderArenaPanel(state, { showQuickMatch: true });
-    assert.ok(html.includes('Find Match'));
+    assert.ok(html.includes('Quick Match'));
   });
 
   it('should render tournaments when option set', () => {
