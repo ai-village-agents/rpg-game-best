@@ -18,6 +18,7 @@ import { initAudio } from './audio-system.js';
 import { createTutorialState } from './tutorial.js';
 import { createEncounterState } from './random-encounter-system.js';
 import { triggerAutoSave } from './save-system.js';
+import { recordPlayTime } from './statistics-dashboard.js';
 import {
   createDailyChallengeState,
   initializeDailyChallenges,
@@ -129,6 +130,21 @@ if (IS_BROWSER) {
     transitionedState = applyDailyProgressFromTransition(state, transitionedState, action);
     
     state = transitionedState; window.state = state;
+    // --- Play time tracking ---
+    if (state.player && state._lastTickTime) {
+      const now = Date.now();
+      const elapsed = Math.floor((now - state._lastTickTime) / 1000);
+      if (elapsed > 0 && elapsed < 300) { // cap at 5 minutes to avoid idle inflation
+        const activity = (state.phase === 'player-turn' || state.phase === 'enemy-turn' || state.phase === 'battle-summary') ? 'combat' : 'exploration';
+        state = recordPlayTime(state, elapsed, activity);
+        window.state = state;
+      }
+      state = { ...state, _lastTickTime: now };
+      window.state = state;
+    } else if (state.player && !state._lastTickTime) {
+      state = { ...state, _lastTickTime: Date.now() };
+      window.state = state;
+    }
     // --- Autosave on key transitions ---
     if (state.player) {
       const prevPhase = arguments.length > 0 && typeof next === 'object' ? (next._prevPhase || '') : '';

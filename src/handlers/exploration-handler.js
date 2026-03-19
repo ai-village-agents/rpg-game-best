@@ -13,6 +13,7 @@ import { createNPCRelationshipManager, ReputationEvent, RelationshipLevel } from
 import { removeItemFromInventory } from '../items.js';
 import { getExplorationQuest } from '../data/exploration-quests.js';
 import { processQuestCompletionWithBonus, generateQuestCompletionMessages } from '../quest-relationship-bridge.js';
+import { recordRoomVisited as recordDashboardRoomVisited } from '../statistics-dashboard.js';
 import {
   tryTriggerWorldEvent,
   tickWorldEvent,
@@ -189,6 +190,10 @@ export function handleExplorationAction(state, action) {
     if (result.transitioned) {
       next = pushLog(next, `You travel ${direction} and arrive at ${roomName}.`);
       next = logLocationDiscovery(next, roomName);
+      // Track room visit for statistics dashboard
+      const visitedRoomId = getRoomId(result.worldState);
+      const isFirstVisitForStats = !(state.visitedRooms || []).some(r => r.row === result.worldState.roomRow && r.col === result.worldState.roomCol);
+      next = recordDashboardRoomVisited(next, visitedRoomId, isFirstVisitForStats);
     } else {
       const exitPreview = getExitPreview(result.worldState, direction, state.worldData);
       const moveMsg = exitPreview.available && exitPreview.roomName
