@@ -623,7 +623,7 @@ export function handleUIAction(state, action) {
     const result = craftItem(state, action.recipeId);
     return {
       ...state,
-      craftingUI: { ...state.craftingUI, lastMessage: result.message },
+      craftingUI: { ...state.craftingUI, lastMessage: { success: result.success, text: result.message } },
     };
   }
 

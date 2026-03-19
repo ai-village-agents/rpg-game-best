@@ -1981,6 +1981,8 @@ if (state.phase === 'achievements') {
 
   if (state.phase === 'shop' && state.shopState) {
     const shopHtml = renderShopPanel(state.shopState, state.player, state.worldEvent || null);
+    const existingShopContent = hud.querySelector('.shop-items');
+    const shopScrollTop = existingShopContent ? existingShopContent.scrollTop : null;
 
     hud.innerHTML = shopHtml;
 
@@ -1992,6 +1994,10 @@ if (state.phase === 'achievements') {
 
     attachShopHandlers(hud, dispatch);
     document.getElementById('btnCloseShop').onclick = () => dispatch({ type: 'CLOSE_SHOP' });
+    const newShopContent = hud.querySelector('.shop-items');
+    if (newShopContent && shopScrollTop !== null) {
+      newShopContent.scrollTop = shopScrollTop;
+    }
 
     log.innerHTML = state.log
       .slice()
@@ -2028,8 +2034,8 @@ if (state.phase === 'achievements') {
       <div class="buttons">
         ${(currentLine && !isLastLine) ? `<button id="btnDialogNext">Next ▶</button>` : ''}
         ${npcHasShop ? `<button id="btnViewShop">🛒 View Shop</button>` : ''}
-        ${isInnKeeper ? '<button id="btnInnRest">🛏️ Rest (20g)</button>' : ''}
-        ${isInnKeeper ? '<button id="btnInnFood">🍲 Food (10g)</button>' : ''}
+        ${isInnKeeper ? '<button id="btnInnRest">🛏️ Rest — Full HP & MP (20g)</button>' : ''}
+        ${isInnKeeper ? '<button id="btnInnFood">🍲 Food — Restore 25 HP (10g)</button>' : ''}
         ${isInnKeeper ? '<button id="btnInnRumors">🗣️ Rumors</button>' : ''}
         <button id="btnDialogClose">Farewell</button>
       </div>

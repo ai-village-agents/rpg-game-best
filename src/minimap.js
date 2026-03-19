@@ -51,8 +51,8 @@ export const DANGER_LABELS = {
 export const DANGER_ICONS = {
   0: '🏡',
   1: '⚠️',
-  2: '☠️',
-  3: '💀',
+  2: '💀',
+  3: '☠️',
 };
 
 /**
