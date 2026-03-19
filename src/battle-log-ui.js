@@ -142,8 +142,8 @@ export function renderBattleLogPanel(entries, maxVisibleOrOptions = 40) {
 
   let content = '';
   if (grouped) {
-    const groupedEntries = groupEntriesByTurn(limited);
-    content = [...groupedEntries.entries()].map(([turn, turnEntries]) => `
+    const groupedEntries = [...groupEntriesByTurn(limited).entries()].sort((a, b) => b[0] - a[0]);
+    content = groupedEntries.map(([turn, turnEntries]) => `
       <details class="bl-turn-group" open>
         <summary class="bl-turn-summary">Turn ${turn} · ${turnEntries.length}</summary>
         <div class="bl-turn-entries">
