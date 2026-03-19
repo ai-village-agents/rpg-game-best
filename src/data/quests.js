@@ -327,14 +327,14 @@ export const QUESTS = {
       },
       {
         id: 'search_road',
-        name: 'Search the North Road',
-        description: 'Explore the north road where the merchant was last seen.',
+        name: 'Search the Northern Path',
+        description: 'Explore the Northern Path where the merchant was last seen.',
         objectives: [
           {
             id: 'explore_north_road',
             type: 'EXPLORE',
-            description: 'Search the north road',
-            locationId: 'north_road',
+            description: 'Search the Northern Path',
+            locationId: 'n',
             required: true
           }
         ],
@@ -343,12 +343,12 @@ export const QUESTS = {
       {
         id: 'defeat_wolves',
         name: 'Defeat the Wolves',
-        description: 'Wolves have been prowling the road. Defeat them to find the merchant.',
+        description: 'Wolves have been prowling the path. Defeat them to find the merchant.',
         objectives: [
           {
             id: 'kill_wolves',
             type: 'KILL',
-            description: 'Defeat wolves on the north road',
+            description: 'Defeat wolves along the Northern Path',
             enemyType: 'wolf',
             count: 2,
             current: 0,

@@ -21,7 +21,7 @@ const ROOM_NPCS = {
       id: 'scout_patrol',
       name: 'Scout Patrol',
       greeting:
-        'Halt! Identify yourself... Oh, a traveler. Proceed, but be wary — wolves were spotted to the north.',
+        'Halt! Identify yourself... Oh, a traveler. Proceed, but be wary — wolves have been prowling these roads after dark.',
       dialog: ['scout_1'],
     },
   ],
@@ -178,7 +178,7 @@ const RELATIONSHIP_GREETINGS = {
     [RelationshipLevel.UNFRIENDLY]:
       'A scout eyes you warily. "State your name and move along."',
     [RelationshipLevel.NEUTRAL]:
-      'Halt! Identify yourself... Oh, a traveler. Proceed, but be wary — wolves were spotted to the north.',
+      'Halt! Identify yourself... Oh, a traveler. Proceed, but be wary — wolves have been prowling these roads after dark.',
     [RelationshipLevel.FRIENDLY]:
       'The scouts nod with respect. "Good to see you again. The road is safer with you around."',
     [RelationshipLevel.ALLIED]:
