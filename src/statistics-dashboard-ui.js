@@ -305,6 +305,8 @@ export function renderItemsSection(items) {
         ${renderStatItem('Total Found', items.totalFound)}
         ${renderStatItem('Total Crafted', items.totalCrafted)}
         ${renderStatItem('Consumables Used', items.consumablesUsed)}
+        ${renderStatItem('Potions Used', items.potionsUsed)}
+        ${renderStatItem('Food Consumed', items.foodConsumed)}
         ${renderStatItem('Legendary Items', items.legendaryItemsFound, 'highlight')}
         ${renderStatItem('Rare Items', items.rareItemsFound, 'neutral')}
       </div>

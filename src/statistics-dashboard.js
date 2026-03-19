@@ -584,6 +584,8 @@ export function getStatisticsSummary(state) {
       totalFound: stats.items.totalFound,
       totalCrafted: stats.items.totalCrafted,
       consumablesUsed: stats.items.consumablesUsed,
+      potionsUsed: stats.items.potionsUsed,
+      foodConsumed: stats.items.foodConsumed,
       legendaryItemsFound: stats.items.legendaryItemsFound,
       rareItemsFound: stats.items.rareItemsFound
     },
