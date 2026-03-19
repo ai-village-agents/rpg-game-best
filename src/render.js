@@ -647,7 +647,7 @@ export function render(state, dispatch) {
     if (state.tutorialState && state.tutorialState.hintsEnabled) {
       let triggerEvent = null;
       if (state.phase === 'class-select' && !state.tutorialState.completedSteps.includes('welcome')) triggerEvent = 'class-select';
-      else if (state.phase === 'exploration' && !state.tutorialState.completedSteps.includes('exploration-basics')) triggerEvent = 'first-exploration';
+      else if (state.phase === 'exploration' && state.narrativeIntroSeen && !state.tutorialState.completedSteps.includes('exploration-basics')) triggerEvent = 'first-exploration';
       else if ((state.phase === 'player-turn' || state.phase === 'enemy-turn') && !state.tutorialState.completedSteps.includes('combat-intro')) triggerEvent = 'first-combat';
       else if (state.phase === 'inventory' && !state.tutorialState.completedSteps.includes('inventory-intro')) triggerEvent = 'first-inventory';
       else if (state.phase === 'shop' && !state.tutorialState.completedSteps.includes('shop-intro')) triggerEvent = 'first-shop';
