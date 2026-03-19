@@ -29,7 +29,7 @@ import {
   processCompanionDefeatPenalty,
   autoReviveCompanionsAfterCombat,
 } from './companion-combat.js';
-import { getEnemyShieldData, checkWeakness, applyShieldDamage, processBreakState, BREAK_DAMAGE_MULTIPLIER } from './shield-break.js';
+import { getEnemyShieldData, checkWeakness, applyShieldDamage, processBreakState, BREAK_DAMAGE_MULTIPLIER, ELEMENT_ICONS } from './shield-break.js';
 import { initCombatBattleLog, logPlayerAttack, logPlayerAbility, logDamageDealt, logDamageReceived, logHealing, logItemUsed, logStatusApplied, logStatusExpired, logTurnStart, logTurnEnd, logVictory, logDefeat } from './combat-battle-log-integration.js';
 import { applyDifficultyToEnemyHp, applyDifficultyToEnemyDamage, applyDifficultyToXpReward, applyDifficultyToGoldReward, DEFAULT_DIFFICULTY } from './difficulty.js';
 import { ACTION_TYPES, calculateMomentumGain, addMomentum, consumeOverdrive, applyMomentumDecay, getOverdriveAbility, calculateOverdriveDamage, canUseOverdrive, createMomentumState } from './momentum.js';
@@ -398,6 +398,20 @@ export function startNewEncounter(state, zoneLevel = 1) {
   next = { ...next, currentEnemyId: enemyId, bestiary: recordEncounter(next.bestiary || { encountered: [], defeatedCounts: {} }, enemyId) };
 
   next = pushLog(next, `${enemy.displayName ?? enemy.name} appears!`);
+  const enemyWeaknesses = enemy.weaknesses ?? [];
+  if (enemyWeaknesses.length > 0) {
+    const weaknessList = enemyWeaknesses
+      .map((type) => {
+        const icon = ELEMENT_ICONS[type] || '';
+        return icon ? `${icon} ${type}` : type;
+      })
+      .join(', ');
+    next = pushLog(next, `Weakness spotted: ${weaknessList}! Use elemental attacks for bonus damage.`);
+  } else {
+    next = pushLog(next, 'This foe has no obvious weaknesses. Use varied tactics!');
+  }
+  const enemyAffinity = enemy.element ?? 'unknown';
+  next = pushLog(next, `Enemy affinity: ${enemyAffinity}`);
   initCombatBattleLog();
   next = pushLog(next, `Your turn.`);
   return next;
@@ -456,6 +470,9 @@ export function playerAttack(state) {
 
   state = pushLog(state, `You strike for ${damage} damage.`);
   logPlayerAttack(damage, (state.enemy.displayName ?? state.enemy.name));
+  if ((state.enemy.weaknesses ?? []).length > 0 && !(state.enemy.weaknesses ?? []).includes('physical') && (state.turn ?? 0) % 3 === 0) {
+    state = pushLog(state, 'Tip: Try using elemental abilities to exploit enemy weaknesses!');
+  }
   if (state.comboState) {
     state = { ...state, comboState: registerHit(state.comboState, state.turn ?? 0, damage) };
   }
@@ -490,11 +507,15 @@ export function playerDefend(state) {
     state = pushLog(state, `You are ${reason} and cannot act!`);
     return { ...state, phase: 'enemy-turn' };
   }
+  state = pushLog(state, `You brace for impact.`);
+  const currentMp = state.player.mp ?? 0;
+  const maxMp = state.player.maxMp ?? 0;
+  const newMp = maxMp > 0 ? clamp(currentMp + 2, 0, maxMp) : currentMp;
   state = {
     ...state,
-    player: { ...state.player, defending: true },
+    player: { ...state.player, defending: true, mp: newMp },
   };
-  state = pushLog(state, `You brace for impact.`);
+  state = pushLog(state, `Defending restores 2 MP. (MP: ${newMp}/${maxMp})`);
   if (state.comboState) {
     state = { ...state, comboState: resetCombo(state.comboState) };
   }

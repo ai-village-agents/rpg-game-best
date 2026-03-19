@@ -12,7 +12,7 @@ import { xpToNextLevel, XP_THRESHOLDS } from './characters/stats.js';
 import { formatAbilityName } from './specialization-ui.js';
 import { getNPCsInRoom, getCurrentDialogLine, getDialogProgress, isLastDialogLine } from './npc-dialog.js';
 import { getActiveQuestsSummary, getCompletedQuestsSummary, getAvailableQuestsInRoom } from './quest-integration.js';
-import { getAbilityDisplayInfo } from './combat/abilities.js';
+import { getAbility, getAbilityDisplayInfo } from './combat/abilities.js';
 import { items as itemsData } from './data/items.js';
 import { getRarityMeta } from './ui/rarity-util.js';
 import { renderStatusEffectsRow, getStatusEffectStyles } from './status-effect-ui.js';
@@ -37,6 +37,7 @@ import { renderSporelingEvolutionPanel, getSporelingEvolutionStyles } from './sp
 import { renderDungeonPanel, renderDungeonActions, attachDungeonHandlers, getDungeonStyles, shouldShowDungeonEntrance } from './dungeon-ui.js';
 import { renderProvisionsPanel, renderProvisionBuffs, attachProvisionsHandlers, getProvisionsStyles } from './provisions-ui.js';
 import { renderShieldBreakHUD } from './shield-break-ui.js';
+import { ELEMENT_ICONS } from './shield-break.js';
 import { renderCombatStatsHtml } from './battle-summary.js';
 import { formatLogEntryHtml, getLogStyles } from './combat-log-formatter.js';
 import { triggerFloatingTextFromLog, getFloatingTextStyles } from './floating-text.js';
@@ -833,6 +834,14 @@ export function render(state, dispatch) {
   // --- Combat Phases (player-turn, enemy-turn) ---
   if (state.phase === 'player-turn' || state.phase === 'enemy-turn') {
     const provisionBuffBar = renderProvisionBuffs(state);
+    const enemyWeaknesses = state.enemy?.weaknesses ?? [];
+    const weaknessLine = enemyWeaknesses.length > 0
+      ? `<div style="grid-column: 1 / -1"><div style="margin-top:4px;font-size:0.9em;color:#ffcc00;">⚠️ Weak to: ${enemyWeaknesses.map((type) => {
+        const icon = ELEMENT_ICONS[type] || '';
+        const label = esc(type);
+        return `<span style="margin-right:8px;">${icon ? icon + ' ' : ''}${label}</span>`;
+      }).join('')}</div></div>`
+      : '';
     hud.innerHTML = `
       <div class="row">
         <div class="card">
@@ -862,6 +871,7 @@ export function render(state, dispatch) {
             <div>ATK / DEF</div><div><b>${state.enemy.atk}</b> / <b>${state.enemy.def}</b></div>
             <div>Defending</div><div><b>${state.enemy.defending ? 'Yes' : 'No'}</b></div>
             ${renderStatusEffectsRow(state.enemy.statusEffects ?? [])}
+            ${weaknessLine}
             ${state.enemy?.maxShields > 0 ? `<div style="grid-column: 1 / -1">${renderShieldBreakHUD(state.enemy)}</div>` : ''}
             ${state.intentState ? renderEnemyIntent(state.intentState) : ''}
           </div>
@@ -886,9 +896,15 @@ export function render(state, dispatch) {
     // Build ability buttons
     const playerAbilities = state.player.abilities ?? [];
     const abilityInfos = getAbilityDisplayInfo(playerAbilities, state.player.mp ?? 0);
-    const abilityBtns = abilityInfos.map(a =>
-      `<button class="ability-btn" data-ability="${esc(a.id)}" ${(!isPlayerTurn || !a.canUse) ? 'disabled' : ''} title="${esc(a.description)}">${esc(a.name)} (${a.mpCost} MP)</button>`
-    ).join('');
+    const abilityBtns = abilityInfos.map(a => {
+      const ability = getAbility(a.id);
+      const element = ability?.element;
+      const icon = element ? (ELEMENT_ICONS[element] || '') : '';
+      const isEffective = element && enemyWeaknesses.includes(element);
+      const effectiveBadge = isEffective ? ' <span style="color:#ffd700;font-weight:bold;">⚡EFFECTIVE</span>' : '';
+      const style = isEffective ? 'style="border:2px solid #d4af37;"' : '';
+      return `<button class="ability-btn" data-ability="${esc(a.id)}" ${(!isPlayerTurn || !a.canUse) ? 'disabled' : ''} title="${esc(a.description)}" ${style}>${icon ? icon + ' ' : ''}${esc(a.name)} (${a.mpCost} MP)${effectiveBadge}</button>`;
+    }).join('');
 
     // Build combat item buttons from real inventory consumables
     const playerInv = state.player.inventory || {};

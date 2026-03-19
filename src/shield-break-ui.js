@@ -54,13 +54,11 @@ export function renderShieldBreakHUD(enemy) {
   if (!enemy) return '';
 
   const shields = renderShieldDisplay(enemy);
-  const weaknesses = renderWeaknessIcons(enemy.weaknesses || []);
   const breakState = renderBreakState(enemy);
 
   return (
     `<div class="shield-break-hud">` +
     `${shields}` +
-    `${weaknesses}` +
     `${breakState}` +
     `</div>`
   );
