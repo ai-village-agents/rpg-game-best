@@ -66,6 +66,7 @@ import { renderStatsDashboardPhase, renderStatsDashboardActions, attachStatsDash
 import { renderEncounterPopup, getEncounterStyles } from './random-encounter-system-ui.js';
 import { renderDefeatScreen, renderDefeatActions, getDefeatScreenStyles } from './defeat-screen-ui.js';
 import { loadFromSlot } from './engine.js';
+import { canAccessTavern } from './tavern-access.js';
 let _victoryAnimStartTime = 0;
 
 /** Track previous log for floating text diff */
@@ -683,6 +684,7 @@ export function render(state, dispatch) {
 
   // --- Exploration Phase ---
   if (state.phase === 'exploration') {
+    const showTavern = canAccessTavern(state);
     const exitPreviews = getExitPreviews(state.world, state.worldData);
     const movementTitle = (direction) => {
       const destination = exitPreviews[direction]?.roomName;
@@ -769,7 +771,7 @@ export function render(state, dispatch) {
         <div class="action-category">
           <h3>ACTIVITIES</h3>
           <div class="action-category-buttons">
-            <button id="btnTavern">Tavern 🍺</button>
+            ${showTavern ? '<button id="btnTavern">Tavern 🍺</button>' : ''}
             <button id="btnBountyBoard">Bounty Board 📜</button>
             <button id="btnArena">Arena ⚔️</button>
             <button id="btnCrafting">Crafting 🔨</button>
@@ -805,7 +807,8 @@ export function render(state, dispatch) {
     document.getElementById('btnCrafting').onclick = () => dispatch({ type: 'VIEW_CRAFTING' });
     document.getElementById('btnTalents').onclick = () => dispatch({ type: 'VIEW_TALENTS' });
     document.getElementById('btnHelp').onclick = () => dispatch({ type: 'TOGGLE_HELP' });
-    document.getElementById('btnTavern').onclick = () => dispatch({ type: 'VIEW_TAVERN' });
+    const tavernBtn = document.getElementById('btnTavern');
+    if (tavernBtn) tavernBtn.onclick = () => dispatch({ type: 'VIEW_TAVERN' });
     document.getElementById('btnBountyBoard').onclick = () => dispatch({ type: 'VIEW_BOUNTY_BOARD' });
     document.getElementById('btnJournal').onclick = () => dispatch({ type: 'OPEN_JOURNAL' });
     document.getElementById('btnFactions').onclick = () => dispatch({ type: 'OPEN_FACTIONS' });

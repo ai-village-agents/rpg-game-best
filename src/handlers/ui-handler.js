@@ -36,6 +36,7 @@ import { createComboState } from '../combo-system.js';
 import { initIntentState } from '../enemy-intent.js';
 import { initCombatBattleLog } from '../combat-battle-log-integration.js';
 import { dismissSporeling } from '../sporeling-integration.js';
+import { canAccessTavern } from '../tavern-access.js';
 import {
   recordEnemyDefeated as recordDashboardEnemyDefeated,
   recordGoldEarned as recordDashboardGoldEarned,
@@ -1046,7 +1047,7 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'VIEW_TAVERN') {
-    if (isPreAdventure) return null;
+    if (isPreAdventure || !canAccessTavern(state)) return null;
     return { ...state, phase: 'tavern-dice', previousPhase: state.phase };
   }
   if (type === 'CLOSE_TAVERN') {
