@@ -13,40 +13,40 @@ import { recipes as allRecipes } from './data/recipes.js';
 export function getCraftingStyles() {
   return `
     .crafting-panel {
-      background: #1a1a2e;
-      border: 2px solid #e94560;
+      background: var(--panel);
+      border: 2px solid var(--accent);
       border-radius: 8px;
       padding: 16px;
       max-width: 600px;
       margin: 0 auto;
-      color: #eee;
+      color: var(--text);
       font-family: monospace;
     }
     .crafting-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid var(--border);
       padding-bottom: 8px;
       margin-bottom: 12px;
     }
     .crafting-header h2 {
       margin: 0;
-      color: #e94560;
+      color: var(--accent);
       font-size: 1.3em;
     }
     .crafting-close-btn {
-      background: #333;
-      color: #e94560;
-      border: 1px solid #e94560;
+      background: var(--border);
+      color: var(--accent);
+      border: 1px solid var(--accent);
       border-radius: 4px;
       padding: 4px 12px;
       cursor: pointer;
       font-family: monospace;
     }
     .crafting-close-btn:hover {
-      background: #e94560;
-      color: #fff;
+      background: var(--accent);
+      color: var(--tab-active-text, #fff);
     }
     .crafting-tabs {
       display: flex;
@@ -54,25 +54,25 @@ export function getCraftingStyles() {
       margin-bottom: 12px;
     }
     .crafting-tab {
-      background: #16213e;
-      border: 1px solid #555;
+      background: var(--card);
+      border: 1px solid var(--border-light);
       border-radius: 4px 4px 0 0;
       padding: 6px 14px;
       cursor: pointer;
-      color: #aaa;
+      color: var(--count-text);
       font-family: monospace;
       font-size: 0.9em;
     }
     .crafting-tab.active {
-      background: #0f3460;
-      color: #e94560;
-      border-color: #e94560;
+      background: color-mix(in srgb, var(--card) 70%, var(--accent) 30%);
+      color: var(--accent);
+      border-color: var(--accent);
       border-bottom: none;
     }
     .crafting-recipe-list {
       max-height: 250px;
       overflow-y: auto;
-      border: 1px solid #333;
+      border: 1px solid var(--border);
       border-radius: 4px;
       margin-bottom: 12px;
     }
@@ -81,41 +81,41 @@ export function getCraftingStyles() {
       justify-content: space-between;
       align-items: center;
       padding: 8px 12px;
-      border-bottom: 1px solid #222;
+      border-bottom: 1px solid var(--border);
       cursor: pointer;
       transition: background 0.15s;
     }
     .crafting-recipe-item:hover {
-      background: #16213e;
+      background: var(--card);
     }
     .crafting-recipe-item.selected {
-      background: #0f3460;
-      border-left: 3px solid #e94560;
+      background: color-mix(in srgb, var(--card) 70%, var(--accent) 30%);
+      border-left: 3px solid var(--accent);
     }
     .crafting-recipe-item.cannot-craft {
       opacity: 0.6;
     }
     .crafting-recipe-name {
       font-weight: bold;
-      color: #eee;
+      color: var(--text);
     }
     .crafting-recipe-level {
-      color: #888;
+      color: var(--dim-text);
       font-size: 0.85em;
     }
     .crafting-detail {
-      background: #16213e;
-      border: 1px solid #333;
+      background: var(--card);
+      border: 1px solid var(--border);
       border-radius: 4px;
       padding: 12px;
       margin-bottom: 12px;
     }
     .crafting-detail h3 {
       margin: 0 0 6px 0;
-      color: #e94560;
+      color: var(--accent);
     }
     .crafting-detail-desc {
-      color: #aaa;
+      color: var(--count-text);
       margin-bottom: 8px;
       font-style: italic;
     }
@@ -129,18 +129,18 @@ export function getCraftingStyles() {
       font-size: 0.95em;
     }
     .crafting-ingredients li.have {
-      color: #4ade80;
+      color: var(--good);
     }
     .crafting-ingredients li.missing {
-      color: #f87171;
+      color: var(--bad);
     }
     .crafting-result {
-      color: #38bdf8;
+      color: var(--stat-text);
       margin-bottom: 8px;
     }
     .crafting-craft-btn {
-      background: #e94560;
-      color: #fff;
+      background: var(--accent);
+      color: var(--tab-active-text, #fff);
       border: none;
       border-radius: 4px;
       padding: 8px 24px;
@@ -150,16 +150,16 @@ export function getCraftingStyles() {
       font-weight: bold;
     }
     .crafting-craft-btn:disabled {
-      background: #555;
-      color: #888;
+      background: var(--border-light);
+      color: var(--dim-text);
       cursor: not-allowed;
     }
     .crafting-craft-btn:not(:disabled):hover {
-      background: #c73a52;
+      background: color-mix(in srgb, var(--accent) 80%, var(--panel) 20%);
     }
     .crafting-empty {
       text-align: center;
-      color: #888;
+      color: var(--dim-text);
       padding: 24px;
     }
     .crafting-message {
@@ -170,12 +170,12 @@ export function getCraftingStyles() {
       font-weight: bold;
     }
     .crafting-message.success {
-      background: #064e3b;
-      color: #4ade80;
+      background: var(--success-bg);
+      color: var(--good);
     }
     .crafting-message.error {
-      background: #4a0000;
-      color: #f87171;
+      background: color-mix(in srgb, var(--panel) 70%, var(--bad) 30%);
+      color: var(--bad);
     }
   `;
 }
@@ -258,7 +258,7 @@ export function renderCraftingPanel(state, uiState = {}) {
         <div><strong>Ingredients:</strong></div>
         <ul class="crafting-ingredients">${ingredientsHtml}</ul>
         <div class="crafting-result">Produces: ${resultName} x${resultQty}</div>
-        ${!levelOk ? `<div style="color:#f87171;">Requires level ${recipe.requiredLevel}</div>` : ''}
+        ${!levelOk ? `<div style="color:var(--bad);">Requires level ${recipe.requiredLevel}</div>` : ''}
         <button class="crafting-craft-btn"${disabledAttr} data-action="CRAFT_ITEM" data-recipe-id="${recipe.id}">Craft</button>
       </div>`;
     }

@@ -502,3 +502,338 @@ textarea:focus {
 .dark-theme .dungeon-map-floor--cleared {
   background: rgba(72, 187, 120, 0.15);
 }
+
+/* ─── Theme-Aware Utility Classes (for JS-generated HTML) ─── */
+.text-good   { color: var(--good); }
+.text-bad    { color: var(--bad); }
+.text-accent { color: var(--accent); }
+.text-muted  { color: var(--muted); }
+.text-gold   { color: var(--gold-text); }
+.text-dim    { color: var(--dim-text); }
+.text-desc   { color: var(--desc-text); }
+.text-stat   { color: var(--stat-text); }
+.text-count  { color: var(--count-text); }
+.text-main   { color: var(--text); }
+
+.bg-panel    { background: var(--panel); }
+.bg-card     { background: var(--card); }
+.bg-overlay  { background: var(--overlay-bg); }
+.bg-subtle   { background: var(--subtle-bg); }
+.bg-success  { background: var(--success-bg); color: var(--success-text); }
+.bg-input    { background: var(--input-bg); }
+
+.border-main { border-color: var(--border); }
+.border-light{ border-color: var(--border-light); }
+.border-accent{ border-color: var(--accent); }
+
+/* Quest breadcrumb theme-aware backgrounds */
+.quest-breadcrumb-available { border-left: 3px solid var(--gold-text); background: color-mix(in srgb, var(--panel) 85%, var(--gold-text) 15%); }
+.quest-breadcrumb-starter   { border-left: 3px solid var(--accent); background: color-mix(in srgb, var(--panel) 85%, var(--accent) 15%); }
+.quest-breadcrumb-active    { border-left: 3px solid var(--good); background: color-mix(in srgb, var(--panel) 85%, var(--good) 15%); }
+
+/* Specialization card theme */
+.spec-card {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--panel) 70%, #a335ee 30%), color-mix(in srgb, var(--panel) 85%, #a335ee 15%));
+  border: 2px solid #a335ee;
+  color: var(--text);
+}
+.spec-choice-card {
+  border: 2px solid var(--border-light);
+  cursor: pointer;
+}
+.spec-choice-card:hover {
+  border-color: var(--gold-text);
+}
+
+/* Combat weakness badge */
+.badge-effective { color: var(--gold-text); font-weight: bold; }
+.border-effective { border: 2px solid var(--gold-text); }
+
+/* Break state display */
+.break-state-display { color: var(--bad); font-weight: bold; font-size: 0.9em; padding: 2px 6px; border: 1px solid var(--bad); border-radius: 3px; }
+
+/* Stat bonus display */
+.stat-bonus { color: var(--good); }
+.stat-penalty { color: var(--bad); }
+.stat-neutral { color: var(--count-text); }
+
+/* Save slots overlay theme */
+.save-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--overlay-bg);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+}
+.save-container {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 480px;
+  width: 90%;
+  color: var(--text);
+}
+.save-title {
+  font-size: 1.3em;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.save-slot {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.save-slot:hover {
+  border-color: var(--accent);
+}
+.save-slot-empty {
+  color: var(--dim-text);
+  font-style: italic;
+}
+.save-slot-name {
+  font-weight: bold;
+  color: var(--text);
+}
+.save-slot-info {
+  font-size: 0.85em;
+  color: var(--muted);
+}
+.save-slot-date {
+  font-size: 0.8em;
+  color: var(--dim-text);
+}
+.save-btn {
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  font-size: 0.85em;
+}
+.save-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.save-btn-danger {
+  background: var(--bad);
+  color: #fff;
+  border-color: var(--bad);
+}
+.save-btn-cancel {
+  background: var(--card);
+  color: var(--text);
+  border-color: var(--border-light);
+}
+
+/* Crafting UI theme */
+.craft-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--overlay-bg);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+}
+.craft-container {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: var(--text);
+}
+.craft-title {
+  font-size: 1.3em;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.craft-recipe {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+.craft-recipe:hover {
+  border-color: var(--accent);
+}
+.craft-recipe-name {
+  font-weight: bold;
+  color: var(--text);
+}
+.craft-recipe-desc {
+  font-size: 0.85em;
+  color: var(--desc-text);
+}
+.craft-ingredient {
+  font-size: 0.85em;
+}
+.craft-ingredient-have {
+  color: var(--good);
+}
+.craft-ingredient-need {
+  color: var(--bad);
+}
+.craft-btn {
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+.craft-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Settings UI theme */
+.settings-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--overlay-bg);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+}
+.settings-container {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  color: var(--text);
+}
+.settings-title {
+  font-size: 1.3em;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.settings-section {
+  margin-bottom: 16px;
+}
+.settings-label {
+  color: var(--muted);
+  font-size: 0.9em;
+  margin-bottom: 4px;
+}
+.settings-select, .settings-input {
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  padding: 6px 10px;
+}
+
+/* Statistics dashboard theme */
+.stats-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--overlay-bg);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+}
+.stats-container {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 700px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: var(--text);
+}
+.stats-title {
+  font-size: 1.3em;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.stats-section-title {
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  margin: 12px 0 8px;
+}
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--subtle-border);
+}
+.stats-label {
+  color: var(--muted);
+}
+.stats-value {
+  color: var(--text);
+  font-weight: bold;
+}
+
+/* Quest tracker HUD theme */
+.quest-hud {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  color: var(--text);
+}
+.quest-hud-title {
+  color: var(--accent);
+  font-weight: bold;
+}
+.quest-hud-objective {
+  font-size: 0.9em;
+  color: var(--muted);
+}
+.quest-hud-complete {
+  color: var(--good);
+}
+
+/* Floating text theme - use inherited colors where possible */
+.float-text-damage { color: var(--bad); }
+.float-text-heal   { color: var(--good); }
+.float-text-gold   { color: var(--gold-text); }
+.float-text-xp     { color: var(--accent); }
+.float-text-info   { color: var(--text); }
+
+/* Sporeling evolution theme */
+.sporeling-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--overlay-bg);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+}
+.sporeling-container {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+  color: var(--text);
+}
+.sporeling-title {
+  color: var(--accent);
+  font-size: 1.2em;
+  margin-bottom: 12px;
+}
+.sporeling-stat {
+  color: var(--stat-text);
+}
+.sporeling-btn {
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  background: var(--card);
+  color: var(--text);
+}
+.sporeling-btn:hover {
+  border-color: var(--accent);
+}
+
+/* Specialization card hover state (applied via JS) */
+.spec-choice-card-hover {
+  border-color: var(--gold-text) !important;
+}

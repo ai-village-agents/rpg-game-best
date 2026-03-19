@@ -226,7 +226,7 @@ function formatStatWithBonus(baseValue, bonusValue, finalValue) {
     return `<b>${finalValue}</b>`;
   }
   const sign = bonusValue > 0 ? '+' : '';
-  return `<b>${baseValue}</b> <span style="color:#4f4;">${sign}${bonusValue}</span> = <b>${finalValue}</b>`;
+  return `<b>${baseValue}</b> <span style="color:var(--good);">${sign}${bonusValue}</span> = <b>${finalValue}</b>`;
 }
 
 function renderEquipmentSummaryRows(player) {
@@ -373,16 +373,16 @@ function renderQuestBreadcrumb(state) {
     const roomId = state.world?.roomId || 'center';
     const availableQuests = getAvailableQuestsInRoom(questState, roomId, state);
     if (availableQuests.length > 0) {
-      return `<div class="card quest-breadcrumb" style="border-left:3px solid #f0ad4e;background:#2a2518;">
-        <h3 style="margin:0 0 4px 0;font-size:13px;color:#f0ad4e;">📋 Quests Available Here!</h3>
-        <div style="font-size:12px;color:#ccc;">Talk to NPCs or press <b>Quests 📜</b> to see ${availableQuests.length} available quest${availableQuests.length > 1 ? 's' : ''}.</div>
+      return `<div class="card quest-breadcrumb" style="border-left:3px solid var(--gold-text);background:color-mix(in srgb, var(--panel) 85%, var(--gold-text) 15%);">
+        <h3 style="margin:0 0 4px 0;font-size:13px;color:var(--gold-text);">📋 Quests Available Here!</h3>
+        <div style="font-size:12px;color:var(--tab-text);">Talk to NPCs or press <b>Quests 📜</b> to see ${availableQuests.length} available quest${availableQuests.length > 1 ? 's' : ''}.</div>
       </div>`;
     }
     // If no quests anywhere, hint to talk to Village Elder
     if (questState.completedQuests.length === 0) {
-      return `<div class="card quest-breadcrumb" style="border-left:3px solid #5bc0de;background:#1a2530;">
-        <h3 style="margin:0 0 4px 0;font-size:13px;color:#5bc0de;">💡 Getting Started</h3>
-        <div style="font-size:12px;color:#ccc;">Visit the <b>Village Square</b> and talk to the <b>Village Elder</b> to begin your adventure. Press <b>Quests 📜</b> to see available quests.</div>
+      return `<div class="card quest-breadcrumb" style="border-left:3px solid var(--accent);background:color-mix(in srgb, var(--panel) 85%, var(--accent) 15%);">
+        <h3 style="margin:0 0 4px 0;font-size:13px;color:var(--accent);">💡 Getting Started</h3>
+        <div style="font-size:12px;color:var(--tab-text);">Visit the <b>Village Square</b> and talk to the <b>Village Elder</b> to begin your adventure. Press <b>Quests 📜</b> to see available quests.</div>
       </div>`;
     }
     return '';
@@ -407,16 +407,16 @@ function renderQuestBreadcrumb(state) {
         : rawProgress === true ? target : 0;
       const done = current >= target;
       const progressText = target > 1 ? ` (${current}/${target})` : '';
-      return `<div style="font-size:11px;color:${done ? '#5cb85c' : '#eee'};">${done ? '✅' : '⬜'} ${objective.description || objective.id}${progressText}</div>`;
+      return `<div style="font-size:11px;color:${done ? 'var(--good)' : 'var(--text)'};">${done ? '✅' : '⬜'} ${objective.description || objective.id}${progressText}</div>`;
     }).join('');
     objectiveHtml = items;
   }
   
-  const moreQuests = activeQuests.length > 1 ? ` <span style="color:#888;font-size:11px;">+${activeQuests.length - 1} more</span>` : '';
+  const moreQuests = activeQuests.length > 1 ? ` <span style="color:var(--dim-text);font-size:11px;">+${activeQuests.length - 1} more</span>` : '';
   
-  return `<div class="card quest-breadcrumb" style="border-left:3px solid #5cb85c;background:#1a2a1a;">
-    <h3 style="margin:0 0 4px 0;font-size:13px;color:#5cb85c;">🎯 ${quest.questName}${moreQuests}</h3>
-    <div style="font-size:12px;color:#ccc;margin-bottom:2px;">Stage ${stageProgress}/${quest.totalStages}: <b>${stageName}</b></div>
+  return `<div class="card quest-breadcrumb" style="border-left:3px solid var(--good);background:color-mix(in srgb, var(--panel) 85%, var(--good) 15%);">
+    <h3 style="margin:0 0 4px 0;font-size:13px;color:var(--good);">🎯 ${quest.questName}${moreQuests}</h3>
+    <div style="font-size:12px;color:var(--tab-text);margin-bottom:2px;">Stage ${stageProgress}/${quest.totalStages}: <b>${stageName}</b></div>
     ${objectiveHtml}
   </div>`;
 }
@@ -501,7 +501,7 @@ export function render(state, dispatch) {
       .shield-break-hud { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 4px 0; }
       .shield-display { font-size: 1.1em; letter-spacing: 2px; }
       .weakness-icon { font-size: 1em; }
-      .break-state-display { color: #ff4444; font-weight: bold; font-size: 0.9em; padding: 2px 6px; border: 1px solid #ff4444; border-radius: 3px; }
+      .break-state-display { color: var(--bad); font-weight: bold; font-size: 0.9em; padding: 2px 6px; border: 1px solid var(--bad); border-radius: 3px; }
       .break-active { background: rgba(255,68,68,0.15); }
     `;
     document.head.appendChild(styleEl);
@@ -522,10 +522,10 @@ export function render(state, dispatch) {
         pointer-events: none;
       }
       .achievement-toast {
-        background: linear-gradient(135deg, #2a1a4e, #1a0a3e);
+        background: linear-gradient(135deg, color-mix(in srgb, var(--panel) 70%, #a335ee 30%), color-mix(in srgb, var(--panel) 85%, #a335ee 15%));
         border: 2px solid #a335ee;
         border-radius: 8px;
-        color: #e0c8ff;
+        color: var(--text);
         font-size: 14px;
         padding: 12px 18px;
         min-width: 280px;
@@ -948,7 +948,7 @@ export function render(state, dispatch) {
     const provisionBuffBar = renderProvisionBuffs(state);
     const enemyWeaknesses = state.enemy?.weaknesses ?? [];
     const weaknessLine = enemyWeaknesses.length > 0
-      ? `<div style="grid-column: 1 / -1"><div style="margin-top:4px;font-size:0.9em;color:#ffcc00;">⚠️ Weak to: ${enemyWeaknesses.map((type) => {
+      ? `<div style="grid-column: 1 / -1"><div style="margin-top:4px;font-size:0.9em;color:var(--gold-text);">⚠️ Weak to: ${enemyWeaknesses.map((type) => {
         const icon = ELEMENT_ICONS[type] || '';
         const label = esc(type);
         return `<span style="margin-right:8px;">${icon ? icon + ' ' : ''}${label}</span>`;
@@ -963,8 +963,8 @@ export function render(state, dispatch) {
             <div>ATK / DEF</div><div><b>${(() => {
               const eqStats = getEffectiveCombatStats(state.player);
               const eqBon = getEquipmentBonusDisplay(state.player);
-              const atkStr = eqBon.attack ? eqStats.atk + ' <span style="color:#4f4">(+' + eqBon.attack + ')</span>' : '' + state.player.atk;
-              const defStr = eqBon.defense ? eqStats.def + ' <span style="color:#4f4">(+' + eqBon.defense + ')</span>' : '' + state.player.def;
+              const atkStr = eqBon.attack ? eqStats.atk + ' <span style="color:var(--good)">(+' + eqBon.attack + ')</span>' : '' + state.player.atk;
+              const defStr = eqBon.defense ? eqStats.def + ' <span style="color:var(--good)">(+' + eqBon.defense + ')</span>' : '' + state.player.def;
               return atkStr + ' / ' + defStr;
             })()}</b></div>
             <div>Defending</div><div><b>${state.player.defending ? 'Yes' : 'No'}</b></div>
@@ -1013,8 +1013,8 @@ export function render(state, dispatch) {
       const element = ability?.element;
       const icon = element ? (ELEMENT_ICONS[element] || '') : '';
       const isEffective = element && enemyWeaknesses.includes(element);
-      const effectiveBadge = isEffective ? ' <span style="color:#ffd700;font-weight:bold;">⚡EFFECTIVE</span>' : '';
-      const style = isEffective ? 'style="border:2px solid #d4af37;"' : '';
+      const effectiveBadge = isEffective ? ' <span style="color:var(--gold-text);font-weight:bold;">⚡EFFECTIVE</span>' : '';
+      const style = isEffective ? 'style="border:2px solid var(--gold-text);"' : '';
       return `<button class="ability-btn" data-ability="${esc(a.id)}" ${(!isPlayerTurn || !a.canUse) ? 'disabled' : ''} title="${esc(a.description)}" ${style}>${icon ? icon + ' ' : ''}${esc(a.name)} (${a.mpCost} MP)${effectiveBadge}</button>`;
     }).join('');
 
@@ -1085,7 +1085,7 @@ export function render(state, dispatch) {
 
     const choiceCards = choices.map((choice, idx) => {
       const statLines = choice.statBonuses.map(sb => {
-        const color = sb.value > 0 ? '#4f4' : '#f44';
+        const color = sb.value > 0 ? 'var(--good)' : 'var(--bad)';
         return '<div style="color:' + color + ';">' + esc(sb.formatted) + '</div>';
       }).join('');
       const abilityLines = choice.abilities.map(a =>
@@ -1095,9 +1095,9 @@ export function render(state, dispatch) {
         ? '<div style="margin-top:6px;"><b>\u2728 ' + esc(choice.passive.name) + '</b></div>'
           + '<div style="font-size:0.85em;opacity:0.8;">' + esc(choice.passive.description) + '</div>'
         : '';
-      return '<div class="card" style="flex:1;min-width:220px;cursor:pointer;border:2px solid #555;" '
+      return '<div class="card" style="flex:1;min-width:220px;cursor:pointer;border:2px solid var(--border-light);" '
         + 'id="specChoice' + idx + '">'
-        + '<h3 style="color:#ffd700;">' + esc(choice.name) + '</h3>'
+        + '<h3 style="color:var(--gold-text);">' + esc(choice.name) + '</h3>'
         + '<div style="font-size:0.9em;opacity:0.85;margin-bottom:8px;">' + esc(choice.description) + '</div>'
         + '<div style="margin-bottom:6px;"><b>Stat Bonuses:</b></div>' + statLines
         + '<div style="margin-top:6px;margin-bottom:6px;"><b>New Abilities:</b></div>' + abilityLines
@@ -1107,7 +1107,7 @@ export function render(state, dispatch) {
 
     hud.innerHTML = '<div class="row">'
       + '<div class="card" style="width:100%;text-align:center;">'
-      + '<h2 style="color:#ffd700;">\u2B50 Specialization Unlocked!</h2>'
+      + '<h2 style="color:var(--gold-text);">\u2B50 Specialization Unlocked!</h2>'
       + '<div>' + playerName + ' the ' + esc(className) + ' has reached Level 5!</div>'
       + '<div style="margin-top:4px;">Choose your path wisely — this choice is permanent.</div>'
       + '</div></div>'
@@ -1119,8 +1119,8 @@ export function render(state, dispatch) {
     choices.forEach((choice, idx) => {
       const el = document.getElementById('specChoice' + idx);
       if (el) {
-        el.onmouseenter = () => { el.style.borderColor = '#ffd700'; };
-        el.onmouseleave = () => { el.style.borderColor = '#555'; };
+        el.onmouseenter = () => { el.classList.add('spec-choice-card-hover'); };
+        el.onmouseleave = () => { el.classList.remove('spec-choice-card-hover'); };
         el.onclick = () => dispatch({ type: 'CHOOSE_SPECIALIZATION', specId: choice.id, specName: choice.name });
       }
     });
@@ -1721,7 +1721,7 @@ if (state.phase === 'achievements') {
       const statTags = detail && detail.stats
         ? Object.entries(detail.stats)
             .filter(([, v]) => typeof v === 'number' && v !== 0)
-            .map(([k, v]) => `<span style="color:#4f4;font-size:0.85em;margin-left:4px;">${v > 0 ? '+' : ''}${v} ${esc(k.toUpperCase())}</span>`)
+            .map(([k, v]) => `<span style="color:var(--good);font-size:0.85em;margin-left:4px;">${v > 0 ? '+' : ''}${v} ${esc(k.toUpperCase())}</span>`)
             .join('')
         : '';
       const unequipBtn = itemId ? `<button class="inv-btn" data-action="unequip" data-slot="${esc(slot)}">Unequip</button>` : '';
@@ -1739,7 +1739,7 @@ if (state.phase === 'achievements') {
     const bonusSummaryRows = hasBonuses
       ? Object.entries(eqBonuses)
           .filter(([, v]) => v !== 0)
-          .map(([stat, v]) => `<div>${esc(stat.charAt(0).toUpperCase() + stat.slice(1))}</div><div style="color:#4f4;"><b>${v > 0 ? '+' : ''}${v}</b></div>`)
+          .map(([stat, v]) => `<div>${esc(stat.charAt(0).toUpperCase() + stat.slice(1))}</div><div style="color:var(--good);"><b>${v > 0 ? '+' : ''}${v}</b></div>`)
           .join('')
       : '<div><i>No bonuses</i></div><div></div>';
 
@@ -1764,12 +1764,12 @@ if (state.phase === 'achievements') {
               .filter(c => c.diff !== 0)
               .map(c => {
                 const sign = c.diff > 0 ? '+' : '';
-                const color = c.diff > 0 ? '#4f4' : '#f44';
+                const color = c.diff > 0 ? 'var(--good)' : 'var(--bad)';
                 const arrow = c.diff > 0 ? '\u2191' : '\u2193';
                 const label = c.stat.charAt(0).toUpperCase() + c.stat.slice(1);
                 return `<span style="color:${color};font-size:0.8em;margin-left:4px;" title="${label}: ${c.current} → ${c.candidate}">${sign}${c.diff} ${label} ${arrow}</span>`;
               }).join(' ');
-            comparisonHtml = deltas || '<span style="color:#aaa;font-size:0.8em;margin-left:4px;">= same stats</span>';
+            comparisonHtml = deltas || '<span style="color:var(--count-text);font-size:0.8em;margin-left:4px;">= same stats</span>';
           }
         }
         const detBtn = `<button class="inv-btn" data-action="details" data-item="${esc(id)}">Info</button>`;
@@ -1790,7 +1790,7 @@ if (state.phase === 'achievements') {
         const nameStyle = 'color: ' + rarityColor + ';' + (isBold ? ' font-weight: bold;' : '');
         const badgeStyle = 'color: ' + rarityColor + '; font-size: 0.8em; opacity: 0.85; margin-left: 4px;';
         const rarityTag = rarityBadge ? ` <span style="${badgeStyle}">${esc(rarityBadge)}</span>` : '';
-        return `<div>${rarityEmoji} <span style="${nameStyle}">${esc(name)}</span> <small style="color:#aaa;">(${esc(type)})</small>${rarityTag}</div><div><b>${count}</b> ${useBtn}${eqBtn}${detBtn}${comparisonHtml}</div>`;
+        return `<div>${rarityEmoji} <span style="${nameStyle}">${esc(name)}</span> <small style="color:var(--count-text);">(${esc(type)})</small>${rarityTag}</div><div><b>${count}</b> ${useBtn}${eqBtn}${detBtn}${comparisonHtml}</div>`;
       }).join('') + '</div>';
 
     // Item details screen
@@ -1801,13 +1801,13 @@ if (state.phase === 'achievements') {
         const rarityColor = getRarityMeta(detail?.rarity).color;
         const rarityLabel = detail.rarity
           ? `<span style="color:${rarityColor}; font-weight:700;">${esc(detail.rarity)}</span>`
-          : '<span style="color:#aaa;">Unknown</span>';
+          : '<span style="color:var(--count-text);">Unknown</span>';
         const statsHtml = Object.entries(detail.stats || {}).map(([k, v]) => `<div>${esc(k)}</div><div><b>${v > 0 ? '+' : ''}${v}</b></div>`).join('');
         const effectHtml = Object.entries(detail.effect || {}).map(([k, v]) => `<div>${esc(k)}</div><div><b>${v}</b></div>`).join('');
         detailsHtml = `
           <div class="card">
             <h2>${esc(detail.name)}</h2>
-            <div style="color:#aaa; font-size:0.9em; margin-bottom:6px;">Type: <b>${esc(detail.type || 'Unknown')}</b> · Rarity: ${rarityLabel}</div>
+            <div style="color:var(--count-text); font-size:0.9em; margin-bottom:6px;">Type: <b>${esc(detail.type || 'Unknown')}</b> · Rarity: ${rarityLabel}</div>
             <div>${esc(detail.description || '')}</div>
             <div class="kv">
               <div>Category</div><div>${esc(detail.type || 'Unknown')}</div>
@@ -1823,14 +1823,14 @@ if (state.phase === 'achievements') {
           const vsName = detailComp.currentItemName ? esc(detailComp.currentItemName) : '<i>nothing</i>';
           const compRows = detailComp.comparisons.map(c => {
             const sign = c.diff > 0 ? '+' : '';
-            const color = c.diff > 0 ? '#4f4' : c.diff < 0 ? '#f44' : '#aaa';
+            const color = c.diff > 0 ? 'var(--good)' : c.diff < 0 ? 'var(--bad)' : 'var(--count-text)';
             const arrow = c.diff > 0 ? ' \u2191' : c.diff < 0 ? ' \u2193' : '';
             const label = c.stat.charAt(0).toUpperCase() + c.stat.slice(1);
             return `<div>${esc(label)}</div><div style="color:${color};"><b>${sign}${c.diff}${arrow}</b> <small>(${c.current} → ${c.candidate})</small></div>`;
           }).join('');
           detailsHtml += `
             <div class="card" style="margin-top:8px;">
-              <h3 style="color:#ccc;">Compared to: ${vsName} <small style="color:#888;">(${esc(detailComp.slot)})</small></h3>
+              <h3 style="color:var(--tab-text);">Compared to: ${vsName} <small style="color:var(--dim-text);">(${esc(detailComp.slot)})</small></h3>
               <div class="kv">${compRows}</div>
             </div>
           `;
@@ -1860,7 +1860,7 @@ if (state.phase === 'achievements') {
         <div class="card">
           <h2>Equipment</h2>
           <div class="kv">${eqRows}</div>
-          ${hasBonuses ? `<h3 style="margin-top:8px;color:#aaa;">Total Bonuses</h3><div class="kv">${bonusSummaryRows}</div>` : ''}
+          ${hasBonuses ? `<h3 style="margin-top:8px;color:var(--count-text);">Total Bonuses</h3><div class="kv">${bonusSummaryRows}</div>` : ''}
         </div>
         <div class="card">
           <h2>Equipment Sets <button id="toggleSetsBtn" style="float:right;font-size:0.8em;">Show/Hide</button></h2>
@@ -1871,9 +1871,9 @@ if (state.phase === 'achievements') {
           <div class="kv">
             <div>HP</div><div><b>${hpLine(player)}</b></div>
             <div>MP</div><div><b>${player?.mp ?? 0}/${player?.maxMp ?? 0}</b></div>
-            <div>ATK</div><div><b>${baseAtk}</b>${eqBonuses.attack ? ` <span style="color:#4f4;">+${eqBonuses.attack}</span> = <b>${effectiveStats.atk}</b>` : ''}</div>
-            <div>DEF</div><div><b>${baseDef}</b>${eqBonuses.defense ? ` <span style="color:#4f4;">+${eqBonuses.defense}</span> = <b>${effectiveStats.def}</b>` : ''}</div>
-            <div>SPD</div><div><b>${baseSpd}</b>${eqBonuses.speed ? ` <span style="color:#4f4;">+${eqBonuses.speed}</span> = <b>${effectiveStats.spd}</b>` : ''}</div>
+            <div>ATK</div><div><b>${baseAtk}</b>${eqBonuses.attack ? ` <span style="color:var(--good);">+${eqBonuses.attack}</span> = <b>${effectiveStats.atk}</b>` : ''}</div>
+            <div>DEF</div><div><b>${baseDef}</b>${eqBonuses.defense ? ` <span style="color:var(--good);">+${eqBonuses.defense}</span> = <b>${effectiveStats.def}</b>` : ''}</div>
+            <div>SPD</div><div><b>${baseSpd}</b>${eqBonuses.speed ? ` <span style="color:var(--good);">+${eqBonuses.speed}</span> = <b>${effectiveStats.spd}</b>` : ''}</div>
             <div>Gold</div><div><b>${player?.gold ?? 0}</b></div>
           </div>
         </div>
@@ -2014,10 +2014,10 @@ if (state.phase === 'achievements') {
     hud.innerHTML = `
       <div class="card">
         <h2>💬 ${esc(ds.npcName)}</h2>
-        <div class="dialog-greeting" style="color:#aaa;font-style:italic;margin-bottom:8px;">${esc(ds.greeting)}</div>
+        <div class="dialog-greeting" style="color:var(--count-text);font-style:italic;margin-bottom:8px;">${esc(ds.greeting)}</div>
         ${currentLine
           ? `<div class="dialog-line" style="font-size:1.1em;margin-bottom:12px;">${esc(currentLine)} ${progressText}</div>`
-          : `<div class="dialog-line" style="color:#aaa;font-style:italic;">... (End of conversation)</div>`
+          : `<div class="dialog-line" style="color:var(--count-text);font-style:italic;">... (End of conversation)</div>`
         }
       </div>
     `;

@@ -45,7 +45,7 @@ export function renderSlotCard(slot, mode) {
     return `<div class="save-slot-card" data-slot-index="${idx}">
       <div class="slot-header">Slot ${idx + 1}</div>
       <div class="slot-info">
-        <div class="slot-name">${name} <span class="slot-meta" style="color:#aaa; font-size:0.85em; font-weight:normal;">(Lv ${slot.level || 1} ${escHtml(slot.class || 'Adventurer')})</span></div>
+        <div class="slot-name">${name} <span class="slot-meta text-count" style="font-size:0.85em; font-weight:normal;">(Lv ${slot.level || 1} ${escHtml(slot.class || 'Adventurer')})</span></div>
         <div class="slot-detail">${escHtml(slot.location || 'Unknown Location')}</div>
         <div class="slot-detail">Turn ${turn} &bull; ${escHtml(date)}</div>
       </div>
@@ -112,15 +112,15 @@ export function getSaveSlotsStyles() {
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
+      background: var(--overlay-bg);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 1000;
     }
     .save-slots-panel {
-      background: #1a1a2e;
-      border: 2px solid #e94560;
+      background: var(--panel);
+      border: 2px solid var(--accent);
       border-radius: 8px;
       padding: 16px;
       max-height: 80vh;
@@ -136,7 +136,7 @@ export function getSaveSlotsStyles() {
     }
     .save-slots-header h2 {
       margin: 0;
-      color: #e94560;
+      color: var(--accent);
       font-size: 1.3em;
     }
     .save-slots-tabs {
@@ -145,17 +145,17 @@ export function getSaveSlotsStyles() {
     }
     .tab-btn {
       padding: 4px 12px;
-      border: 1px solid #555;
-      background: #16213e;
-      color: #ccc;
+      border: 1px solid var(--border-light);
+      background: var(--card);
+      color: var(--tab-text);
       cursor: pointer;
       border-radius: 4px;
       font-size: 0.85em;
     }
     .tab-btn.active-tab {
-      background: #e94560;
-      color: #fff;
-      border-color: #e94560;
+      background: var(--accent);
+      color: var(--tab-active-text);
+      border-color: var(--accent);
     }
     .save-slots-list {
       display: flex;
@@ -163,8 +163,8 @@ export function getSaveSlotsStyles() {
       gap: 8px;
     }
     .save-slot-card {
-      background: #16213e;
-      border: 1px solid #333;
+      background: var(--card);
+      border: 1px solid var(--border);
       border-radius: 6px;
       padding: 10px 12px;
       display: flex;
@@ -176,7 +176,7 @@ export function getSaveSlotsStyles() {
     }
     .slot-header {
       font-weight: bold;
-      color: #e94560;
+      color: var(--accent);
       min-width: 50px;
     }
     .slot-info {
@@ -184,11 +184,11 @@ export function getSaveSlotsStyles() {
     }
     .slot-name {
       font-weight: bold;
-      color: #eee;
+      color: var(--text);
     }
     .slot-detail {
       font-size: 0.85em;
-      color: #999;
+      color: var(--desc-text);
     }
     .slot-actions {
       display: flex;
@@ -196,27 +196,27 @@ export function getSaveSlotsStyles() {
     }
     .slot-actions button {
       padding: 4px 10px;
-      border: 1px solid #555;
-      background: #0f3460;
-      color: #ccc;
+      border: 1px solid var(--border-light);
+      background: var(--card);
+      color: var(--tab-text);
       cursor: pointer;
       border-radius: 4px;
       font-size: 0.8em;
     }
     .slot-actions button:hover:not(:disabled) {
-      background: #e94560;
-      color: #fff;
+      background: var(--accent);
+      color: var(--tab-active-text);
     }
     .slot-actions button:disabled {
       opacity: 0.4;
       cursor: not-allowed;
     }
     .btn-delete-slot {
-      background: #3a0a0a !important;
-      border-color: #800 !important;
+      background: color-mix(in srgb, var(--panel) 80%, var(--bad) 20%) !important;
+      border-color: var(--bad) !important;
     }
     .btn-delete-slot:hover {
-      background: #a00 !important;
+      background: var(--bad) !important;
     }
     .save-slots-footer {
       margin-top: 12px;
@@ -224,15 +224,15 @@ export function getSaveSlotsStyles() {
     }
     .save-slots-footer button {
       padding: 6px 20px;
-      background: #16213e;
-      color: #ccc;
-      border: 1px solid #555;
+      background: var(--card);
+      color: var(--tab-text);
+      border: 1px solid var(--border-light);
       border-radius: 4px;
       cursor: pointer;
     }
     .save-slots-footer button:hover {
-      background: #e94560;
-      color: #fff;
+      background: var(--accent);
+      color: var(--tab-active-text);
     }
   `;
 }

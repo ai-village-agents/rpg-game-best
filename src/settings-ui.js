@@ -163,14 +163,14 @@ export function getSettingsStyles() {
     }
     .settings-panel h2 {
       margin: 0 0 16px 0;
-      border-bottom: 2px solid #555;
+      border-bottom: 2px solid var(--border-light);
       padding-bottom: 8px;
     }
     .settings-section-header {
       font-weight: bold;
       margin: 16px 0 8px 0;
       font-size: 1.1em;
-      color: #aaa;
+      color: var(--count-text);
     }
     .settings-section-header:first-of-type {
       margin-top: 0;
@@ -180,11 +180,11 @@ export function getSettingsStyles() {
       align-items: center;
       justify-content: space-between;
       padding: 8px 0;
-      border-bottom: 1px dotted #333;
+      border-bottom: 1px dotted var(--border);
     }
     .setting-row label {
       flex: 1;
-      color: #ccc;
+      color: var(--tab-text);
     }
     .setting-slider {
       width: 120px;
@@ -194,7 +194,7 @@ export function getSettingsStyles() {
       width: 40px;
       text-align: right;
       font-family: monospace;
-      color: #fff;
+      color: var(--tab-active-text, #fff);
     }
     .setting-checkbox {
       width: 20px;
@@ -215,19 +215,19 @@ export function getSettingsStyles() {
     .settings-actions {
       margin-top: 16px;
       padding-top: 16px;
-      border-top: 1px solid #555;
+      border-top: 1px solid var(--border-light);
       text-align: center;
     }
     .settings-actions button.secondary {
-      background: #444;
-      color: #ccc;
+      background: var(--input-border);
+      color: var(--tab-text);
     }
     .settings-actions button.secondary:hover {
-      background: #555;
+      background: var(--border-light);
     }
     #btnCloseSettings {
-      background: #3a7bd5;
-      color: #fff;
+      background: var(--accent);
+      color: var(--tab-active-text, #fff);
       border: none;
       padding: 8px 20px;
       border-radius: 4px;
@@ -236,7 +236,7 @@ export function getSettingsStyles() {
       margin-right: 8px;
     }
     #btnCloseSettings:hover {
-      background: #2a5fb5;
+      background: color-mix(in srgb, var(--accent) 80%, var(--panel) 20%);
     }
     input[type="range"]:disabled {
       opacity: 0.5;

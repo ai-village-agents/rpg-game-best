@@ -164,14 +164,14 @@ export function getQuestTrackerStyles() {
       top: 10px;
       right: 10px;
       background: rgba(20, 20, 30, 0.95);
-      border: 2px solid #4a9eff;
+      border: 2px solid var(--accent);
       border-radius: 8px;
       padding: 8px 12px;
       min-width: 200px;
       max-width: 280px;
       font-family: 'Press Start 2P', monospace;
       font-size: 10px;
-      color: #e0e0e0;
+      color: var(--text);
       z-index: 1000;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
@@ -183,7 +183,7 @@ export function getQuestTrackerStyles() {
     }
     
     .quest-tracker-minimized:hover {
-      border-color: #6ab8ff;
+      border-color: color-mix(in srgb, var(--accent) 70%, var(--text) 30%);
       background: rgba(30, 30, 40, 0.95);
     }
     
@@ -203,7 +203,7 @@ export function getQuestTrackerStyles() {
     }
     
     .tracker-title {
-      color: #4a9eff;
+      color: var(--accent);
       font-weight: bold;
       white-space: nowrap;
       overflow: hidden;
@@ -217,9 +217,9 @@ export function getQuestTrackerStyles() {
     
     .tracker-btn {
       background: rgba(74, 158, 255, 0.2);
-      border: 1px solid #4a9eff;
+      border: 1px solid var(--accent);
       border-radius: 4px;
-      color: #4a9eff;
+      color: var(--accent);
       width: 20px;
       height: 20px;
       cursor: pointer;
@@ -235,13 +235,13 @@ export function getQuestTrackerStyles() {
     }
     
     .tracker-hint {
-      color: #888;
+      color: var(--dim-text);
       font-size: 8px;
       font-style: italic;
     }
     
     .tracker-stage {
-      color: #aaa;
+      color: var(--count-text);
       font-size: 8px;
       margin-bottom: 6px;
     }
@@ -261,7 +261,7 @@ export function getQuestTrackerStyles() {
     }
     
     .objective-progress {
-      color: #4a9eff;
+      color: var(--accent);
       margin-left: 8px;
       white-space: nowrap;
     }
@@ -275,7 +275,7 @@ export function getQuestTrackerStyles() {
     
     .tracker-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #4a9eff, #6ab8ff);
+      background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 70%, var(--text) 30%));
       border-radius: 2px;
       transition: width 0.3s ease;
     }

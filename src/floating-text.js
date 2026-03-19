@@ -194,26 +194,26 @@ export function getFloatingTextStyles() {
       white-space: nowrap;
     }
     .floating-text--damage {
-      color: #ff4444;
+      color: var(--bad);
     }
     .floating-text--critical {
-      color: #ff0000;
+      color: var(--bad);
       font-size: 1.8rem;
       text-shadow: 0 0 6px rgba(255,0,0,0.7), 0 0 12px rgba(255,0,0,0.4);
     }
     .floating-text--heal {
-      color: #44ff44;
+      color: var(--good);
     }
     .floating-text--miss {
-      color: #999999;
+      color: var(--dim-text);
       font-style: italic;
       font-size: 1.2rem;
     }
     .floating-text--status {
-      color: #cc66ff;
+      color: var(--accent);
     }
     .floating-text--shield {
-      color: #ffcc00;
+      color: var(--gold-text);
       font-size: 1.6rem;
       text-shadow: 0 0 6px rgba(255,204,0,0.7), 0 0 12px rgba(255,204,0,0.4);
     }

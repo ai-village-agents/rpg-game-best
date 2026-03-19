@@ -60,11 +60,11 @@ const renderEvolutionBar = (current, needed, percent) => {
 
 const renderTraitBadge = (trait) => {
   const categoryColors = {
-    offense: '#e74c3c',
-    defense: '#3498db',
-    utility: '#9b59b6',
+    offense: 'var(--bad)',
+    defense: 'var(--stat-text)',
+    utility: 'var(--accent)',
   };
-  const color = categoryColors[trait.category] || '#7f8c8d';
+  const color = categoryColors[trait.category] || 'var(--dim-text)';
   return `
     <div class="sporeling-trait-badge" style="border-color: ${color}">
       <span class="trait-name">${escapeHtml(trait.name)}</span>
@@ -75,11 +75,11 @@ const renderTraitBadge = (trait) => {
 
 const renderTraitOption = (trait) => {
   const categoryColors = {
-    offense: '#e74c3c',
-    defense: '#3498db',
-    utility: '#9b59b6',
+    offense: 'var(--bad)',
+    defense: 'var(--stat-text)',
+    utility: 'var(--accent)',
   };
-  const color = categoryColors[trait.category] || '#7f8c8d';
+  const color = categoryColors[trait.category] || 'var(--dim-text)';
   return `
     <div class="sporeling-trait-option" data-trait-id="${escapeHtml(trait.id)}" style="border-left: 3px solid ${color}">
       <div class="trait-header">
@@ -196,11 +196,11 @@ export function renderSporelingEvolutionPanel(state) {
 export function getSporelingEvolutionStyles() {
   return `
     .sporeling-evolution-panel {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      background: linear-gradient(135deg, var(--panel) 0%, var(--card) 100%);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       padding: 16px;
-      color: #e0e0e0;
+      color: var(--text);
       font-family: system-ui, sans-serif;
     }
 
@@ -216,7 +216,7 @@ export function getSporelingEvolutionStyles() {
     .sporeling-panel-header h3 {
       margin: 0;
       font-size: 18px;
-      color: #9b59b6;
+      color: var(--accent);
     }
 
     .sporeling-stage {
@@ -285,11 +285,11 @@ export function getSporelingEvolutionStyles() {
     }
 
     .sporeling-bar-hp .sporeling-bar-fill {
-      background: linear-gradient(90deg, #27ae60, #2ecc71);
+      background: linear-gradient(90deg, var(--good), var(--good));
     }
 
     .sporeling-bar-evolution .sporeling-bar-fill {
-      background: linear-gradient(90deg, #8e44ad, #9b59b6);
+      background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 80%, var(--panel) 20%), var(--accent));
     }
 
     .sporeling-bar-label {
@@ -319,7 +319,7 @@ export function getSporelingEvolutionStyles() {
     .sporeling-traits h4 {
       margin: 12px 0 8px;
       font-size: 14px;
-      color: #bdc3c7;
+      color: var(--muted);
     }
 
     .sporeling-trait-badges {
@@ -337,7 +337,7 @@ export function getSporelingEvolutionStyles() {
     }
 
     .no-traits {
-      color: #7f8c8d;
+      color: var(--dim-text);
       font-style: italic;
       font-size: 12px;
     }
@@ -352,7 +352,7 @@ export function getSporelingEvolutionStyles() {
 
     .sporeling-evolution-choices h4 {
       margin: 0 0 12px;
-      color: #9b59b6;
+      color: var(--accent);
     }
 
     .sporeling-trait-list {
@@ -378,18 +378,18 @@ export function getSporelingEvolutionStyles() {
     }
 
     .trait-category {
-      color: #7f8c8d;
+      color: var(--dim-text);
       font-size: 12px;
     }
 
     .trait-description {
       font-size: 12px;
-      color: #bdc3c7;
+      color: var(--muted);
       margin-bottom: 8px;
     }
 
     .sporeling-button {
-      background: linear-gradient(135deg, #3498db, #2980b9);
+      background: linear-gradient(135deg, var(--stat-text), color-mix(in srgb, var(--stat-text) 80%, var(--panel) 20%));
       border: none;
       color: white;
       padding: 8px 16px;
@@ -405,7 +405,7 @@ export function getSporelingEvolutionStyles() {
     }
 
     .sporeling-button-evolve {
-      background: linear-gradient(135deg, #9b59b6, #8e44ad);
+      background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 80%, var(--panel) 20%));
     }
 
     .sporeling-button-evolve:hover {
@@ -414,7 +414,7 @@ export function getSporelingEvolutionStyles() {
 
     .sporeling-evolve-ready {
       text-align: center;
-      color: #f1c40f;
+      color: var(--gold-text);
       font-weight: bold;
       animation: pulse 1.5s infinite;
       margin: 12px 0;
@@ -437,7 +437,7 @@ export function getSporelingEvolutionStyles() {
     }
 
     .sporeling-empty-message {
-      color: #7f8c8d;
+      color: var(--dim-text);
     }
   `;
 }

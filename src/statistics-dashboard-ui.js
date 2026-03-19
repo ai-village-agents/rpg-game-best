@@ -11,11 +11,11 @@ import { getStatisticsSummary, getTopEnemiesDefeated, createEmptyStatistics } fr
  */
 const DASHBOARD_STYLES = `
 .stats-dashboard {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border: 2px solid #4a5568;
+  background: linear-gradient(135deg, var(--panel) 0%, var(--card) 100%);
+  border: 2px solid var(--border-light);
   border-radius: 8px;
   padding: 16px;
-  color: #e2e8f0;
+  color: var(--text);
   font-family: 'Segoe UI', sans-serif;
   max-width: 800px;
   margin: 0 auto;
@@ -26,7 +26,7 @@ const DASHBOARD_STYLES = `
   font-weight: bold;
   text-align: center;
   margin-bottom: 16px;
-  color: #f6e05e;
+  color: var(--gold-text);
   text-shadow: 0 0 10px rgba(246, 224, 94, 0.5);
 }
 
@@ -44,8 +44,8 @@ const DASHBOARD_STYLES = `
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 8px;
-  color: #90cdf4;
-  border-bottom: 1px solid #4a5568;
+  color: var(--stat-text);
+  border-bottom: 1px solid var(--border-light);
   padding-bottom: 8px;
 }
 
@@ -68,25 +68,25 @@ const DASHBOARD_STYLES = `
 }
 
 .stat-label {
-  color: #a0aec0;
+  color: var(--muted);
   font-size: 13px;
 }
 
 .stat-value {
   font-weight: bold;
-  color: #68d391;
+  color: var(--good);
 }
 
 .stat-value.negative {
-  color: #fc8181;
+  color: var(--bad);
 }
 
 .stat-value.neutral {
-  color: #f6e05e;
+  color: var(--gold-text);
 }
 
 .stat-value.highlight {
-  color: #b794f4;
+  color: var(--accent);
 }
 
 .enemy-list {
@@ -116,7 +116,7 @@ const DASHBOARD_STYLES = `
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #48bb78, #68d391);
+  background: linear-gradient(90deg, var(--good), var(--good));
   border-radius: 4px;
   transition: width 0.3s ease;
 }
@@ -127,7 +127,7 @@ const DASHBOARD_STYLES = `
   padding: 8px;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
-  color: #90cdf4;
+  color: var(--stat-text);
 }
 `;
 
