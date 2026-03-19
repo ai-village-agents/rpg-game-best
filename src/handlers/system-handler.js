@@ -104,6 +104,12 @@ export function handleSystemAction(state, action) {
       log: [
         `You have chosen the path of the ${className}.`,
         `You carry the experience of a ${background.name}.`,
+        `--- THE COMING OBLIVION ---`,
+        `The Elder Scrolls foretold of a time when the Oblivion Lord would awaken... and that time is now.`,
+        `Darkness seeps across the land. The realms are fracturing.`,
+        `As a humble adventurer, you have been chosen by the Fates to descend into the perilous dungeons, slay the Oblivion Lord, and restore peace to the realm.`,
+        `Your journey begins here. Steel your resolve.`,
+        `---------------------------`,
         `${getRoomDescription(state.world)} You may explore in any direction.`,
       ],
       visitedRooms: initVisitedRooms(1, 1),
