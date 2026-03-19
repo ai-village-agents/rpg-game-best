@@ -199,6 +199,7 @@ export function handleEncounterAction(state, action) {
             combatStats: null,
             combatStatsSummary: null,
             player: { ...state.player, defending: false, statusEffects: [] },
+            comboState: state.comboState ? { ...state.comboState, hitCount: 0, isActive: false, chainMultiplier: 1.0, comboStreak: 0 } : undefined,
             momentumState: state.momentumState ? createMomentumState() : undefined,
             intentState: initIntentState(),
             encounterCombatActive: true,

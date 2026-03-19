@@ -193,6 +193,9 @@ function processTurnStart(state, actorKey) {
 
 function applyVictoryDefeat(state) {
   if (state.enemy.hp <= 0) {
+    if (state.comboState) {
+      state = { ...state, comboState: resetCombo(state.comboState) };
+    }
     if (state.isArenaMatch) {
       const matchData = {
         opponentRating: state.arenaOpponentRating || 1000,
@@ -318,6 +321,9 @@ function applyVictoryDefeat(state) {
     state = autoReviveCompanionsAfterCombat(state);
   }
   if (state.player.hp <= 0) {
+    if (state.comboState) {
+      state = { ...state, comboState: resetCombo(state.comboState) };
+    }
     if (state.isArenaMatch) {
       const matchData = {
         opponentRating: state.arenaOpponentRating || 1000,
