@@ -192,6 +192,16 @@ describe('Dungeon Handler', () => {
       assert.ok(result.log.some(l => l.includes('floor 2') || l.includes('Floor 2')));
     });
 
+    it('should advance from a non-boss floor once stairs are found', () => {
+      const ds = enterDungeon(createDungeonState());
+      const withStairs = findStairs(ds);
+      const state = makeDungeonState({ dungeonState: withStairs });
+      const result = handleDungeonAction(state, { type: 'DUNGEON_ADVANCE' });
+      assert.ok(result);
+      assert.equal(result.dungeonState.currentFloor, 2);
+      assert.ok(result.log.some(l => l.includes('floor 2') || l.includes('Floor 2')));
+    });
+
     it('should reject at max floor', () => {
       const maxFloor = 15;
       const ds = {
