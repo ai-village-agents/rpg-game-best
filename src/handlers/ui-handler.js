@@ -42,6 +42,7 @@ import {
   recordGoldEarned as recordDashboardGoldEarned,
   recordGoldSpent as recordDashboardGoldSpent,
   recordHealing as recordDashboardHealing,
+  recordQuestCompleted as recordDashboardQuestCompleted,
   recordConsumableUsed as recordDashboardConsumableUsed,
 } from '../statistics-dashboard.js';
 
@@ -192,7 +193,13 @@ export function handleUIAction(state, action) {
 
   const inventoryActions = ['CLOSE_INVENTORY', 'INVENTORY_USE', 'INVENTORY_EQUIP', 'INVENTORY_UNEQUIP', 'INVENTORY_VIEW_DETAILS', 'INVENTORY_BACK', 'INVENTORY_SET_SORT', 'INVENTORY_SET_FILTER'];
   if (inventoryActions.includes(type) && state.phase === 'inventory') {
-    return handleInventoryAction(state, action);
+    const result = handleInventoryAction(state, action);
+    if (result && action.type === 'INVENTORY_USE' && action.itemId) {
+      const itemId = action.itemId.toLowerCase();
+      const isPotion = itemId.includes('potion') || itemId.includes('elixir') || itemId.includes('tonic');
+      return recordDashboardConsumableUsed(result, isPotion ? 'potion' : 'food');
+    }
+    return result;
   }
 
   // Quests / Quest Log
@@ -239,6 +246,7 @@ export function handleUIAction(state, action) {
         next = { ...next, questState: questResult.questState };
 
         const newRewards = buildPendingRewards(questResult.completedQuests);
+        for (const cq of questResult.completedQuests) { next = recordDashboardQuestCompleted(next, 'side'); }
         if (newRewards.length > 0) {
           const existing = next.pendingQuestRewards || [];
           next = { ...next, pendingQuestRewards: [...existing, ...newRewards] };
@@ -530,6 +538,9 @@ export function handleUIAction(state, action) {
       pendingQuestRewards: [],
       preRewardPhase: undefined,
     };
+    for (const pr of pendingRewards) {
+      next = recordDashboardGoldEarned(next, pr.rewards?.gold || 0, 'quest');
+    }
     for (const msg of messages) {
       next = pushLog(next, msg);
     }

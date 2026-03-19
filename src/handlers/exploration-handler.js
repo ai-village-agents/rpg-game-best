@@ -13,7 +13,11 @@ import { createNPCRelationshipManager, ReputationEvent, RelationshipLevel } from
 import { removeItemFromInventory } from '../items.js';
 import { getExplorationQuest } from '../data/exploration-quests.js';
 import { processQuestCompletionWithBonus, generateQuestCompletionMessages } from '../quest-relationship-bridge.js';
-import { recordRoomVisited as recordDashboardRoomVisited } from '../statistics-dashboard.js';
+import {
+  recordRoomVisited as recordDashboardRoomVisited,
+  recordQuestCompleted as recordDashboardQuestCompleted,
+  recordConsumableUsed as recordDashboardConsumableUsed,
+} from '../statistics-dashboard.js';
 import {
   tryTriggerWorldEvent,
   tickWorldEvent,
@@ -177,6 +181,7 @@ export function handleExplorationAction(state, action) {
       next = { ...next, questState: questResult.questState };
       // Queue rewards if quests completed
       const newRewards = buildPendingRewards(questResult.completedQuests);
+      for (const cq of questResult.completedQuests) { next = recordDashboardQuestCompleted(next, 'side'); }
       if (newRewards.length > 0) {
         const existing = next.pendingQuestRewards || [];
         next = { ...next, pendingQuestRewards: [...existing, ...newRewards] };
@@ -278,6 +283,7 @@ export function handleExplorationAction(state, action) {
       next = { ...next, questState: questResult.questState };
       // Queue rewards if quests completed
       const newRewards = buildPendingRewards(questResult.completedQuests);
+      for (const cq of questResult.completedQuests) { next = recordDashboardQuestCompleted(next, 'side'); }
       if (newRewards.length > 0) {
         const existing = next.pendingQuestRewards || [];
         next = { ...next, pendingQuestRewards: [...existing, ...newRewards] };
@@ -327,6 +333,7 @@ export function handleExplorationAction(state, action) {
       }
 
       const newRewards = buildPendingRewards(questResult.completedQuests);
+      for (const cq of questResult.completedQuests) { next = recordDashboardQuestCompleted(next, 'side'); }
       if (newRewards.length > 0) {
         const existing = next.pendingQuestRewards || [];
         next = { ...next, pendingQuestRewards: [...existing, ...newRewards] };
@@ -354,6 +361,7 @@ export function handleExplorationAction(state, action) {
 
       // Queue pending quest rewards
       const newDeliverRewards = buildPendingRewards(deliverResult.completedQuests);
+      for (const cq of deliverResult.completedQuests) { next = recordDashboardQuestCompleted(next, 'side'); }
       if (newDeliverRewards.length > 0) {
         const existing = next.pendingQuestRewards || [];
         next = { ...next, pendingQuestRewards: [...existing, ...newDeliverRewards] };
@@ -461,6 +469,7 @@ export function handleFastTravelAction(state, action) {
       const questResult = onRoomEnter(next.questState, roomId);
       next = { ...next, questState: questResult.questState };
       const newRewards = buildPendingRewards(questResult.completedQuests);
+      for (const cq of questResult.completedQuests) { next = recordDashboardQuestCompleted(next, 'side'); }
       if (newRewards.length > 0) {
         const existing = next.pendingQuestRewards || [];
         next = { ...next, pendingQuestRewards: [...existing, ...newRewards] };
