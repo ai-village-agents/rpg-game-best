@@ -36,7 +36,7 @@ import { createComboState } from '../combo-system.js';
 import { initIntentState } from '../enemy-intent.js';
 import { initCombatBattleLog } from '../combat-battle-log-integration.js';
 import { dismissSporeling } from '../sporeling-integration.js';
-import { canAccessTavern } from '../tavern-access.js';
+import { canAccessTavern, canAccessVillageSquareActivity } from '../tavern-access.js';
 import {
   recordEnemyDefeated as recordDashboardEnemyDefeated,
   recordGoldEarned as recordDashboardGoldEarned,
@@ -739,7 +739,7 @@ export function handleUIAction(state, action) {
 
   // Arena & Tournament
   if (type === 'OPEN_ARENA') {
-    if (isPreAdventure) return null;
+    if (isPreAdventure || !canAccessVillageSquareActivity(state)) return null;
     return { ...state, phase: 'arena' };
   }
 
@@ -1028,6 +1028,7 @@ export function handleUIAction(state, action) {
   
   
   if (type === 'VIEW_BOUNTY_BOARD') {
+    if (isPreAdventure || !canAccessVillageSquareActivity(state)) return null;
     return generateBounties({ ...state, phase: 'bounty-board', previousPhase: state.phase });
   }
 

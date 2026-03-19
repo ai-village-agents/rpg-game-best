@@ -66,7 +66,7 @@ import { renderStatsDashboardPhase, renderStatsDashboardActions, attachStatsDash
 import { renderEncounterPopup, getEncounterStyles } from './random-encounter-system-ui.js';
 import { renderDefeatScreen, renderDefeatActions, getDefeatScreenStyles } from './defeat-screen-ui.js';
 import { loadFromSlot } from './engine.js';
-import { canAccessTavern } from './tavern-access.js';
+import { canAccessTavern, canAccessVillageSquareActivity } from './tavern-access.js';
 let _victoryAnimStartTime = 0;
 
 /** Track previous log for floating text diff */
@@ -685,6 +685,7 @@ export function render(state, dispatch) {
   // --- Exploration Phase ---
   if (state.phase === 'exploration') {
     const showTavern = canAccessTavern(state);
+    const showVillageSquareActivities = canAccessVillageSquareActivity(state);
     const exitPreviews = getExitPreviews(state.world, state.worldData);
     const movementTitle = (direction) => {
       const destination = exitPreviews[direction]?.roomName;
@@ -772,8 +773,8 @@ export function render(state, dispatch) {
           <h3>ACTIVITIES</h3>
           <div class="action-category-buttons">
             ${showTavern ? '<button id="btnTavern">Tavern 🍺</button>' : ''}
-            <button id="btnBountyBoard">Bounty Board 📜</button>
-            <button id="btnArena">Arena ⚔️</button>
+            ${showVillageSquareActivities ? '<button id="btnBountyBoard">Bounty Board 📜</button>' : ''}
+            ${showVillageSquareActivities ? '<button id="btnArena">Arena ⚔️</button>' : ''}
             <button id="btnCrafting">Crafting 🔨</button>
             <button id="btnDailyChallenges">Daily 📅</button>
             <button id="btnFactions">Factions 👑</button>
@@ -809,10 +810,12 @@ export function render(state, dispatch) {
     document.getElementById('btnHelp').onclick = () => dispatch({ type: 'TOGGLE_HELP' });
     const tavernBtn = document.getElementById('btnTavern');
     if (tavernBtn) tavernBtn.onclick = () => dispatch({ type: 'VIEW_TAVERN' });
-    document.getElementById('btnBountyBoard').onclick = () => dispatch({ type: 'VIEW_BOUNTY_BOARD' });
+    const bountyBoardBtn = document.getElementById('btnBountyBoard');
+    if (bountyBoardBtn) bountyBoardBtn.onclick = () => dispatch({ type: 'VIEW_BOUNTY_BOARD' });
     document.getElementById('btnJournal').onclick = () => dispatch({ type: 'OPEN_JOURNAL' });
     document.getElementById('btnFactions').onclick = () => dispatch({ type: 'OPEN_FACTIONS' });
-    document.getElementById('btnArena').onclick = () => dispatch({ type: 'OPEN_ARENA' });
+    const arenaBtn = document.getElementById('btnArena');
+    if (arenaBtn) arenaBtn.onclick = () => dispatch({ type: 'OPEN_ARENA' });
     document.getElementById('btnCompanions').onclick = () => dispatch({ type: 'OPEN_COMPANIONS' });
     const btnSporeling = document.getElementById('btnSporeling');
     if (btnSporeling) btnSporeling.onclick = () => dispatch({ type: 'OPEN_SPORELING' });
