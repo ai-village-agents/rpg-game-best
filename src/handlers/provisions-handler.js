@@ -136,10 +136,11 @@ export function handleProvisionAction(state, action) {
       };
     }
 
-    const inventory = state.player.inventory || [];
+    
+    const inventory = state.player.inventory || {};
     for (const ingredient of recipe.ingredients) {
-      const item = inventory.find((i) => i.id === ingredient.itemId);
-      if (!item || item.quantity < ingredient.quantity) {
+      const currentQty = inventory[ingredient.itemId] || 0;
+      if (currentQty < ingredient.quantity) {
         return {
           ...state,
           provisionsUI: {
@@ -150,29 +151,16 @@ export function handleProvisionAction(state, action) {
       }
     }
 
-    let newInventory = inventory.map((i) => ({ ...i }));
+    let newInventory = { ...inventory };
     for (const ingredient of recipe.ingredients) {
-      const idx = newInventory.findIndex((i) => i.id === ingredient.itemId);
-      if (idx !== -1) {
-        newInventory[idx].quantity -= ingredient.quantity;
-        if (newInventory[idx].quantity <= 0) {
-          newInventory.splice(idx, 1);
-        }
+      newInventory[ingredient.itemId] -= ingredient.quantity;
+      if (newInventory[ingredient.itemId] <= 0) {
+        delete newInventory[ingredient.itemId];
       }
     }
 
-    const existingResult = newInventory.find((i) => i.id === recipe.result.itemId);
-    if (existingResult) {
-      existingResult.quantity += recipe.result.quantity;
-    } else {
-      const provisionData = PROVISIONS[recipe.result.itemId];
-      newInventory.push({
-        id: recipe.result.itemId,
-        name: provisionData ? provisionData.name : recipe.result.itemId,
-        type: 'provision',
-        quantity: recipe.result.quantity,
-      });
-    }
+    const currentResultQty = newInventory[recipe.result.itemId] || 0;
+    newInventory[recipe.result.itemId] = currentResultQty + recipe.result.quantity;
 
     const msg = `Cooked ${recipe.name}! Received ${recipe.result.quantity}x ${recipe.result.itemId}.`;
     let next = {

@@ -1911,7 +1911,7 @@ if (state.phase === 'achievements') {
     });
 
     // Wire item action buttons
-    actions.querySelectorAll('.inv-btn').forEach(btn => {
+    [...actions.querySelectorAll('.inv-btn'), ...hud.querySelectorAll('.inv-btn')].forEach(btn => {
       const action2 = btn.dataset.action;
       const itemId = btn.dataset.item;
       const slot = btn.dataset.slot;
