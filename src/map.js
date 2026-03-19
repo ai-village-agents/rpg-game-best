@@ -95,7 +95,7 @@ const defaultRooms = [
       { x: 3, y: 1, w: 1, h: 3 },
     ]),
     buildRoom('ne', 'Northeast Ridge', [
-      { x: 1, y: 3, w: 2, h: 1 },
+      { x: 1, y: 3, w: 1, h: 1 },
       { x: 5, y: 1, w: 1, h: 1 },
     ]),
   ],
