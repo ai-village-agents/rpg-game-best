@@ -5,7 +5,7 @@ import { startTavernDice, guessTavernDice, cashOutTavernDice } from '../tavern-d
 import { generateBounties, acceptBounty } from '../bounty-board.js';
 import { updateAudioSettings } from '../audio-system.js';
 import { createInventoryState, handleInventoryAction } from '../inventory.js';
-import { markAllRead } from '../journal.js';
+import { markAllRead, toggleEntryImportance } from '../journal.js';
 import { createLevelUpState, advanceLevelUp } from '../level-up.js';
 import { acceptQuest, onRoomEnter } from '../quest-integration.js';
 import { buildPendingRewards, claimAllQuestRewards, hasPendingRewards } from '../quest-rewards.js';
@@ -132,6 +132,14 @@ export function handleUIAction(state, action) {
   if (type === 'CLOSE_JOURNAL') {
     if (state.phase !== 'journal') return null;
     return { ...state, phase: state.previousPhase || 'exploration' };
+  }
+
+  if (type === 'TOGGLE_JOURNAL_STAR') {
+    if (state.phase !== 'journal') return null;
+    const entryId = action.entryId;
+    if (!entryId) return null;
+    const next = toggleEntryImportance(state, entryId);
+    return { ...next, phase: 'journal' };
   }
 
   // Settings

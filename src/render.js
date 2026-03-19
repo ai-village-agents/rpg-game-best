@@ -31,7 +31,7 @@ import { renderWorldEventBanner } from './world-events-ui.js';
 import { isMinimapHidden } from './world-events.js';
 import { hasShop } from './shop.js';
 import { renderBestiaryPanel } from './bestiary-ui.js';
-import { renderJournalPanel, renderJournalBadge } from './journal-ui.js';
+import { renderJournalPanel, renderJournalBadge, setJournalCategory, toggleImportantFilter } from './journal-ui.js';
 import { renderCompanionPanel, renderCompanionHUD, renderCompanionBadge } from './companions-ui.js';
 import { renderSporelingEvolutionPanel, getSporelingEvolutionStyles } from './sporeling-evolution-ui.js';
 import { renderDungeonPanel, renderDungeonActions, attachDungeonHandlers, getDungeonStyles, shouldShowDungeonEntrance } from './dungeon-ui.js';
@@ -1378,6 +1378,32 @@ if (state.phase === 'achievements') {
     hud.innerHTML = renderJournalPanel(state);
     actions.innerHTML = '<div class="buttons"><button id="btnCloseJournal">Close 📔</button></div>';
     document.getElementById('btnCloseJournal').onclick = () => dispatch({ type: 'CLOSE_JOURNAL' });
+    // Wire up journal filter tabs
+    document.querySelectorAll('.journal-tab[data-category]').forEach(btn => {
+      btn.onclick = () => {
+        setJournalCategory(btn.dataset.category);
+        dispatch({ type: 'OPEN_JOURNAL' }); // re-render
+      };
+    });
+    // Wire up important-only toggle
+    const importantToggleBtn = document.querySelector('.journal-important-toggle');
+    if (importantToggleBtn) {
+      importantToggleBtn.onclick = () => {
+        toggleImportantFilter();
+        dispatch({ type: 'OPEN_JOURNAL' }); // re-render
+      };
+    }
+    // Wire up close X button in journal header
+    const journalCloseBtn = document.querySelector('.journal-close');
+    if (journalCloseBtn) {
+      journalCloseBtn.onclick = () => dispatch({ type: 'CLOSE_JOURNAL' });
+    }
+    // Wire up star toggles
+    document.querySelectorAll('.journal-star[data-entry-id]').forEach(btn => {
+      btn.onclick = () => {
+        dispatch({ type: 'TOGGLE_JOURNAL_STAR', entryId: btn.dataset.entryId });
+      };
+    });
     log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     return;

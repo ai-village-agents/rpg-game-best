@@ -109,7 +109,7 @@ export function renderSettingsPanel(settings, keybindings, listeningAction) {
     ${renderCheckbox('setting-muted', 'Mute All Audio', s.audio?.muted ?? false)}
     ${renderSlider('setting-master-volume', 'Master Volume', s.audio?.masterVolume ?? 0.7, s.audio?.muted)}
     ${renderSlider('setting-sfx-volume', 'Sound Effects', s.audio?.sfxVolume ?? 1.0, s.audio?.muted)}
-    ${renderSlider('setting-music-volume', 'Music', s.audio?.musicVolume ?? 0.5, s.audio?.muted)}
+    <div class="setting-row"><label>Music</label><span style="color:var(--muted);font-size:0.9em;">🎵 Coming soon!</span></div>
   `;
   
   const displaySection = `
@@ -263,7 +263,6 @@ export function attachSettingsHandlers(settings, onUpdate, onReset) {
   const sliderMap = {
     'setting-master-volume': 'audio.masterVolume',
     'setting-sfx-volume': 'audio.sfxVolume',
-    'setting-music-volume': 'audio.musicVolume',
   };
   
   for (const [id, path] of Object.entries(sliderMap)) {
