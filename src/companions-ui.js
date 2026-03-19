@@ -82,8 +82,12 @@ const renderRecruitedCompanion = (companion) => {
   `;
 };
 
-const renderAvailableCompanion = (npc, playerRoom) => {
+const renderAvailableCompanion = (npc, playerRoom, state) => {
   const stats = npc.stats || {};
+  const npcInteractions = state?.npcInteractions || {};
+  const hasTalked = !!npcInteractions?.[npc.id]?.talked;
+  const recruitCost = npc.recruitCost || 0;
+  const playerGold = state?.player?.gold ?? 0;
 
   return `
     <div class="companion-card companion-card-available" data-companion-id="${npc.id}">
@@ -96,11 +100,18 @@ const renderAvailableCompanion = (npc, playerRoom) => {
         const roomName = roomId ? ROOM_NAMES[roomId] : null;
         return roomName ? ` (${roomName})` : '';
       })()}</div>
+      <div class="companion-cost">${recruitCost ? `💰 ${recruitCost} gold` : '🆓 Free'}</div>
       <div class="companion-actions">${(() => {
         const companionRoom = LOCATION_TO_ROOM[npc.location] || null;
         const isHere = !playerRoom || !companionRoom || playerRoom === companionRoom;
         if (isHere) {
-          return `<button class="companion-button" data-action="RECRUIT_COMPANION" data-companion-id="${npc.id}">Recruit</button>`;
+          if (!hasTalked) {
+            return '<button class="companion-button" disabled>Talk First</button>';
+          }
+          if (recruitCost && playerGold < recruitCost) {
+            return `<button class="companion-button" disabled>Not Enough Gold (need ${recruitCost}g)</button>`;
+          }
+          return `<button class="companion-button" data-action="RECRUIT_COMPANION" data-companion-id="${npc.id}">Recruit (${recruitCost || 'Free'}${recruitCost ? 'g' : ''})</button>`;
         } else {
           const roomName = ROOM_NAMES[companionRoom] || 'their location';
           return `<button class="companion-button" disabled title="Travel to ${roomName} to recruit">Not Here</button>`;
@@ -142,7 +153,7 @@ export const renderCompanionPanel = (state) => {
         <div class="companion-list">
           ${
             availableNpcCompanions.length
-              ? availableNpcCompanions.map((npc) => renderAvailableCompanion(npc, getCurrentRoomId(state?.world))).join('')
+              ? availableNpcCompanions.map((npc) => renderAvailableCompanion(npc, getCurrentRoomId(state?.world), state)).join('')
               : '<div class="companion-empty">No companions available right now.</div>'
           }
         </div>

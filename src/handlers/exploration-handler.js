@@ -368,12 +368,22 @@ export function handleExplorationAction(state, action) {
       npcRelationshipManager.getRelationshipLevel(npc.id) || RelationshipLevel.NEUTRAL;
 
     const dialogState = createDialogState(npc, relationshipLevel);
+
+    // Track NPC interaction for companion recruitment gating
+    const npcInteractions = next.npcInteractions || {};
+    const existingInteraction = npcInteractions[npc.id] || {};
+    const updatedInteractions = {
+      ...npcInteractions,
+      [npc.id]: { ...existingInteraction, talked: true, lastTalked: Date.now() },
+    };
+
     return {
       ...next,
       phase: 'dialog',
       dialogState,
       preDialogPhase: 'exploration',
       npcRelationshipManager,
+      npcInteractions: updatedInteractions,
     };
   }
 

@@ -276,6 +276,7 @@ export const NPCS = {
     sprite: 'warrior_male',
     dialog: 'fenris_intro',
     canRecruit: true,
+    recruitCost: 50,
     recruitConditions: {
       quest: 'main_quest_1',
       stage: 'defeat_goblins'
@@ -306,6 +307,7 @@ export const NPCS = {
     sprite: 'mage_female',
     dialog: 'lyra_intro',
     canRecruit: true,
+    recruitCost: 75,
     recruitConditions: {
       quest: 'side_cave_clearing',
       complete: true

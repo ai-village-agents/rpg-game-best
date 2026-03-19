@@ -59,6 +59,17 @@ export function recruitCompanion(state, companionId) {
     return pushLog(state, `${npc.name} is not here. Try looking in the ${npc.location.split('_').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}.`);
   }
 
+  const npcInteractions = state.npcInteractions || {};
+  if (!npcInteractions?.[companionId]?.talked) {
+    return pushLog(state, `You need to talk to ${npc.name} first before recruiting them.`);
+  }
+
+  const recruitCost = npc.recruitCost || 0;
+  const playerGold = state?.player?.gold ?? 0;
+  if (recruitCost > 0 && playerGold < recruitCost) {
+    return pushLog(state, `${npc.name} requires ${recruitCost} gold to join your party. You only have ${playerGold} gold.`);
+  }
+
   const stats = npc.stats || {};
   const newCompanion = {
     id: npc.id,
@@ -77,8 +88,18 @@ export function recruitCompanion(state, companionId) {
     loyalty: 50,
   };
 
-  const next = { ...state, companions: [...companions, newCompanion], maxCompanions };
-  return pushLog(next, `${npc.name} joined your party.`);
+  const next = {
+    ...state,
+    companions: [...companions, newCompanion],
+    maxCompanions,
+    ...(recruitCost > 0
+      ? { player: { ...state.player, gold: playerGold - recruitCost } }
+      : {}),
+  };
+  return pushLog(
+    next,
+    `${npc.name} joined your party${recruitCost > 0 ? ` for ${recruitCost} gold` : ''}.`
+  );
 }
 
 export function dismissCompanion(state, companionId) {
