@@ -1,3 +1,5 @@
+import { craftingMaterials, craftedItems } from './recipes.js';
+
 export const rarityColors = {
   Common: '#999999',
   Uncommon: '#1EFF00',
@@ -6,7 +8,7 @@ export const rarityColors = {
   Legendary: '#FF8000',
 };
 
-export const items = {
+const baseItems = {
   potion: {
     id: 'potion',
     name: 'Healing Potion',
@@ -740,6 +742,9 @@ export const items = {
     value: 600,
   },
 };
+
+
+export const items = { ...baseItems, ...craftingMaterials, ...craftedItems };
 
 export const lootTables = {
   goblin: { rarityWeights: { Common: 70, Uncommon: 20, Rare: 8, Epic: 2, Legendary: 0 } },
