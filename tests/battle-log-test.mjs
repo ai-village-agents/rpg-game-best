@@ -229,6 +229,22 @@ test('renderBattleLogPanel with grouped option uses details elements', () => {
   assert.match(html, /bl-turn-group/);
 });
 
+test('renderBattleLogPanel with grouped option shows latest turn first', () => {
+  const log = new BattleLog();
+  log.startTurn(1);
+  log.addEntry('attack', 'Turn 1 action');
+  log.startTurn(2);
+  log.addEntry('attack', 'Turn 2 action');
+
+  const html = renderBattleLogPanel(log.entries, { grouped: true });
+  const turn2Index = html.indexOf('Turn 2 ·');
+  const turn1Index = html.indexOf('Turn 1 ·');
+
+  assert.ok(turn2Index >= 0);
+  assert.ok(turn1Index >= 0);
+  assert.ok(turn2Index < turn1Index);
+});
+
 test('renderBattleLogPanel with showSummary=true shows damage summary when damage exists', () => {
   const log = new BattleLog();
   log.startTurn(1);
