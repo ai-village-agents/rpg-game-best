@@ -1273,7 +1273,7 @@ export function render(state, dispatch) {
     document.getElementById('btnLoad').onclick = () => dispatch({ type: 'LOAD' });
     const btnViewStats = document.getElementById('btnViewStats');
     if (btnViewStats) {
-      btnViewStats.onclick = () => dispatch({ type: 'SHOW_STATS' });
+      btnViewStats.onclick = () => dispatch({ type: 'VIEW_STATS' });
     }
 
     log.innerHTML = state.log

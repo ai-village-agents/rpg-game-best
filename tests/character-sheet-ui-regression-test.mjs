@@ -65,3 +65,22 @@ test('render source wires character labels, character-sheet content, and talents
     'opening talents should reset viewport to top',
   );
 });
+
+
+test('SHOW_STATS alias still opens the character sheet phase from defeat', () => {
+  const state = createBaseState({ phase: 'defeat' });
+  const next = handleUIAction(state, { type: 'SHOW_STATS' });
+
+  assert.ok(next);
+  assert.equal(next.phase, 'stats');
+  assert.equal(next.previousPhase, 'defeat');
+});
+
+test('defeat screen View Statistics button dispatches VIEW_STATS', () => {
+  const src = readFileSync('src/render.js', 'utf8');
+  assert.match(
+    src,
+    /btnViewStats\.onclick = \(\) => dispatch\(\{ type: 'VIEW_STATS' \}\)/,
+    'defeat screen stats button should dispatch VIEW_STATS so the button works in-browser',
+  );
+});
