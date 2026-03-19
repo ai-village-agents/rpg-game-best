@@ -56,7 +56,7 @@ export function renderArenaPanel(state, options = {}) {
       <div class="arena-rating">
         <div class="rating-display">
           <span class="rating-value">${stats.rating}</span>
-          <span class="rating-label">Rating</span>
+          <span class="rating-label">Rating <span title="Earn rating by winning Quick Matches. Higher rating unlocks Tournaments!" style="cursor:help">ℹ️</span></span>
         </div>
         ${renderTierProgress(stats.tierProgress)}
       </div>
@@ -142,9 +142,10 @@ function renderStatRow(label, value, className = '') {
 function renderQuickMatchButton() {
   return `
     <div class="arena-actions">
-      <button class="arena-btn arena-btn-primary" data-action="quick-match">
-        Find Match
+      <button class="arena-btn arena-btn-primary" data-action="quick-match" title="Fight a random opponent of similar rating to earn Arena Rating">
+        ⚔️ Quick Match (Ranked)
       </button>
+      <p class="arena-mode-desc" style="font-size: 0.8em; color: #aaa; text-align: center; margin-top: 5px; font-style: italic;">Fight a random opponent of similar rating.</p>
     </div>
   `;
 }
@@ -161,7 +162,8 @@ function renderTournamentList(state, playerData) {
 
   return `
     <div class="tournament-list">
-      <h3>Tournaments</h3>
+      <h3>🏆 Tournaments</h3>
+      <p class="tournament-desc" style="font-size: 0.85em; color: #bbb; margin-bottom: 15px; font-style: italic;">Enter high-stakes tournaments for massive rewards! Requires specific levels and entry fees.</p>
       ${tournamentHtml}
     </div>
   `;

@@ -2231,7 +2231,7 @@ if (state.phase === 'achievements') {
     }
 
     hud.innerHTML = renderArenaPanel(state.arenaState, { showQuickMatch: true, showTournaments: true, playerData: { level: state.player.level, gold: state.player.gold } });
-    actions.innerHTML = '<div class="buttons"><button id="btnArenaQuickMatch">Quick Match ⚔️</button><button id="btnArenaTournament">Tournaments 🏆</button><button id="btnCloseArena">Close</button></div>';
+    actions.innerHTML = '<div class="buttons"><button id="btnArenaQuickMatch" title="Fight a random opponent to earn rating">Quick Match (Ranked) ⚔️</button><button id="btnCloseArena">Close Arena</button></div>';
 
     const quickMatchBtn = document.getElementById('btnArenaQuickMatch');
     if (quickMatchBtn) quickMatchBtn.onclick = () => dispatch({ type: 'START_ARENA_MATCH' });
