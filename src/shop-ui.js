@@ -111,6 +111,7 @@ function renderSellTab(player) {
   return sellable.map(entry => {
     const rarityColor = getRarityMeta(entry?.item?.rarity).color || '#999';
     const typeIcon = getTypeIcon(entry.item.type);
+    const statsText = getStatsText(entry.item);
 
     return `
       <div class="shop-item">
@@ -119,6 +120,7 @@ function renderSellTab(player) {
           <span class="shop-item-count">x${entry.count}</span>
         </div>
         <div class="shop-item-desc">${esc(entry.item.description)}</div>
+        ${statsText ? `<div class="shop-item-stats">${statsText}</div>` : ''}
         <div class="shop-item-footer">
           <span class="shop-item-price">💰 ${entry.sellPrice} each</span>
           <button class="shop-sell-btn" data-item-id="${esc(entry.itemId)}">Sell 1</button>
