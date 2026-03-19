@@ -16,7 +16,7 @@ assert.strictEqual(handleProvisionAction({}, {}), null);
 // 3. OPEN_PROVISIONS sets phase to 'provisions'
 const baseState = {
   phase: 'exploration',
-  player: { level: 1, hp: 50, maxHp: 50, mp: 15, maxMp: 15, inventory: [] },
+  player: { level: 1, hp: 50, maxHp: 50, mp: 15, maxMp: 15, inventory: {} },
   log: [],
 };
 const opened = handleProvisionAction(baseState, { type: 'OPEN_PROVISIONS' });
@@ -61,7 +61,7 @@ const stateWithProvision = {
   ...opened,
   player: {
     ...baseState.player,
-    inventory: [{ id: 'travelerBread', name: "Traveler's Bread", type: 'provision', quantity: 2 }],
+    inventory: { travelerBread: 2 },
   },
   provisionState: { activeBuffs: [], provisionsUsed: 0 },
 };
@@ -69,8 +69,7 @@ const useSuccess = handleProvisionAction(stateWithProvision, { type: 'USE_PROVIS
 assert.ok(useSuccess, 'Should return updated state');
 assert.strictEqual(useSuccess.provisionState.provisionsUsed, 1);
 // Quantity should decrease
-const breadAfterUse = useSuccess.player.inventory.find(i => i.id === 'travelerBread');
-assert.ok(!breadAfterUse || breadAfterUse.quantity === 1, 'Bread quantity should decrease by 1');
+assert.strictEqual(useSuccess.player.inventory.travelerBread, 1, 'Bread quantity should decrease by 1');
 
 // 10. USE_PROVISION with instant heal
 const stateWithMushroom = {
@@ -79,7 +78,7 @@ const stateWithMushroom = {
     ...baseState.player,
     hp: 30,
     maxHp: 50,
-    inventory: [{ id: 'fieldMushroom', name: 'Field Mushroom', type: 'provision', quantity: 1 }],
+    inventory: { fieldMushroom: 1 },
   },
   provisionState: { activeBuffs: [], provisionsUsed: 0 },
 };
@@ -125,7 +124,7 @@ assert.strictEqual(cookOutOfPhase, null);
 const lowLevelCook = handleProvisionAction(
   {
     ...opened,
-    player: { ...baseState.player, level: 1, inventory: [] },
+    player: { ...baseState.player, level: 1, inventory: {} },
   },
   { type: 'COOK_PROVISION', recipeId: 'cookHeartyStew' }
 );
@@ -135,7 +134,7 @@ assert.ok(lowLevelCook.provisionsUI.message.includes('Requires level'));
 const noIngredientsCook = handleProvisionAction(
   {
     ...opened,
-    player: { ...baseState.player, level: 5, inventory: [] },
+    player: { ...baseState.player, level: 5, inventory: {} },
   },
   { type: 'COOK_PROVISION', recipeId: 'cookHeartyStew' }
 );
@@ -147,21 +146,17 @@ const cookState = {
   player: {
     ...baseState.player,
     level: 5,
-    inventory: [
-      { id: 'herbBundle', name: 'Herb Bundle', quantity: 3 },
-      { id: 'roastedMeat', name: 'Roasted Meat', quantity: 2 },
-    ],
+    inventory: {
+      herbBundle: 3,
+      roastedMeat: 2,
+    },
   },
 };
 const cooked = handleProvisionAction(cookState, { type: 'COOK_PROVISION', recipeId: 'cookHeartyStew' });
 assert.ok(cooked, 'Should return updated state after cooking');
-const herbAfter = cooked.player.inventory.find(i => i.id === 'herbBundle');
-assert.strictEqual(herbAfter.quantity, 1, 'herbBundle should decrease by 2');
-const meatAfter = cooked.player.inventory.find(i => i.id === 'roastedMeat');
-assert.strictEqual(meatAfter.quantity, 1, 'roastedMeat should decrease by 1');
-const stewResult = cooked.player.inventory.find(i => i.id === 'heartyStew');
-assert.ok(stewResult, 'heartyStew should be added to inventory');
-assert.strictEqual(stewResult.quantity, 1);
+assert.strictEqual(cooked.player.inventory.herbBundle, 1, 'herbBundle should decrease by 2');
+assert.strictEqual(cooked.player.inventory.roastedMeat, 1, 'roastedMeat should decrease by 1');
+assert.strictEqual(cooked.player.inventory.heartyStew, 1, 'heartyStew should be added to inventory');
 
 // 18. getProvisionBuffSummary with no buffs
 const emptySummary = getProvisionBuffSummary({});
