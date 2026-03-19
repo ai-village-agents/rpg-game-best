@@ -73,6 +73,24 @@ export const OVERDRIVE_ABILITIES = {
     cleansesStatus: true,
     effect: { type: 'regen', duration: 3, power: 15 },
   },
+  rogue: {
+    id: 'shadow-assault',
+    name: 'Shadow Assault',
+    description: 'Vanish into shadows and strike with a rapid flurry of precise blows.',
+    type: 'physical',
+    hits: 5,
+    powerPerHit: 25,
+    critBonus: 0.3, // +30% crit chance
+  },
+  cleric: {
+    id: 'divine-prayer',
+    name: 'Divine Prayer',
+    description: 'Channel divine power to fully restore HP and purify all ailments.',
+    type: 'heal',
+    healPercent: 1.0, // 100% HP restore
+    cleansesStatus: true,
+    effect: { type: 'regen', duration: 3, power: 15 },
+  },
   default: {
     id: 'limit-break',
     name: 'Limit Break',

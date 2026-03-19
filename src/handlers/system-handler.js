@@ -125,6 +125,18 @@ export function handleSystemAction(state, action) {
   }
 
   if (type === 'LOAD') {
+    // Try save slots first (slot 4 = autosave, then 3..0)
+    for (let i = 4; i >= 0; i--) {
+      const slotData = loadFromSlot(i);
+      if (slotData) {
+        return {
+          ...slotData,
+          phase: 'exploration',
+          log: [...(slotData.log ?? []), 'Save loaded.'],
+        };
+      }
+    }
+    // Fall back to legacy save
     const loaded = loadFromLocalStorage();
     if (loaded) {
       return { ...loaded, log: [...(loaded.log ?? []), 'Save loaded.'] };

@@ -32,7 +32,7 @@ import {
 import { getEnemyShieldData, checkWeakness, applyShieldDamage, processBreakState, BREAK_DAMAGE_MULTIPLIER, ELEMENT_ICONS } from './shield-break.js';
 import { initCombatBattleLog, logPlayerAttack, logPlayerAbility, logDamageDealt, logDamageReceived, logHealing, logItemUsed, logStatusApplied, logStatusExpired, logTurnStart, logTurnEnd, logVictory, logDefeat } from './combat-battle-log-integration.js';
 import { applyDifficultyToEnemyHp, applyDifficultyToEnemyDamage, applyDifficultyToXpReward, applyDifficultyToGoldReward, DEFAULT_DIFFICULTY } from './difficulty.js';
-import { ACTION_TYPES, calculateMomentumGain, addMomentum, consumeOverdrive, applyMomentumDecay, getOverdriveAbility, calculateOverdriveDamage, canUseOverdrive, createMomentumState } from './momentum.js';
+import { ACTION_TYPES, calculateMomentumGain, addMomentum, consumeOverdrive, applyMomentumDecay, getOverdriveAbility, calculateOverdriveDamage, calculateOverdriveHealing, canUseOverdrive, createMomentumState } from './momentum.js';
 import { registerHit, checkComboDecay, resetCombo, isComboBreaker, getChainBonus, getComboMultiplier } from './combo-system.js';
 import { initIntentState, updateIntentState } from './enemy-intent.js';
 import { modifyReputation } from './faction-reputation-system.js';
@@ -751,8 +751,20 @@ export function playerUseOverdrive(state) {
     return { ...state, phase: 'enemy-turn' };
   }
   const ability = getOverdriveAbility(state.player.classId);
-  const damage = calculateOverdriveDamage(ability, state.player, state.enemy);
-  const totalDamage = damage * (ability.hits || 1);
+  if (ability.type === 'heal') {
+    const healResult = calculateOverdriveHealing(ability, state.player);
+    const newHp = clamp(state.player.hp + healResult.healAmount, 0, state.player.maxHp);
+    let updatedPlayer = { ...state.player, hp: newHp, defending: false };
+    if (healResult.cleansesStatus) {
+      updatedPlayer = { ...updatedPlayer, statusEffects: [] };
+    }
+    state = { ...state, player: updatedPlayer };
+    state = pushLog(state, `OVERDRIVE: ${ability.name}! Restores ${healResult.healAmount} HP!`);
+    state = { ...state, momentumState: consumeOverdrive(state.momentumState) };
+    return { ...state, phase: 'enemy-turn' };
+  }
+  const damageResult = calculateOverdriveDamage(ability, state.player, state.enemy);
+  const totalDamage = damageResult.totalDamage;
   const enemyHp = clamp(state.enemy.hp - totalDamage, 0, state.enemy.maxHp);
   state = { ...state, enemy: { ...state.enemy, hp: enemyHp, defending: false }, player: { ...state.player, defending: false } };
   state = pushLog(state, `OVERDRIVE: ${ability.name}! Deals ${totalDamage} damage (${ability.hits || 1} hits)!`);
