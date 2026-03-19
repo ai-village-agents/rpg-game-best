@@ -115,31 +115,31 @@ const OPPONENT_TEMPLATES = {
   novice: {
     levelRange: [1, 5],
     names: ['Rookie Fighter', 'Arena Initiate', 'Aspiring Warrior', 'Young Challenger'],
-    statMultiplier: 0.8,
+    statMultiplier: 0.5,
     aiAggression: 0.3
   },
   intermediate: {
     levelRange: [6, 10],
     names: ['Seasoned Fighter', 'Arena Regular', 'Proven Warrior', 'Skilled Combatant'],
-    statMultiplier: 1.0,
+    statMultiplier: 0.8,
     aiAggression: 0.5
   },
   advanced: {
     levelRange: [11, 15],
     names: ['Veteran Fighter', 'Arena Champion', 'Battle Master', 'Elite Warrior'],
-    statMultiplier: 1.2,
+    statMultiplier: 1.0,
     aiAggression: 0.7
   },
   expert: {
     levelRange: [16, 20],
     names: ['Grand Champion', 'Arena Legend', 'War Hero', 'Combat Virtuoso'],
-    statMultiplier: 1.4,
+    statMultiplier: 1.2,
     aiAggression: 0.85
   },
   master: {
     levelRange: [21, 99],
     names: ['Immortal Champion', 'Arena Deity', 'Supreme Warrior', 'Living Legend'],
-    statMultiplier: 1.6,
+    statMultiplier: 1.5,
     aiAggression: 1.0
   }
 };

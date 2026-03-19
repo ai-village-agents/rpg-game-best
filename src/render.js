@@ -502,6 +502,11 @@ export function render(state, dispatch) {
   }
 
   const finalizeRender = () => {
+    const actionsEl = document.getElementById('actions');
+    if (actionsEl) {
+      actionsEl.style.display = actionsEl.innerHTML.trim() === '' ? 'none' : '';
+    }
+
     if (state.fastTravelModalOpen) {
       hud.innerHTML += renderFastTravelModal(state);
       attachFastTravelHandlers(dispatch);
