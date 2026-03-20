@@ -309,9 +309,9 @@ describe('canAdvance(state)', () => {
     assert.equal(result, true);
   });
 
-  test('returns true when stairs found on boss floor even if not cleared', () => {
+  test('returns false when stairs found on uncleared boss floor', () => {
     const result = canAdvance(makeState({ currentFloor: 3, stairsFound: true }));
-    assert.equal(result, true);
+    assert.equal(result, false);
   });
 });
 

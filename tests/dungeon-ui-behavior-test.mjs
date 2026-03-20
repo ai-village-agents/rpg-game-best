@@ -113,7 +113,7 @@ describe('renderDungeonPanel', () => {
     );
   });
 
-  test('renders boss section with status based on clearance', () => {
+  test('renders boss defeated row with status based on clearance', () => {
     const bossFloor = DUNGEON_FLOORS.find((f) => f.bossFloor && f.id === 3);
     assert.ok(bossFloor, 'expected boss floor 3');
 
@@ -127,10 +127,10 @@ describe('renderDungeonPanel', () => {
     });
 
     const htmlAlive = renderDungeonPanel(stateAlive);
-    assert.ok(htmlAlive.includes('Boss'), 'boss label present');
+    assert.ok(htmlAlive.includes('Boss Defeated'), 'boss defeated label present');
     assert.ok(
-      htmlAlive.includes(`${bossFloor.bossId} (Alive)`),
-      'boss shown as alive when floor not cleared',
+      htmlAlive.includes(`❌ No (${bossFloor.bossId})`),
+      'boss defeated row shows no when floor not cleared',
     );
 
     // Cleared.
@@ -144,8 +144,8 @@ describe('renderDungeonPanel', () => {
 
     const htmlDefeated = renderDungeonPanel(stateDefeated);
     assert.ok(
-      htmlDefeated.includes(`${bossFloor.bossId} (Defeated)`),
-      'boss shown as defeated when floor cleared',
+      htmlDefeated.includes(`✅ Yes (${bossFloor.bossId})`),
+      'boss defeated row shows yes when floor cleared',
     );
   });
 
@@ -211,7 +211,7 @@ describe('renderDungeonActions', () => {
     );
   });
 
-  test('shows boss and descend buttons on a boss floor when eligible', () => {
+  test('shows boss button and hides descend on uncleared boss floor with stairs found', () => {
     const bossFloor = DUNGEON_FLOORS.find((f) => f.bossFloor && f.id !== 10);
     assert.ok(bossFloor, 'expected a non-final boss floor');
 
@@ -229,8 +229,8 @@ describe('renderDungeonActions', () => {
     assert.ok(html.includes('btnDungeonSearch'), 'Search button present');
     assert.ok(html.includes('btnDungeonBoss'), 'Boss button present');
     assert.ok(
-      html.includes('btnDungeonAdvance'),
-      'Descend button present when canAdvance and not last floor',
+      !html.includes('btnDungeonAdvance'),
+      'Descend button hidden on uncleared boss floor',
     );
     assert.ok(html.includes('btnDungeonInventory'), 'Inventory button present');
     assert.ok(html.includes('btnDungeonExit'), 'Exit button present');

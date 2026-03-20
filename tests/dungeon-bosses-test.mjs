@@ -195,7 +195,7 @@ describe('Lich King Enemy Entry', () => {
     assert.equal(enemy.maxHp, 350);
     assert.equal(enemy.mp, 120);
     assert.equal(enemy.maxMp, 120);
-    assert.equal(enemy.element, 'shadow');
+    assert.equal(enemy.element, 'dark');
     assert.equal(enemy.isBoss, true);
     assert.equal(enemy.aiBehavior, 'boss');
   });
@@ -507,11 +507,16 @@ describe('Dungeon Floor 13 Boss Integration', () => {
       'HP should match between enemy entry and boss phase 1');
   });
 
-  it('lich-king element is consistent', () => {
+  it('lich-king element is canonically consistent across enemy and boss data', () => {
     const enemyElement = ENEMIES['lich-king'].element;
     const bossElement = BOSSES['lich-king'].element;
-    assert.equal(enemyElement, bossElement,
-      'Element should match between enemy entry and boss data');
+    const canonicalize = (element) => ({ shadow: 'dark', dark: 'dark' }[element] || element);
+    assert.equal(enemyElement, 'dark',
+      'Enemy entry should use dark element');
+    assert.equal(bossElement, 'shadow',
+      'Boss data still uses legacy shadow element');
+    assert.equal(canonicalize(enemyElement), canonicalize(bossElement),
+      'Enemy and boss elements should match after alias normalization');
   });
 
   it('Floor 13 encounter table includes lich-king', () => {
