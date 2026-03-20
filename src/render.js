@@ -68,6 +68,16 @@ import { renderEncounterPopup, getEncounterStyles } from './random-encounter-sys
 import { renderDefeatScreen, renderDefeatActions, getDefeatScreenStyles } from './defeat-screen-ui.js';
 import { loadFromSlot } from './engine.js';
 import { canAccessTavern, canAccessVillageSquareActivity } from './tavern-access.js';
+
+// Track the last rendered phase group to only auto-scroll on major phase changes
+let _lastRenderedPhaseGroup = null;
+
+function getPhaseGroup(phase) {
+  // Group combat sub-phases together so scrolling doesn't fire on each turn
+  const combatPhases = ['player-turn', 'enemy-turn', 'battle-end', 'combat-victory', 'combat-defeat'];
+  if (combatPhases.includes(phase)) return 'combat';
+  return phase;
+}
 let _victoryAnimStartTime = 0;
 
 /** Track previous log for floating text diff */
@@ -722,7 +732,12 @@ export function render(state, dispatch) {
       attachTutorialHandlers(dispatch);
     }
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Only auto-scroll to top on major phase group changes (not every render/combat turn)
+    const currentGroup = getPhaseGroup(state.phase);
+    if (currentGroup !== _lastRenderedPhaseGroup) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      _lastRenderedPhaseGroup = currentGroup;
+    }
   };
 
   // --- Class Select Phase ---

@@ -49,7 +49,7 @@ body {
   margin: 0 auto;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 960px) {
   .app {
     max-width: 1400px;
     grid-template-columns: 1fr 380px;
