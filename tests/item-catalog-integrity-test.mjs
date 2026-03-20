@@ -27,7 +27,7 @@ assert(items && typeof items === 'object', 'items export is an object');
 const itemEntries = Object.entries(items);
 assert(itemEntries.length > 0, 'items contains at least one item');
 
-const allowedTypes = new Set(['consumable', 'weapon', 'armor', 'accessory']);
+const allowedTypes = new Set(['consumable', 'weapon', 'armor', 'accessory', 'material']);
 const allowedRarities = new Set(Object.keys(rarityColors));
 
 // Per-item validation
@@ -52,8 +52,12 @@ itemEntries.forEach(([id, item]) => {
   assert(Number.isInteger(v) && v >= 0, `${label}: value is a non-negative integer`);
 
   // stats/effect basic shape
-  assert(item.stats && typeof item.stats === 'object', `${label}: stats is an object`);
-  assert(item.effect && typeof item.effect === 'object', `${label}: effect is an object`);
+  if (item.type === 'material') {
+    assert(item.category === 'material', `${label}: material category stays material`);
+  } else {
+    assert(item.stats && typeof item.stats === 'object', `${label}: stats is an object`);
+    assert(item.effect && typeof item.effect === 'object', `${label}: effect is an object`);
+  }
 
   // Type-specific expectations
   if (item.type === 'weapon') {
@@ -80,6 +84,10 @@ itemEntries.forEach(([id, item]) => {
       Object.keys(item.effect || {}).length > 0,
       `${label}: consumable defines at least one effect field`
     );
+  }
+
+  if (item.type === 'material') {
+    assert(item.value > 0, `${label}: material has positive crafting value`);
   }
 });
 
