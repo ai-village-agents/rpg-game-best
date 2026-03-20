@@ -329,7 +329,13 @@ export function handleUIAction(state, action) {
       if (chosen.statBoosts.maxHp) updatedPlayer.stats.hp = Math.min(updatedPlayer.stats.hp + chosen.statBoosts.maxHp, updatedPlayer.stats.maxHp);
       if (chosen.statBoosts.maxMp) updatedPlayer.stats.mp = Math.min(updatedPlayer.stats.mp + chosen.statBoosts.maxMp, updatedPlayer.stats.maxMp);
     }
-    let next = { ...state, player: updatedPlayer, levelUpState: { ...state.levelUpState, pendingChoice: false } };
+    // Update newStats in levelUpState to include choice bonuses for the stat summary display
+    const updatedLevelUps = [...state.levelUpState.levelUps];
+    const currentIdx = state.levelUpState.currentIndex || 0;
+    if (updatedLevelUps[currentIdx]) {
+      updatedLevelUps[currentIdx] = { ...updatedLevelUps[currentIdx], newStats: { ...updatedPlayer.stats }, choiceName };
+    }
+    let next = { ...state, player: updatedPlayer, levelUpState: { ...state.levelUpState, pendingChoice: false, levelUps: updatedLevelUps } };
     next = pushLog(next, 'You chose ' + choiceName + '!');
     return next;
   }

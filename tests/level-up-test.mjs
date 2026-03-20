@@ -366,13 +366,13 @@ console.log('\n--- Full level-up flow integration ---');
 {
   // Simulate a 4-member party gaining XP after combat
   const party = [
-    makeMember('Hero', 'warrior', 80),
-    makeMember('Sage', 'mage', 90),
+    makeMember('Hero', 'warrior', 30),
+    makeMember('Sage', 'mage', 40),
     makeMember('Shadow', 'rogue', 50),
-    makeMember('Healer', 'cleric', 95),
+    makeMember('Healer', 'cleric', 35),
   ];
 
-  // 25 XP each: Hero 80→105 (lv2!), Sage 90→115 (lv2!), Shadow 50→75 (no), Healer 95→120 (lv2!)
+  // 25 XP each: Hero 30→55 (lv2!), Sage 40→65 (lv2!), Shadow 50→75 (already lv2, no), Healer 35→60 (lv2!)
   const levelUps = checkLevelUps(party, 25);
   assert(levelUps.length === 3, '3 of 4 party members level up');
 
@@ -401,11 +401,13 @@ console.log('\n--- Party with mixed levels ---');
 
 {
   // One member already high level, one just short of level up
+  // XP_THRESHOLDS = [0, 50, 200, 400, 650, ...]
   const party = [
-    makeMember('Hero', 'warrior', 240),  // Just under lv3 (250)
+    makeMember('Hero', 'warrior', 190),  // Level 2 (190>=50, 190<200)
     makeMember('Sage', 'mage', 10450),    // Max level 20
   ];
 
+  // +15 XP: Hero 190→205 → calcLevel(205)=3 (level up!), Sage at max (no)
   const levelUps = checkLevelUps(party, 15);
   assert(levelUps.length === 1, 'only Hero levels up (Sage at max)');
   assert(levelUps[0].name === 'Hero', 'Hero levels up');
