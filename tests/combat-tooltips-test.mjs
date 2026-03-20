@@ -122,7 +122,7 @@ describe('getAbilityTooltip', () => {
     assert.ok(tooltip);
     assert.ok(tooltip.power > 0);
     assert.ok(tooltip.lines.some(l => l.includes('Damage:')));
-    assert.ok(tooltip.lines.some(l => l.includes('180%'))); // 1.8 power = 180%
+    assert.ok(tooltip.lines.some(l => l.includes('200%'))); // 2.0 power = 200%
   });
 
   it('should include healing info for heal abilities', () => {
@@ -306,10 +306,10 @@ describe('getAbilityTooltips', () => {
   });
 
   it('should pass currentMp to each tooltip', () => {
-    const result = getAbilityTooltips(['fireball', 'blizzard'], 8);
-    // fireball costs 6, blizzard costs 10
-    assert.strictEqual(result[0].canAfford, true);  // 8 >= 6
-    assert.strictEqual(result[1].canAfford, false); // 8 < 10
+    const result = getAbilityTooltips(['fireball', 'blizzard'], 4);
+    // fireball costs 3, blizzard costs 6
+    assert.strictEqual(result[0].canAfford, true);  // 4 >= 3
+    assert.strictEqual(result[1].canAfford, false); // 4 < 6
   });
 
   it('should return empty array for empty input', () => {
