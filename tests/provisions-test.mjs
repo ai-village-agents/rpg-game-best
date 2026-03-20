@@ -125,13 +125,13 @@ describe('createProvisionState', () => {
 
 describe('useProvision', () => {
   it('successfully uses a provision from inventory', () => {
-    const state = baseState({ player: { inventory: [{ id: 'travelerBread', quantity: 1 }] } });
+    const state = baseState({ player: { inventory: { travelerBread: 1 } } });
     const result = useProvision(state, 'travelerBread');
     assert.equal(result.success, true);
   });
 
   it('returns success:true with message', () => {
-    const state = baseState({ player: { inventory: [{ id: 'travelerBread', quantity: 1 }] } });
+    const state = baseState({ player: { inventory: { travelerBread: 1 } } });
     const result = useProvision(state, 'travelerBread');
     assert.equal(result.success, true);
     assert.equal(typeof result.message, 'string');
@@ -139,19 +139,19 @@ describe('useProvision', () => {
   });
 
   it('reduces inventory count by 1', () => {
-    const state = baseState({ player: { inventory: [{ id: 'travelerBread', quantity: 2 }] } });
+    const state = baseState({ player: { inventory: { travelerBread: 2 } } });
     useProvision(state, 'travelerBread');
-    assert.equal(state.player.inventory[0].quantity, 1);
+    assert.equal(state.player.inventory.travelerBread, 1);
   });
 
   it('removes inventory entry when quantity hits zero', () => {
-    const state = baseState({ player: { inventory: [{ id: 'travelerBread', quantity: 1 }] } });
+    const state = baseState({ player: { inventory: { travelerBread: 1 } } });
     useProvision(state, 'travelerBread');
-    assert.equal(state.player.inventory.length, 0);
+    assert.equal('travelerBread' in state.player.inventory, false);
   });
 
   it('adds buff to activeBuffs for duration-based provisions', () => {
-    const state = baseState({ player: { inventory: [{ id: 'travelerBread', quantity: 1 }] } });
+    const state = baseState({ player: { inventory: { travelerBread: 1 } } });
     useProvision(state, 'travelerBread');
     assert.equal(state.provisionState.activeBuffs.length, 1);
     assert.equal(state.provisionState.activeBuffs[0].id, 'travelerBread');
@@ -160,7 +160,7 @@ describe('useProvision', () => {
   it('applies instant healing for roastedMeat (healInstant:30)', () => {
     const state = baseState();
     state.player.hp = 50;
-    state.player.inventory = [{ id: 'roastedMeat', quantity: 1 }];
+    state.player.inventory = { roastedMeat: 1 };
     useProvision(state, 'roastedMeat');
     assert.equal(state.player.hp, 80);
   });
@@ -168,20 +168,20 @@ describe('useProvision', () => {
   it('applies instant MP for herbTea (mpInstant:15)', () => {
     const state = baseState();
     state.player.mp = 20;
-    state.player.inventory = [{ id: 'herbTea', quantity: 1 }];
+    state.player.inventory = { herbTea: 1 };
     useProvision(state, 'herbTea');
     assert.equal(state.player.mp, 35);
   });
 
   it('fails when player does not have the item', () => {
-    const state = baseState({ player: { inventory: [{ id: 'travelerBread', quantity: 0 }] } });
+    const state = baseState({ player: { inventory: { travelerBread: 0 } } });
     const result = useProvision(state, 'travelerBread');
     assert.equal(result.success, false);
     assert.ok(result.message.includes('do not have'));
   });
 
   it('fails when provisionId is invalid', () => {
-    const state = baseState({ player: { inventory: [{ id: 'travelerBread', quantity: 1 }] } });
+    const state = baseState({ player: { inventory: { travelerBread: 1 } } });
     const result = useProvision(state, 'missingProvision');
     assert.equal(result.success, false);
     assert.ok(result.message.includes('not found'));
@@ -195,14 +195,14 @@ describe('useProvision', () => {
   });
 
   it('increments provisionsUsed counter', () => {
-    const state = baseState({ player: { inventory: [{ id: 'travelerBread', quantity: 1 }] } });
+    const state = baseState({ player: { inventory: { travelerBread: 1 } } });
     useProvision(state, 'travelerBread');
     assert.equal(state.provisionState.provisionsUsed, 1);
   });
 
   it('initializes provisionState if missing', () => {
     const state = {
-      player: { hp: 50, maxHp: 100, mp: 20, maxMp: 50, level: 5, inventory: [{ id: 'travelerBread', quantity: 1 }] },
+      player: { hp: 50, maxHp: 100, mp: 20, maxMp: 50, level: 5, inventory: { travelerBread: 1 } },
     };
     useProvision(state, 'travelerBread');
     assert.ok(state.provisionState);
@@ -401,20 +401,20 @@ describe('getProvisionById', () => {
 
 describe('canUseProvision', () => {
   it('returns canUse:true when player has item', () => {
-    const state = baseState({ player: { inventory: [{ id: 'travelerBread', quantity: 1 }] } });
+    const state = baseState({ player: { inventory: { travelerBread: 1 } } });
     const result = canUseProvision(state, 'travelerBread');
     assert.equal(result.canUse, true);
   });
 
   it('returns canUse:false when item not in inventory', () => {
-    const state = baseState({ player: { inventory: [] } });
+    const state = baseState({ player: { inventory: {} } });
     const result = canUseProvision(state, 'travelerBread');
     assert.equal(result.canUse, false);
     assert.ok(result.reason.includes('do not have'));
   });
 
   it('returns canUse:false for invalid provision ID', () => {
-    const state = baseState({ player: { inventory: [{ id: 'travelerBread', quantity: 1 }] } });
+    const state = baseState({ player: { inventory: { travelerBread: 1 } } });
     const result = canUseProvision(state, 'missingProvision');
     assert.equal(result.canUse, false);
     assert.ok(result.reason.includes('not found'));
