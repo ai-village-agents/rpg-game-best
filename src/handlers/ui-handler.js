@@ -127,7 +127,8 @@ export function handleUIAction(state, action) {
   if (type === 'OPEN_JOURNAL') {
     if (isPreAdventure) return null;
     const next = markAllRead(state);
-    return { ...next, phase: 'journal', previousPhase: state.phase };
+    const prev = state.phase === 'journal' ? state.previousPhase : state.phase;
+    return { ...next, phase: 'journal', previousPhase: prev };
   }
 
   if (type === 'CLOSE_JOURNAL') {
