@@ -171,7 +171,7 @@ describe('Bestiary', () => {
       let bestiary = createBestiaryState();
       bestiary = recordEncounter(bestiary, 'slime');
       const entry = getBestiaryEntry(bestiary, 'slime');
-      assert.equal(entry.name, 'Slime');
+      assert.equal(entry.name, 'Aetherial Ooze');
       assert.equal(entry.encountered, true);
       assert.equal(entry.isBoss, false);
       assert.equal(entry.element, 'earth');
