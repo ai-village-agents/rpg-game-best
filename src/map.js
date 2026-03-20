@@ -92,10 +92,10 @@ const defaultRooms = [
       { x: 4, y: 2, w: 1, h: 1 },
     ]),
     buildRoom('n', 'The Shimmer Trail', [
-      { x: 3, y: 1, w: 1, h: 3 },
+      { x: 3, y: 1, w: 1, h: 2 },
     ]),
     buildRoom('ne', 'Crystalspine Heights', [
-      { x: 1, y: 3, w: 1, h: 1 },
+      { x: 2, y: 3, w: 1, h: 1 },
       { x: 5, y: 1, w: 1, h: 1 },
     ]),
   ],
@@ -301,8 +301,32 @@ export class WorldMap {
       nextY = Math.max(minY, Math.min(maxY, nextY));
     }
 
+    const tryTargetRoomSlide = () => {
+      const offsets = [-1, 1, -2, 2];
+      for (const offset of offsets) {
+        const candidateX = (directionKey === 'north' || directionKey === 'south') ? nextX + offset : nextX;
+        const candidateY = (directionKey === 'west' || directionKey === 'east') ? nextY + offset : nextY;
+        if (!this._isInsideRoom(candidateX, candidateY)) continue;
+        if (!this._isBlocked(targetRoom, candidateX, candidateY)) {
+          return { x: candidateX, y: candidateY };
+        }
+      }
+      return null;
+    };
+
     // Clamp against obstacles on the edge tile; if blocked, stop at boundary.
     if (this._isBlocked(targetRoom, nextX, nextY)) {
+      const targetSlide = tryTargetRoomSlide();
+      if (targetSlide) {
+        this.state = {
+          roomRow: nextRoomRow,
+          roomCol: nextRoomCol,
+          x: targetSlide.x,
+          y: targetSlide.y,
+        };
+        return { moved: true, blocked: null, transitioned: true, state: this.snapshot() };
+      }
+
       const slide = this._tryWallSlide(directionKey, this.getCurrentRoom(), this.state);
       if (slide) {
         this.state = { ...this.state, ...slide };

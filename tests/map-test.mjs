@@ -148,6 +148,57 @@ console.log('\n--- Room transitions ---');
   assert(!res2.transitioned, 'No transition at world boundary');
 }
 
+console.log('\n--- Blocked transition entry slides in target room ---');
+{
+  function makeRoom() {
+    const collision = Array.from({ length: ROOM_H }, () => Array.from({ length: ROOM_W }, () => 0));
+    for (let x = 0; x < ROOM_W; x += 1) {
+      collision[0][x] = 1;
+      collision[ROOM_H - 1][x] = 1;
+    }
+    for (let y = 0; y < ROOM_H; y += 1) {
+      collision[y][0] = 1;
+      collision[y][ROOM_W - 1] = 1;
+    }
+    for (let col = MID_X - 1; col <= MID_X + 1; col += 1) {
+      collision[0][col] = 0;
+      collision[1][col] = 0;
+      collision[ROOM_H - 1][col] = 0;
+      collision[ROOM_H - 2][col] = 0;
+    }
+    for (let row = MID_Y - 1; row <= MID_Y + 1; row += 1) {
+      collision[row][0] = 0;
+      collision[row][1] = 0;
+      collision[row][ROOM_W - 1] = 0;
+      collision[row][ROOM_W - 2] = 0;
+    }
+    return { id: 'test', name: 'Test Room', collision };
+  }
+
+  const sourceRoom = makeRoom();
+  const targetRoom = makeRoom();
+  targetRoom.collision[ROOM_H - 2][MID_X] = 1;
+  targetRoom.collision[ROOM_H - 2][MID_X - 1] = 0;
+
+  const worldData = {
+    ...DEFAULT_WORLD_DATA,
+    rooms: [
+      [null, targetRoom, null],
+      [null, sourceRoom, null],
+      [null, null, null],
+    ],
+    startRoom: { row: 1, col: 1 },
+    startPosition: { x: MID_X, y: 0 },
+  };
+
+  const res = movePlayer({ roomRow: 1, roomCol: 1, x: MID_X, y: 0 }, 'north', worldData);
+  assert(res.moved, 'Blocked target entry still moves via target-room slide');
+  assert(res.transitioned, 'Blocked target entry still transitions rooms');
+  assert(res.worldState.roomRow === 0 && res.worldState.roomCol === 1, 'Arrives in target room after slide');
+  assert(res.worldState.y === ROOM_H - 2, 'Keeps expected entry depth after slide');
+  assert(res.worldState.x !== MID_X, 'Adjusts lane position when exact entry tile is blocked');
+}
+
 console.log('\n--- Direct adjacent travel helper ---');
 {
   const startState = {
