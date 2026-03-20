@@ -379,8 +379,26 @@ export class WorldMap {
       nextY = Math.max(minY, Math.min(maxY, nextY));
     }
 
+    const tryTargetRoomSlide = () => {
+      const offsets = [-1, 1, -2, 2];
+      for (const offset of offsets) {
+        const candidateX = (directionKey === 'north' || directionKey === 'south') ? nextX + offset : nextX;
+        const candidateY = (directionKey === 'west' || directionKey === 'east') ? nextY + offset : nextY;
+        if (!this._isInsideRoom(candidateX, candidateY)) continue;
+        if (!this._isBlocked(targetRoom, candidateX, candidateY)) {
+          return { x: candidateX, y: candidateY };
+        }
+      }
+      return null;
+    };
+
     if (this._isBlocked(targetRoom, nextX, nextY)) {
-      return { moved: false, blocked: 'collision', transitioned: false, state: this.snapshot() };
+      const targetSlide = tryTargetRoomSlide();
+      if (!targetSlide) {
+        return { moved: false, blocked: 'collision', transitioned: false, state: this.snapshot() };
+      }
+      nextX = targetSlide.x;
+      nextY = targetSlide.y;
     }
 
     this.state = {

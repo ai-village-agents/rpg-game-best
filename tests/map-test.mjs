@@ -218,6 +218,53 @@ console.log('\n--- Direct adjacent travel helper ---');
   const blocked = travelToAdjacentRoom(edgeState, 'north');
   assert(!blocked.moved, 'Direct adjacent travel does not move when no adjacent room exists');
   assert(blocked.blocked === 'edge', 'Direct adjacent travel reports edge when no adjacent room');
+
+  function makeAdjacentTestRoom(name = 'Test Room') {
+    const collision = Array.from({ length: ROOM_H }, () => Array.from({ length: ROOM_W }, () => 0));
+    for (let x = 0; x < ROOM_W; x += 1) {
+      collision[0][x] = 1;
+      collision[ROOM_H - 1][x] = 1;
+    }
+    for (let y = 0; y < ROOM_H; y += 1) {
+      collision[y][0] = 1;
+      collision[y][ROOM_W - 1] = 1;
+    }
+    for (let col = MID_X - 1; col <= MID_X + 1; col += 1) {
+      collision[0][col] = 0;
+      collision[1][col] = 0;
+      collision[ROOM_H - 1][col] = 0;
+      collision[ROOM_H - 2][col] = 0;
+    }
+    for (let row = MID_Y - 1; row <= MID_Y + 1; row += 1) {
+      collision[row][0] = 0;
+      collision[row][1] = 0;
+      collision[row][ROOM_W - 1] = 0;
+      collision[row][ROOM_W - 2] = 0;
+    }
+    return { id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'), name, collision };
+  }
+
+  const blockedTargetRoom = makeAdjacentTestRoom('Shimmer Trail');
+  blockedTargetRoom.collision[ROOM_H - 2][MID_X - 1] = 1;
+  blockedTargetRoom.collision[ROOM_H - 2][MID_X - 2] = 0;
+
+  const blockedEntryWorld = {
+    ...DEFAULT_WORLD_DATA,
+    rooms: [
+      [null, blockedTargetRoom, null],
+      [null, makeAdjacentTestRoom('Millbrook Crossing'), null],
+      [null, null, null],
+    ],
+    startRoom: { row: 1, col: 1 },
+    startPosition: { x: MID_X - 1, y: MID_Y },
+  };
+
+  const slid = travelToAdjacentRoom({ roomRow: 1, roomCol: 1, x: MID_X - 1, y: MID_Y }, 'north', blockedEntryWorld);
+  assert(slid.moved, 'Direct adjacent travel still moves when target entry tile is blocked');
+  assert(slid.transitioned, 'Direct adjacent travel still transitions when target entry tile is blocked');
+  assert(slid.worldState.roomRow === 0 && slid.worldState.roomCol === 1, 'Direct adjacent travel reaches the adjacent room after slide');
+  assert(slid.worldState.y === ROOM_H - 2, 'Direct adjacent travel keeps expected entry depth after slide');
+  assert(slid.worldState.x === MID_X - 2, 'Direct adjacent travel slides to nearest open lane when entry tile is blocked');
 }
 
 console.log('\n--- Exit preview helpers ---');

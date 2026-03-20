@@ -97,17 +97,17 @@ describe('Area Scene Renderer', () => {
   it('renders exit destination cues for available exits', () => {
     const state = { phase: 'exploration', world: { roomRow: 1, roomCol: 1, x: 4, y: 3 } };
     const html = renderAreaScene(state);
-    assert.ok(html.includes('area-scene-exit-cue cue-north'), 'Should render north cue');
-    assert.ok(html.includes('area-scene-exit-cue cue-south'), 'Should render south cue');
-    assert.ok(html.includes('area-scene-exit-cue cue-west'), 'Should render west cue');
-    assert.ok(html.includes('area-scene-exit-cue cue-east'), 'Should render east cue');
+    assert.ok(html.includes('area-scene-exit-cue move-btn cue-north'), 'Should render north cue');
+    assert.ok(html.includes('area-scene-exit-cue move-btn cue-south'), 'Should render south cue');
+    assert.ok(html.includes('area-scene-exit-cue move-btn cue-west'), 'Should render west cue');
+    assert.ok(html.includes('area-scene-exit-cue move-btn cue-east'), 'Should render east cue');
     assert.ok(html.includes('↑ The Shimmer Trail'), 'Should include north destination room name');
   });
 
   it('renders ready highlight on cues when player is aligned at edge', () => {
     const state = { phase: 'exploration', world: { roomRow: 1, roomCol: 1, x: 4, y: 1 } };
     const html = renderAreaScene(state);
-    assert.ok(html.includes('area-scene-exit-cue cue-north cue-aligned cue-ready'), 'North cue should be ready');
+    assert.ok(html.includes('area-scene-exit-cue move-btn cue-north cue-aligned cue-ready'), 'North cue should be ready');
   });
 
   it('keeps blocked exits rendered as locks', () => {

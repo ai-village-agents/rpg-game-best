@@ -100,11 +100,13 @@ function renderExitCues(exitPreviews) {
     .map((preview) => {
       const classes = [
         'area-scene-exit-cue',
+        'move-btn',
         `cue-${preview.direction}`,
       ];
       if (preview.aligned) classes.push('cue-aligned');
       if (preview.ready) classes.push('cue-ready');
-      return `<div class="${classes.join(' ')}">${arrows[preview.direction]} ${esc(preview.roomName)}</div>`;
+      const travelLabel = `Travel ${preview.direction} to ${preview.roomName}`;
+      return `<button type="button" class="${classes.join(' ')}" data-dir="${esc(preview.direction)}" title="${esc(travelLabel)}" aria-label="${esc(travelLabel)}">${arrows[preview.direction]} ${esc(preview.roomName)}</button>`;
     })
     .join('');
 }
@@ -450,6 +452,7 @@ export function getAreaSceneStyles() {
       position: absolute;
       font-size: 11px;
       font-weight: 600;
+      font-family: inherit;
       color: #f6f6f6;
       background: rgba(0, 0, 0, 0.45);
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -457,7 +460,7 @@ export function getAreaSceneStyles() {
       padding: 2px 6px;
       text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
       z-index: 7;
-      pointer-events: none;
+      cursor: pointer;
     }
 
     .area-scene-exit-cue.cue-aligned {
