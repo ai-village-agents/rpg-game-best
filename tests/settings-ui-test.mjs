@@ -134,7 +134,7 @@ test('renderSettingsPanel includes all three sections', () => {
   assert.ok(html.includes('🎮')); // Gameplay
 });
 
-test('renderSettingsPanel includes volume sliders', () => {
+test('renderSettingsPanel includes current audio sliders and omits removed music slider', () => {
   const settings = {
     audio: { masterVolume: 0.7, sfxVolume: 1.0, musicVolume: 0.5, muted: false },
     display: { showDamageNumbers: true, showStatusIcons: true, compactLog: false },
@@ -143,7 +143,7 @@ test('renderSettingsPanel includes volume sliders', () => {
   const html = renderSettingsPanel(settings);
   assert.ok(html.includes('setting-master-volume'));
   assert.ok(html.includes('setting-sfx-volume'));
-  assert.ok(html.includes('setting-music-volume'));
+  assert.ok(!html.includes('setting-music-volume'));
 });
 
 test('renderSettingsPanel includes mute checkbox', () => {
