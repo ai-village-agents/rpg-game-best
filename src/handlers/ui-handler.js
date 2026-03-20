@@ -14,6 +14,7 @@ import { pushLog } from '../state.js';
 import { getCurrentRoom, getRoomExits } from '../map.js';
 import { getCurrentRoomId } from '../minimap.js';
 import { advanceDialog } from '../npc-dialog.js';
+import { addNotification, createNotification, NOTIFICATION_TYPES } from '../notification-toast.js';
 import { renderAchievementsPanel } from '../achievements-ui.js';
 import { loadSettings, updateSetting, resetSettings, saveSettings } from '../settings.js';
 import { createShopState, buyItem, sellItem } from '../shop.js';
@@ -28,6 +29,7 @@ import { BESTIARY_FILTER_DEFAULT, BESTIARY_SORT_DEFAULT } from '../bestiary-ui.j
 import { completeTutorialStep, dismissCurrentHint, showHint, createTutorialState, resetTutorial } from '../tutorial.js';
 import { getAllStandings, modifyReputation, getFactionStanding, claimReward } from '../faction-reputation-system.js';
 import { renderReputationPanel } from '../faction-reputation-system-ui.js';
+import { getExplorationQuest } from '../data/exploration-quests.js';
 import { createGuild, addMember, removeMember, changeMemberRank, depositGold, withdrawGold, unlockPerk, disbandGuild, getGuildStats } from '../guild-system.js';
 import { renderGuildPanel, renderCreateGuildForm, renderGuildBrowser, renderGuildHud } from '../guild-system-ui.js';
 import { processMatchResult, createTournament, recordTournamentMatchResult, getTournamentRewards, resetSeason, generateOpponent } from '../arena-tournament-system.js';
@@ -37,6 +39,7 @@ import { initIntentState } from '../enemy-intent.js';
 import { initCombatBattleLog } from '../combat-battle-log-integration.js';
 import { dismissSporeling } from '../sporeling-integration.js';
 import { canAccessTavern, canAccessVillageSquareActivity } from '../tavern-access.js';
+import { trackQuest } from '../quest-tracker-hud.js';
 import {
   recordEnemyDefeated as recordDashboardEnemyDefeated,
   recordGoldEarned as recordDashboardGoldEarned,
@@ -69,6 +72,39 @@ function recordBattleRewardsInStatistics(state) {
     next = recordDashboardGoldEarned(next, state.goldGained, 'combat');
   }
   return next;
+}
+
+function isObjectiveIncomplete(objective, progressValue) {
+  if (objective.type === 'KILL' || objective.type === 'COLLECT' || objective.type === 'DELIVER') {
+    const target = objective.count || 1;
+    return (progressValue || 0) < target;
+  }
+  return progressValue !== true;
+}
+
+function getQuestAcceptanceDetail(questState, questId) {
+  const quest = getExplorationQuest(questId);
+  const progress = questState?.questProgress?.[questId];
+  const stage = progress ? quest?.stages?.[progress.stageIndex] : null;
+  const objectives = stage?.objectives || [];
+  const objectiveProgress = progress?.objectiveProgress || {};
+
+  const nextRequired = objectives.find((objective) => (
+    objective.required && isObjectiveIncomplete(objective, objectiveProgress[objective.id])
+  ));
+  const nextObjective = nextRequired || objectives.find((objective) => (
+    isObjectiveIncomplete(objective, objectiveProgress[objective.id])
+  ));
+
+  if (nextObjective?.description) {
+    return `Next objective: ${nextObjective.description}`;
+  }
+
+  if (stage?.description) {
+    return stage.description;
+  }
+
+  return 'Open Quests to review objectives.';
 }
 
 export function handleUIAction(state, action) {
@@ -239,12 +275,16 @@ export function handleUIAction(state, action) {
     if (!state.questState) return pushLog(state, 'Quest system not initialized.');
     const result = acceptQuest(state.questState, action.questId);
     let next = { ...state, questState: result.questState };
+    let acceptedQuestCompletedImmediately = false;
 
     if (result.accepted) {
       const roomId = getCurrentRoomId(state.world);
       if (roomId) {
         const questResult = onRoomEnter(next.questState, roomId);
         next = { ...next, questState: questResult.questState };
+        acceptedQuestCompletedImmediately = questResult.completedQuests.some(
+          (completedQuest) => completedQuest.questId === action.questId
+        );
 
         const newRewards = buildPendingRewards(questResult.completedQuests);
         for (const cq of questResult.completedQuests) { next = recordDashboardQuestCompleted(next, 'side'); }
@@ -253,6 +293,16 @@ export function handleUIAction(state, action) {
           next = { ...next, pendingQuestRewards: [...existing, ...newRewards] };
         }
       }
+
+      next = trackQuest(next, action.questId);
+      const detail = acceptedQuestCompletedImmediately
+        ? 'Completed immediately in this room. Open Quests to claim the reward.'
+        : getQuestAcceptanceDetail(next.questState, action.questId);
+      next = addNotification(next, createNotification(
+        NOTIFICATION_TYPES.QUEST_UPDATE,
+        result.message,
+        { detail }
+      ));
     }
 
     return pushLog(next, result.message);

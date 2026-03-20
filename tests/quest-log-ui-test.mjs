@@ -8,6 +8,8 @@ import { strict as assert } from 'node:assert';
 import { describe, it, beforeEach } from 'node:test';
 import { initQuestState, acceptQuest, onRoomEnter, getAvailableQuestsInRoom, getActiveQuestsSummary } from '../src/quest-integration.js';
 import { createWorldState } from '../src/map.js';
+import { NOTIFICATION_TYPES } from '../src/notification-toast.js';
+import { EXPLORATION_QUESTS } from '../src/data/exploration-quests.js';
 
 describe('Quest Log UI - Quest State Management', () => {
   let questState;
@@ -230,15 +232,42 @@ describe('Quest Log UI - UI handler aliases', () => {
 });
 
 describe('Quest Log UI - ACCEPT_QUEST live handler regression', () => {
-  it('accepting "Know Your Surroundings" in Village Square immediately advances first EXPLORE stage', async () => {
+  it('successful accept in Village Square creates QUEST_UPDATE notification, tracks quest, and includes next objective guidance', async () => {
     const { handleUIAction } = await import('../src/handlers/ui-handler.js');
     const state = {
       phase: 'quests',
       previousPhase: 'exploration',
       log: [],
-      world: createWorldState(), // starts in center
+      world: createWorldState(), // starts in center (Village Square)
       questState: initQuestState(),
       pendingQuestRewards: [],
+      notifications: [],
+      questTrackerState: { trackedQuestId: null, isExpanded: false, isMinimized: false },
+    };
+
+    const next = handleUIAction(state, { type: 'ACCEPT_QUEST', questId: 'grove_guardian' });
+    assert.ok(next);
+    assert.strictEqual(next.questTrackerState.trackedQuestId, 'grove_guardian');
+
+    const toast = next.notifications[next.notifications.length - 1];
+    assert.ok(toast);
+    assert.strictEqual(toast.type, NOTIFICATION_TYPES.QUEST_UPDATE);
+    assert.ok(toast.message.includes('Quest accepted: The Guardian of the Grove'));
+    assert.ok(toast.detail.includes('Next objective:'));
+    assert.ok(toast.detail.includes('Reach the Northwest Grove'));
+  });
+
+  it('accepting "Know Your Surroundings" in Village Square auto-completes the first room objective and still creates a helpful acceptance notification', async () => {
+    const { handleUIAction } = await import('../src/handlers/ui-handler.js');
+    const state = {
+      phase: 'quests',
+      previousPhase: 'exploration',
+      log: [],
+      world: createWorldState(), // starts in center (Village Square)
+      questState: initQuestState(),
+      pendingQuestRewards: [],
+      notifications: [],
+      questTrackerState: { trackedQuestId: null, isExpanded: false, isMinimized: false },
     };
 
     const next = handleUIAction(state, { type: 'ACCEPT_QUEST', questId: 'explore_village' });
@@ -246,7 +275,70 @@ describe('Quest Log UI - ACCEPT_QUEST live handler regression', () => {
     assert.strictEqual(next.questState.questProgress.explore_village.stageIndex, 1);
     assert.deepStrictEqual(next.questState.questProgress.explore_village.objectiveProgress, {});
     assert.ok(next.questState.discoveredRooms.includes('center'));
+    assert.strictEqual(next.questTrackerState.trackedQuestId, 'explore_village');
+
+    const toast = next.notifications[next.notifications.length - 1];
+    assert.ok(toast);
+    assert.strictEqual(toast.type, NOTIFICATION_TYPES.QUEST_UPDATE);
+    assert.ok(toast.message.includes('Quest accepted: Know Your Surroundings'));
+    assert.ok(toast.detail.includes('Next objective:'));
+    assert.ok(
+      toast.detail.includes('Visit the Northern Path') || toast.detail.includes('Visit the Southern Road')
+    );
+
     assert.deepStrictEqual(next.pendingQuestRewards, []);
+  });
+
+  it('accepting a quest that completes immediately in the current room gives claim-reward guidance instead of a next-objective hint', async () => {
+    const { handleUIAction } = await import('../src/handlers/ui-handler.js');
+    EXPLORATION_QUESTS.instant_center_test = {
+      id: 'instant_center_test',
+      name: 'Instant Center Test',
+      description: 'Completes immediately when accepted in center.',
+      type: 'SIDE',
+      level: 1,
+      stages: [
+        {
+          id: 'instant_stage',
+          name: 'Instant Stage',
+          description: 'Be in center.',
+          objectives: [
+            {
+              id: 'visit_center_now',
+              type: 'EXPLORE',
+              description: 'Stand in Village Square',
+              locationId: 'center',
+              required: true
+            }
+          ],
+          nextStage: null
+        }
+      ],
+      rewards: { experience: 1, gold: 1, items: [] },
+      prerequisites: []
+    };
+
+    try {
+      const state = {
+        phase: 'quests',
+        previousPhase: 'exploration',
+        log: [],
+        world: createWorldState(),
+        questState: initQuestState(),
+        pendingQuestRewards: [],
+        notifications: [],
+      };
+
+      const next = handleUIAction(state, { type: 'ACCEPT_QUEST', questId: 'instant_center_test' });
+      assert.ok(next);
+      const toast = next.notifications[next.notifications.length - 1];
+      assert.ok(toast);
+      assert.strictEqual(toast.type, NOTIFICATION_TYPES.QUEST_UPDATE);
+      assert.ok(toast.detail.includes('Completed immediately'));
+      assert.ok(toast.detail.includes('Open Quests to claim the reward'));
+    } finally {
+      delete EXPLORATION_QUESTS.instant_center_test;
+    }
   });
 });
 
