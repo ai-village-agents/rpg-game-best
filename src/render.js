@@ -8,6 +8,7 @@ import { DEFAULT_WORLD_DATA, getRoomExits, getExitPreviews } from './map.js';
 import { getCategorizedInventory, getEquipmentDisplay, getItemDetails, getEquipmentComparison, INVENTORY_SCREENS, EQUIPMENT_SLOTS, getEquipmentBonuses } from './inventory.js';
 import { getEffectiveCombatStats, getEquipmentBonusDisplay, hasEquipmentBonuses } from './combat/equipment-bonuses.js';
 import { getCurrentLevelUp, getStatDiffs, formatStatName, xpForNextLevel } from './level-up.js';
+import { generateLevelUpChoices } from './level-up-choices.js';
 import { xpToNextLevel, XP_THRESHOLDS } from './characters/stats.js';
 import { formatAbilityName } from './specialization-ui.js';
 import { getNPCsInRoom, getCurrentDialogLine, getDialogProgress, isLastDialogLine } from './npc-dialog.js';
@@ -1236,42 +1237,90 @@ export function render(state, dispatch) {
   if (state.phase === 'level-up' && state.levelUpState) {
     const current = getCurrentLevelUp(state.levelUpState);
     if (current) {
-      const diffs = getStatDiffs(current.oldStats, current.newStats);
-      const diffRows = diffs.map(d => {
-        const sign = d.diff > 0 ? '+' : '';
-        return '<div>' + esc(formatStatName(d.stat)) + '</div><div><b>' + d.oldValue + '</b> \u2192 <b class="good">' + d.newValue + '</b> <span class="good">(' + sign + d.diff + ')</span></div>';
-      }).join('');
-
-      const nextXp = xpForNextLevel(current.newLevel);
-      const nextXpText = nextXp > 0 ? 'Next level at ' + nextXp + ' XP' : 'MAX LEVEL';
       const queueInfo = state.levelUpState.levelUps.length > 1
         ? ' (' + (state.levelUpState.currentIndex + 1) + '/' + state.levelUpState.levelUps.length + ')'
         : '';
 
-      hud.innerHTML = '<div class="row">' +
-        '<div class="card">' +
-          '<h2 class="good">\u2B50 Level Up!' + esc(queueInfo) + '</h2>' +
-          '<div class="kv">' +
-            '<div>Character</div><div><b>' + esc(current.name) + '</b></div>' +
-            '<div>Class</div><div><b>' + esc(current.classId ? current.classId[0].toUpperCase() + current.classId.slice(1) : '') + '</b></div>' +
-            '<div>Level</div><div><b>' + current.oldLevel + '</b> \u2192 <b class="good">' + current.newLevel + '</b></div>' +
+      if (state.levelUpState.pendingChoice) {
+        const choices = generateLevelUpChoices(current.classId, current.newLevel);
+        const choiceCards = choices.map(choice => {
+          const boosts = Object.entries(choice.statBoosts || {})
+            .filter(([, value]) => value)
+            .map(([stat, value]) => {
+              const sign = value > 0 ? '+' : '';
+              return '<div>' + esc(sign + value + ' ' + formatStatName(stat).toUpperCase()) + '</div>';
+            })
+            .join('');
+          const bonusAbility = choice.bonusAbility
+            ? '<div class="good" style="margin-top:8px;font-weight:bold">\uD83C\uDD95 New Ability: ' + esc(formatAbilityName(choice.bonusAbility)) + '!</div>'
+            : '';
+
+          return '<div class="card" style="flex:1;min-width:200px;max-width:280px;cursor:pointer;border:2px solid transparent;transition:border-color 0.2s" onmouseover="this.style.borderColor=\'var(--color-good,#4f4)\'" onmouseout="this.style.borderColor=\'transparent\'">' +
+            '<h3 style="margin:0 0 8px">' + esc(choice.icon) + ' ' + esc(choice.name) + '</h3>' +
+            '<p style="opacity:0.8;margin:0 0 8px">' + esc(choice.description) + '</p>' +
+            '<div class="kv">' + boosts + '</div>' +
+            bonusAbility +
+            '<button id="btnChoice_' + choice.id + '" style="margin-top:12px;width:100%">Choose</button>' +
+          '</div>';
+        }).join('');
+
+        hud.innerHTML = '<div class="row">' +
+          '<div class="card" style="width:100%">' +
+            '<h2 class="good">\u2B50 Level Up! Choose Your Path' + esc(queueInfo) + '</h2>' +
+            '<div class="kv">' +
+              '<div>Character</div><div><b>' + esc(current.name) + '</b></div>' +
+              '<div>Class</div><div><b>' + esc(current.classId ? current.classId[0].toUpperCase() + current.classId.slice(1) : '') + '</b></div>' +
+              '<div>Level</div><div><b>' + current.oldLevel + '</b> \u2192 <b class="good">' + current.newLevel + '</b></div>' +
+            '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="card">' +
-          '<h2>Stat Growth</h2>' +
-          '<div class="kv">' + diffRows + '</div>' +
-          '<div style="margin-top:8px;opacity:0.7">' + esc(nextXpText) + '</div>' +
-        '</div>' +
-      '</div>';
+        '<div class="row" style="gap:12px;flex-wrap:wrap;justify-content:center">' +
+          choiceCards +
+        '</div>';
 
-      const btnLabel = state.levelUpState.currentIndex < state.levelUpState.levelUps.length - 1
-        ? 'Next Level Up' : 'Continue';
+        actions.innerHTML = '';
 
-      actions.innerHTML = '<div class="buttons">' +
-        '<button id="btnLevelUpContinue">' + esc(btnLabel) + '</button>' +
-      '</div>';
+        choices.forEach(choice => {
+          const btn = document.getElementById('btnChoice_' + choice.id);
+          if (btn) {
+            btn.onclick = () => dispatch({ type: 'LEVEL_UP_CHOOSE', choiceId: choice.id });
+          }
+        });
+      } else {
+        const diffs = getStatDiffs(current.oldStats, current.newStats);
+        const diffRows = diffs.map(d => {
+          const sign = d.diff > 0 ? '+' : '';
+          return '<div>' + esc(formatStatName(d.stat)) + '</div><div><b>' + d.oldValue + '</b> \u2192 <b class="good">' + d.newValue + '</b> <span class="good">(' + sign + d.diff + ')</span></div>';
+        }).join('');
 
-      document.getElementById('btnLevelUpContinue').onclick = () => dispatch({ type: 'LEVEL_UP_CONTINUE' });
+        const nextXp = xpForNextLevel(current.newLevel);
+        const nextXpText = nextXp > 0 ? 'Next level at ' + nextXp + ' XP' : 'MAX LEVEL';
+
+        hud.innerHTML = '<div class="row">' +
+          '<div class="card">' +
+            '<h2 class="good">\u2B50 Level Up!' + esc(queueInfo) + '</h2>' +
+            '<div class="kv">' +
+              '<div>Character</div><div><b>' + esc(current.name) + '</b></div>' +
+              '<div>Class</div><div><b>' + esc(current.classId ? current.classId[0].toUpperCase() + current.classId.slice(1) : '') + '</b></div>' +
+              '<div>Level</div><div><b>' + current.oldLevel + '</b> \u2192 <b class="good">' + current.newLevel + '</b></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="card">' +
+            '<h2>Stat Growth</h2>' +
+            '<div class="kv">' + diffRows + '</div>' +
+            '<div style="margin-top:8px;opacity:0.7">' + esc(nextXpText) + '</div>' +
+          '</div>' +
+        '</div>';
+
+        const btnLabel = state.levelUpState.currentIndex < state.levelUpState.levelUps.length - 1
+          ? 'Next Level Up' : 'Continue';
+
+        actions.innerHTML = '<div class="buttons">' +
+          '<button id="btnLevelUpContinue">' + esc(btnLabel) + '</button>' +
+        '</div>';
+
+        document.getElementById('btnLevelUpContinue').onclick = () => dispatch({ type: 'LEVEL_UP_CONTINUE' });
+      }
 
       log.innerHTML = state.log
         .slice()

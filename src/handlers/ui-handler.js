@@ -7,6 +7,7 @@ import { updateAudioSettings } from '../audio-system.js';
 import { createInventoryState, handleInventoryAction } from '../inventory.js';
 import { markAllRead, toggleEntryImportance } from '../journal.js';
 import { createLevelUpState, advanceLevelUp } from '../level-up.js';
+import { applyLevelUpChoice, LEVEL_UP_CHOICES } from '../level-up-choices.js';
 import { acceptQuest, onRoomEnter } from '../quest-integration.js';
 import { buildPendingRewards, claimAllQuestRewards, hasPendingRewards } from '../quest-rewards.js';
 import { createGameStats, recordBattleFled, recordBattleWon, recordEnemyDefeated, recordXPEarned, recordGoldEarned } from '../game-stats.js';
@@ -312,7 +313,25 @@ export function handleUIAction(state, action) {
   if (type === 'VIEW_LEVEL_UPS') {
     if (!state.pendingLevelUps || state.pendingLevelUps.length === 0) return null;
     const luState = createLevelUpState(state.pendingLevelUps, 'victory');
-    return { ...state, phase: 'level-up', levelUpState: luState };
+    return { ...state, phase: 'level-up', levelUpState: { ...luState, pendingChoice: true } };
+  }
+
+  if (type === 'LEVEL_UP_CHOOSE') {
+    if (state.phase !== 'level-up' || !state.levelUpState) return null;
+    const { choiceId } = action;
+    if (!choiceId) return null;
+    const updatedPlayer = applyLevelUpChoice(state.player, choiceId);
+    // Also heal the bonus maxHp/maxMp
+    const choices = (LEVEL_UP_CHOICES[state.player.classId] || []);
+    const chosen = choices.find(c => c.id === choiceId);
+    const choiceName = chosen ? chosen.name : choiceId;
+    if (chosen && chosen.statBoosts) {
+      if (chosen.statBoosts.maxHp) updatedPlayer.stats.hp = Math.min(updatedPlayer.stats.hp + chosen.statBoosts.maxHp, updatedPlayer.stats.maxHp);
+      if (chosen.statBoosts.maxMp) updatedPlayer.stats.mp = Math.min(updatedPlayer.stats.mp + chosen.statBoosts.maxMp, updatedPlayer.stats.maxMp);
+    }
+    let next = { ...state, player: updatedPlayer, levelUpState: { ...state.levelUpState, pendingChoice: false } };
+    next = pushLog(next, 'You chose ' + choiceName + '!');
+    return next;
   }
 
   if (type === 'LEVEL_UP_CONTINUE') {
@@ -399,7 +418,7 @@ export function handleUIAction(state, action) {
     // Pending Level Ups Check
     if (state.pendingLevelUps && state.pendingLevelUps.length > 0) {
       const luState = createLevelUpState(state.pendingLevelUps, 'battle-summary-done');
-      return { ...state, phase: 'level-up', levelUpState: luState };
+      return { ...state, phase: 'level-up', levelUpState: { ...luState, pendingChoice: true } };
     }
     
     // Check if player needs to choose a specialization (reached level 5+ without pending level-ups)
