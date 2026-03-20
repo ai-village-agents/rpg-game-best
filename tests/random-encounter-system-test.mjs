@@ -722,8 +722,9 @@ describe('renderEncounterRateDisplay', () => {
   test('Shows encounter rate', () => {
     const state = createEncounterState();
     const html = renderEncounterRateDisplay(state, LOCATION_TYPE.DUNGEON);
+    const expectedPercent = Math.floor(BASE_ENCOUNTER_RATES[LOCATION_TYPE.DUNGEON] * 100);
     assert.ok(html.includes('Encounter Rate'));
-    assert.ok(html.includes('30%'));
+    assert.ok(html.includes(`${expectedPercent}%`));
   });
 });
 
