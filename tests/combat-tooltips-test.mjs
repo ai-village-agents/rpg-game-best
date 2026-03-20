@@ -191,7 +191,7 @@ describe('getItemTooltip', () => {
   it('should return tooltip for potion', () => {
     const tooltip = getItemTooltip('potion');
     assert.ok(tooltip);
-    assert.strictEqual(tooltip.name, 'Healing Potion');
+    assert.strictEqual(tooltip.name, 'Aetherial Draught');
     assert.ok(tooltip.lines.length > 0);
   });
 

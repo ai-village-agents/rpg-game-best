@@ -190,9 +190,9 @@ test('lootLines says "No items looted." when empty', () => {
 });
 
 test('lootLines includes item names when items present', () => {
-  const summary = { xpGained: 0, goldGained: 0, enemyName: 'X', lootedItems: ['Iron Sword'], levelUps: [] };
+  const summary = { xpGained: 0, goldGained: 0, enemyName: 'X', lootedItems: ['Aether-Forged Sword'], levelUps: [] };
   const fmt = formatBattleSummary(summary);
-  assert(fmt.lootLines.some(l => l.includes('Iron Sword')), 'lootLines should include item name');
+  assert(fmt.lootLines.some(l => l.includes('Aether-Forged Sword')), 'lootLines should include item name');
 });
 
 test('lootLines handles object items with name property', () => {
@@ -252,7 +252,7 @@ test('full pipeline: victory state → createBattleSummary → formatBattleSumma
     xpGained: 100,
     goldGained: 25,
     enemy: { name: 'Dark Orc' },
-    lootedItems: ['Health Potion', 'Leather Armor'],
+    lootedItems: ['Health Potion', 'Toughened Hide'],
     pendingLevelUps: [{ name: 'Warrior', newLevel: 4 }],
   };
   const summary = createBattleSummary(victoryState);

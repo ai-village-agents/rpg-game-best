@@ -25,8 +25,8 @@ function test(name, fn) {
 
 // --- Test data ---
 const items = [
-  { id: 'potion', name: 'Healing Potion', type: 'consumable', rarity: 'Common', value: 10, stats: {} },
-  { id: 'iron_sword', name: 'Iron Sword', type: 'weapon', rarity: 'Common', value: 50, stats: { attack: 3 } },
+  { id: 'potion', name: 'Aetherial Draught', type: 'consumable', rarity: 'Common', value: 10, stats: {} },
+  { id: 'iron_sword', name: 'Zweihander', type: 'weapon', rarity: 'Common', value: 50, stats: { attack: 3 } },
   { id: 'mithril_armor', name: 'Mithril Armor', type: 'armor', rarity: 'Rare', value: 200, stats: { defense: 8, speed: -1 } },
   { id: 'fire_ring', name: 'Fire Ring', type: 'accessory', rarity: 'Epic', value: 500, stats: { attack: 2, magic: 5 } },
   { id: 'dragon_blade', name: 'Dragon Blade', type: 'weapon', rarity: 'Legendary', value: 1000, stats: { attack: 15, critChance: 5 } },
@@ -150,16 +150,17 @@ console.log('\nSorting:');
 
 test('sortItems NAME_ASC sorts alphabetically', () => {
   const result = sortItems(items, SORT_MODES.NAME_ASC);
-  assert.equal(result[0].name, 'Amulet of Wisdom');
-  assert.equal(result[1].name, 'Dragon Blade');
-  assert.equal(result[2].name, 'Elixir');
-  assert.equal(result[result.length - 1].name, 'Mithril Armor');
+  assert.equal(result[0].name, 'Aetherial Draught');
+  assert.equal(result[1].name, 'Amulet of Wisdom');
+  assert.equal(result[2].name, 'Dragon Blade');
+  assert.equal(result[3].name, 'Elixir');
+  assert.equal(result[result.length - 1].name, 'Zweihander');
 });
 
 test('sortItems NAME_DESC sorts reverse alphabetically', () => {
   const result = sortItems(items, SORT_MODES.NAME_DESC);
-  assert.equal(result[0].name, 'Mithril Armor');
-  assert.equal(result[result.length - 1].name, 'Amulet of Wisdom');
+  assert.equal(result[0].name, 'Zweihander');
+  assert.equal(result[result.length - 1].name, 'Aetherial Draught');
 });
 
 test('sortItems TYPE groups by type order (consumable, weapon, armor, accessory)', () => {
@@ -178,8 +179,8 @@ test('sortItems TYPE groups by type order (consumable, weapon, armor, accessory)
 test('sortItems TYPE sub-sorts by name within same type', () => {
   const result = sortItems(items, SORT_MODES.TYPE);
   const consumables = result.filter(i => i.type === 'consumable');
-  assert.equal(consumables[0].name, 'Elixir');
-  assert.equal(consumables[1].name, 'Healing Potion');
+  assert.equal(consumables[0].name, 'Aetherial Draught');
+  assert.equal(consumables[1].name, 'Elixir');
 });
 
 test('sortItems RARITY_ASC sorts Common → Legendary', () => {
@@ -199,8 +200,8 @@ test('sortItems RARITY_DESC sorts Legendary → Common', () => {
 test('sortItems RARITY_ASC sub-sorts by name within same rarity', () => {
   const result = sortItems(items, SORT_MODES.RARITY_ASC);
   const commons = result.filter(i => i.rarity === 'Common');
-  assert.equal(commons[0].name, 'Healing Potion');
-  assert.equal(commons[1].name, 'Iron Sword');
+  assert.equal(commons[0].name, 'Aetherial Draught');
+  assert.equal(commons[1].name, 'Zweihander');
 });
 
 test('sortItems VALUE_ASC sorts low to high', () => {
@@ -217,7 +218,7 @@ test('sortItems VALUE_DESC sorts high to low', () => {
 
 test('sortItems STAT_TOTAL_DESC sorts by total stats descending', () => {
   const result = sortItems(items, SORT_MODES.STAT_TOTAL_DESC);
-  // Dragon Blade: 15+5=20, Mithril Armor: 8-1=7, Fire Ring: 2+5=7, Iron Sword: 3, Amulet: 3, Potion: 0, Elixir: 0
+  // Dragon Blade: 15+5=20, Mithril Armor: 8-1=7, Fire Ring: 2+5=7, Aether-Forged Sword: 3, Amulet: 3, Potion: 0, Elixir: 0
   assert.equal(result[0].name, 'Dragon Blade'); // 20
   // Mithril Armor and Fire Ring both have 7, sub-sorted by name
   assert.equal(result[1].name, 'Fire Ring'); // 7 (F < M)
@@ -253,13 +254,14 @@ test('filterAndSortItems filters then sorts', () => {
   const result = filterAndSortItems(items, FILTER_MODES.WEAPON, SORT_MODES.VALUE_DESC);
   assert.equal(result.length, 2);
   assert.equal(result[0].name, 'Dragon Blade'); // 1000g
-  assert.equal(result[1].name, 'Iron Sword'); // 50g
+  assert.equal(result[1].name, 'Zweihander'); // 50g
 });
 
 test('filterAndSortItems with ALL filter sorts everything', () => {
   const result = filterAndSortItems(items, FILTER_MODES.ALL, SORT_MODES.NAME_ASC);
   assert.equal(result.length, items.length);
-  assert.equal(result[0].name, 'Amulet of Wisdom');
+  assert.equal(result[0].name, 'Aetherial Draught');
+  assert.equal(result[1].name, 'Amulet of Wisdom');
 });
 
 test('filterAndSortItems with EQUIPPABLE + RARITY_DESC', () => {
@@ -306,7 +308,7 @@ test('renderSortFilterControls highlights active filter', () => {
   // The weapon button should have the active styling
   const weaponBtnMatch = html.match(/data-filter="weapon"[^>]*/);
   assert.ok(weaponBtnMatch, 'weapon filter button exists');
-  assert.ok(weaponBtnMatch[0].includes('background:#4a9eff'), 'weapon button has active style');
+  assert.ok(weaponBtnMatch[0].includes('var(--accent)'), 'weapon button has active style');
 });
 
 test('renderSortFilterControls shows filtered count when different', () => {

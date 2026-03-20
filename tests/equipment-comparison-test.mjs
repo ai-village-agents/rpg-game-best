@@ -11,14 +11,14 @@ import { describe, it, beforeEach } from 'node:test';
 const mockItems = {
   rustySword: {
     id: 'rustySword',
-    name: 'Rusty Sword',
+    name: 'Corroded Blade',
     type: 'weapon',
     rarity: 'Common',
     stats: { attack: 5, critChance: 0 },
   },
   ironSword: {
     id: 'ironSword',
-    name: 'Iron Sword',
+    name: 'Aether-Forged Sword',
     type: 'weapon',
     rarity: 'Uncommon',
     stats: { attack: 12, critChance: 2 },
@@ -32,7 +32,7 @@ const mockItems = {
   },
   leatherArmor: {
     id: 'leatherArmor',
-    name: 'Leather Armor',
+    name: 'Toughened Hide',
     type: 'armor',
     rarity: 'Common',
     stats: { defense: 5 },
@@ -207,12 +207,12 @@ describe('Equipment Comparison Module', () => {
   describe('getItemData', () => {
     it('should return item object when given string ID', () => {
       const item = getItemData('rustySword');
-      assert.equal(item.name, 'Rusty Sword');
+      assert.equal(item.name, 'Corroded Blade');
     });
 
     it('should return item object when given object', () => {
       const item = getItemData(mockItems.ironSword);
-      assert.equal(item.name, 'Iron Sword');
+      assert.equal(item.name, 'Aether-Forged Sword');
     });
 
     it('should return null for invalid ID', () => {

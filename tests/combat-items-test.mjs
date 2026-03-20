@@ -162,7 +162,7 @@ it('potion clears defending flag', () => {
 it('potion logs usage message', () => {
   const s = makeState();
   const result = playerUseItem(s, 'potion');
-  assert.ok(result.log.some(l => l.includes('Healing Potion') && l.includes('restore')));
+  assert.ok(result.log.some(l => l.includes('Aetherial Draught') && l.includes('restore')));
 });
 
 it('using last potion removes it from inventory', () => {
@@ -203,7 +203,7 @@ it('hiPotion transitions to enemy-turn', () => {
 it('hiPotion logs correct item name', () => {
   const s = makeState({ player: { hp: 10, maxHp: 100 } });
   const result = playerUseItem(s, 'hiPotion');
-  assert.ok(result.log.some(l => l.includes('Hi-Potion') && l.includes('50 HP')));
+  assert.ok(result.log.some(l => l.includes('Greater Aetherial Draught') && l.includes('50 HP')));
 });
 
 // ==========================================
@@ -244,7 +244,7 @@ it('ether transitions to enemy-turn', () => {
 it('ether logs correct message', () => {
   const s = makeState();
   const result = playerUseItem(s, 'ether');
-  assert.ok(result.log.some(l => l.includes('Ether') && l.includes('MP')));
+  assert.ok(result.log.some(l => l.includes('Mana Essence') && l.includes('MP')));
 });
 
 it('ether with 0 maxMp restores 0', () => {
@@ -285,7 +285,7 @@ it('bomb transitions to enemy-turn if enemy survives', () => {
 it('bomb logs fire damage message', () => {
   const s = makeState();
   const result = playerUseItem(s, 'bomb');
-  assert.ok(result.log.some(l => l.includes('Fire Bomb') && l.includes('35') && l.includes('fire')));
+  assert.ok(result.log.some(l => l.includes('Cinder Flask') && l.includes('35') && l.includes('fire')));
 });
 
 it('bomb does not heal the player', () => {
@@ -361,7 +361,7 @@ it('antidote logs cure message when poison removed', () => {
     },
   });
   const result = playerUseItem(s, 'antidote');
-  assert.ok(result.log.some(l => l.includes('Antidote') && l.includes('cure')));
+  assert.ok(result.log.some(l => l.includes('Purifying Balm') && l.includes('cure')));
 });
 
 // ==========================================

@@ -108,18 +108,18 @@ assert(potionResult.effects.healed === 20, 'Potion healed amount reported');
 assert(potionResult.effects.inventory.potion === 1, 'Potion count reduced by 1');
 
 const hiPotionResult = useItem('hiPotion', { ...baseCharacter, inventory: { hiPotion: 1 } }, {});
-assert(hiPotionResult.effects.hp === 50, 'Hi-Potion heals up to max HP');
-assert(hiPotionResult.effects.healed === 40, 'Hi-Potion healing amount reported');
-assert(hiPotionResult.effects.inventory.hiPotion === 0, 'Hi-Potion consumed');
+assert(hiPotionResult.effects.hp === 50, 'Greater Aetherial Draught heals up to max HP');
+assert(hiPotionResult.effects.healed === 40, 'Greater Aetherial Draught healing amount reported');
+assert(hiPotionResult.effects.inventory.hiPotion === 0, 'Greater Aetherial Draught consumed');
 
 const etherResult = useItem('ether', { ...baseCharacter, inventory: { ether: 1 } }, {});
-assert(etherResult.effects.mp === 20, 'Ether restores MP up to max');
-assert(etherResult.effects.restoredMP === 15, 'Ether restored MP amount reported');
-assert(etherResult.effects.inventory.ether === 0, 'Ether consumed');
+assert(etherResult.effects.mp === 20, 'Mana Essence restores MP up to max');
+assert(etherResult.effects.restoredMP === 15, 'Mana Essence restored MP amount reported');
+assert(etherResult.effects.inventory.ether === 0, 'Mana Essence consumed');
 
 const antidoteResult = useItem('antidote', { ...baseCharacter, inventory: { antidote: 1 } }, {});
-assert(Array.isArray(antidoteResult.effects.cureStatus) && antidoteResult.effects.cureStatus.includes('poison'), 'Antidote cleanses poison');
-assert(antidoteResult.effects.inventory.antidote === 0, 'Antidote consumed');
+assert(Array.isArray(antidoteResult.effects.cureStatus) && antidoteResult.effects.cureStatus.includes('poison'), 'Purifying Balm cleanses poison');
+assert(antidoteResult.effects.inventory.antidote === 0, 'Purifying Balm consumed');
 
 // ── Test: Backward Compatibility ────────────────────────────────────
 console.log('\n--- Backward Compatibility ---');
@@ -135,8 +135,8 @@ const normalizedEmpty = normalizeInventory(null);
 assert(Object.keys(normalizedEmpty).length === 0, 'Null inventory normalizes to empty object');
 
 const display = getInventoryDisplay({ potion: 2, dragonSpear: 1, unknownItem: 4 });
-assert(display.includes('Healing Potion ×2'), 'Display shows item names and counts');
-assert(display.includes('Dragon Spear ×1'), 'Display resolves known item names');
+assert(display.includes('Aetherial Draught ×2'), 'Display shows item names and counts');
+assert(display.includes('Wyrmsbane Pike ×1'), 'Display resolves known item names');
 assert(display.includes('unknownItem ×4'), 'Display falls back to ID for unknown items');
 
 // ── Summary ─────────────────────────────────────────────────────────

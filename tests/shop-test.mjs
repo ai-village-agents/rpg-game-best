@@ -110,7 +110,7 @@ describe('Shop System', () => {
       const potionEntry = data.stock.find(s => s.itemId === 'potion');
       assert.ok(potionEntry);
       assert.ok(potionEntry.item);
-      assert.equal(potionEntry.item.name, 'Healing Potion');
+      assert.equal(potionEntry.item.name, 'Aetherial Draught');
       assert.equal(potionEntry.buyPrice, 15);
     });
 

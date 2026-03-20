@@ -11,7 +11,7 @@ export const rarityColors = {
 const baseItems = {
   potion: {
     id: 'potion',
-    name: 'Healing Potion',
+    name: 'Aetherial Draught',
     type: 'consumable',
     category: 'consumable',
     rarity: 'Common',
@@ -23,7 +23,7 @@ const baseItems = {
   },
   hiPotion: {
     id: 'hiPotion',
-    name: 'Hi-Potion',
+    name: 'Greater Aetherial Draught',
     type: 'consumable',
     category: 'consumable',
     rarity: 'Uncommon',
@@ -35,7 +35,7 @@ const baseItems = {
   },
   ether: {
     id: 'ether',
-    name: 'Ether',
+    name: 'Mana Essence',
     type: 'consumable',
     category: 'consumable',
     rarity: 'Uncommon',
@@ -46,7 +46,7 @@ const baseItems = {
   },
   bomb: {
     id: 'bomb',
-    name: 'Fire Bomb',
+    name: 'Cinder Flask',
     type: 'consumable',
     category: 'consumable',
     rarity: 'Uncommon',
@@ -57,7 +57,7 @@ const baseItems = {
   },
   antidote: {
     id: 'antidote',
-    name: 'Antidote',
+    name: 'Purifying Balm',
     type: 'consumable',
     category: 'consumable',
     rarity: 'Common',
@@ -68,7 +68,7 @@ const baseItems = {
   },
   rustySword: {
     id: 'rustySword',
-    name: 'Rusty Sword',
+    name: 'Corroded Blade',
     type: 'weapon',
     category: 'weapon',
     rarity: 'Common',
@@ -79,7 +79,7 @@ const baseItems = {
   },
   ironSword: {
     id: 'ironSword',
-    name: 'Iron Sword',
+    name: 'Aether-Forged Sword',
     type: 'weapon',
     category: 'weapon',
     rarity: 'Uncommon',
@@ -90,7 +90,7 @@ const baseItems = {
   },
   huntersBow: {
     id: 'huntersBow',
-    name: "Hunter's Bow",
+    name: 'Ranger\'s Longbow',
     type: 'weapon',
     category: 'weapon',
     rarity: 'Rare',
@@ -101,7 +101,7 @@ const baseItems = {
   },
   arcaneStaff: {
     id: 'arcaneStaff',
-    name: 'Arcane Staff',
+    name: 'Spellweaver Staff',
     type: 'weapon',
     category: 'weapon',
     rarity: 'Epic',
@@ -112,7 +112,7 @@ const baseItems = {
   },
   dragonSpear: {
     id: 'dragonSpear',
-    name: 'Dragon Spear',
+    name: 'Wyrmsbane Pike',
     type: 'weapon',
     category: 'weapon',
     rarity: 'Legendary',
@@ -123,7 +123,7 @@ const baseItems = {
   },
   leatherArmor: {
     id: 'leatherArmor',
-    name: 'Leather Armor',
+    name: 'Toughened Hide',
     type: 'armor',
     category: 'armor',
     rarity: 'Common',
@@ -134,7 +134,7 @@ const baseItems = {
   },
   chainmail: {
     id: 'chainmail',
-    name: 'Chainmail',
+    name: 'Aether-Linked Mail',
     type: 'armor',
     category: 'armor',
     rarity: 'Uncommon',
@@ -145,7 +145,7 @@ const baseItems = {
   },
   mageRobe: {
     id: 'mageRobe',
-    name: 'Mage Robe',
+    name: 'Acolyte Vestments',
     type: 'armor',
     category: 'armor',
     rarity: 'Rare',
@@ -156,7 +156,7 @@ const baseItems = {
   },
   shadowCloak: {
     id: 'shadowCloak',
-    name: 'Shadow Cloak',
+    name: 'Duskweaver Cloak',
     type: 'armor',
     category: 'armor',
     rarity: 'Epic',
@@ -167,7 +167,7 @@ const baseItems = {
   },
   ringOfFortune: {
     id: 'ringOfFortune',
-    name: 'Ring of Fortune',
+    name: 'Band of the Fates',
     type: 'accessory',
     category: 'accessory',
     rarity: 'Rare',
@@ -178,7 +178,7 @@ const baseItems = {
   },
   amuletOfVigor: {
     id: 'amuletOfVigor',
-    name: 'Amulet of Vigor',
+    name: 'Vitality Talisman',
     type: 'accessory',
     category: 'accessory',
     rarity: 'Epic',
@@ -189,7 +189,7 @@ const baseItems = {
   },
   bootsOfSwiftness: {
     id: 'bootsOfSwiftness',
-    name: 'Boots of Swiftness',
+    name: 'Windstrider Boots',
     type: 'accessory',
     category: 'accessory',
     rarity: 'Uncommon',
@@ -200,7 +200,7 @@ const baseItems = {
   },
   'guardian-bark': {
     id: 'guardian-bark',
-    name: 'Guardian Bark',
+    name: 'Ironwood Ward',
     type: 'consumable',
     category: 'consumable',
     rarity: 'Rare',
@@ -211,7 +211,7 @@ const baseItems = {
   },
   'hi-potion': {
     id: 'hi-potion',
-    name: 'Hi-Potion',
+    name: 'Greater Aetherial Draught',
     type: 'consumable',
     category: 'consumable',
     rarity: 'Uncommon',

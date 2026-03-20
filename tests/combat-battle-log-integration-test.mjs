@@ -113,10 +113,10 @@ describe('Combat Battle Log Integration', () => {
 
   describe('logItemUsed', () => {
     it('logs item usage with effect', () => {
-      const entry = logItemUsed('Hi-Potion', 'restored 50 HP');
+      const entry = logItemUsed('Greater Aetherial Draught', 'restored 50 HP');
       assert.strictEqual(entry.type, 'item-used');
-      assert.strictEqual(entry.message, 'Used Hi-Potion: restored 50 HP.');
-      assert.strictEqual(entry.details.item, 'Hi-Potion');
+      assert.strictEqual(entry.message, 'Used Greater Aetherial Draught: restored 50 HP.');
+      assert.strictEqual(entry.details.item, 'Greater Aetherial Draught');
       assert.strictEqual(entry.details.effect, 'restored 50 HP');
     });
 

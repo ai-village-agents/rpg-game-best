@@ -106,7 +106,7 @@ console.log('--- getItemDetails ---');
 {
   const details = getItemDetails('ironSword');
   assert(details !== null, 'ironSword details not null');
-  assert(details.name === 'Iron Sword', 'ironSword name correct');
+  assert(details.name === 'Aether-Forged Sword', 'ironSword name correct');
   assert(details.type === 'weapon', 'ironSword type is weapon');
   assert(details.rarity === 'Uncommon', 'ironSword rarity is Uncommon');
   assert(details.equippable === true, 'ironSword marked equippable');
@@ -170,7 +170,7 @@ console.log('--- equipItem ---');
   assert(result.success === true, 'equip ironSword succeeds');
   assert(result.player.equipment.weapon === 'ironSword', 'weapon slot has ironSword');
   assert((result.player.inventory.ironSword || 0) === 0, 'ironSword removed from inventory');
-  assert(result.message.includes('Equipped Iron Sword'), 'message mentions equipping');
+  assert(result.message.includes('Equipped Aether-Forged Sword'), 'message mentions equipping');
 }
 {
   const player = makePlayer();
@@ -218,7 +218,7 @@ console.log('--- unequipItem ---');
   assert(result.success === true, 'unequip weapon succeeds');
   assert(result.player.equipment.weapon === null, 'weapon slot now null');
   assert(result.player.inventory.ironSword === 2, 'ironSword returned to inventory (had 1 + 1)');
-  assert(result.message.includes('Unequipped Iron Sword'), 'message mentions unequipping');
+  assert(result.message.includes('Unequipped Aether-Forged Sword'), 'message mentions unequipping');
 }
 {
   const player = makePlayer({ equipment: { weapon: null, armor: null, accessory: null } });
@@ -287,7 +287,7 @@ console.log('--- getCategorizedInventory ---');
 
   const potionEntry = cats.consumables.find(c => c.id === 'potion');
   assert(potionEntry.count === 3, 'potion count is 3');
-  assert(potionEntry.name === 'Healing Potion', 'potion name correct');
+  assert(potionEntry.name === 'Aetherial Draught', 'potion name correct');
 }
 {
   const cats = getCategorizedInventory(null);
@@ -309,9 +309,9 @@ console.log('--- getEquipmentDisplay ---');
 {
   const display = getEquipmentDisplay({ weapon: 'ironSword', armor: null, accessory: 'ringOfFortune' });
   assert(display.weapon !== null, 'weapon display not null');
-  assert(display.weapon.name === 'Iron Sword', 'weapon display name correct');
+  assert(display.weapon.name === 'Aether-Forged Sword', 'weapon display name correct');
   assert(display.armor === null, 'armor display is null');
-  assert(display.accessory.name === 'Ring of Fortune', 'accessory display name correct');
+  assert(display.accessory.name === 'Band of the Fates', 'accessory display name correct');
 }
 {
   const display = getEquipmentDisplay(null);

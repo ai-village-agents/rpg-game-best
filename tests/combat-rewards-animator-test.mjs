@@ -232,7 +232,7 @@ describe('renderRewardsHtml', () => {
     xpAfter: 75,
     xpForLevel: 100,
     goldGained: 120,
-    lootItems: [{ name: 'Iron Sword', quantity: 1 }],
+    lootItems: [{ name: 'Aether-Forged Sword', quantity: 1 }],
     battleRating: { grade: 'A', title: 'Impressive Win', score: 82 },
     turnsUsed: 5,
     damageDealt: 80,
@@ -280,7 +280,7 @@ describe('renderRewardsHtml', () => {
 
   it('shows loot item name', () => {
     const html = renderRewardsHtml(rewardsState, 'complete');
-    assert.ok(html.includes('Iron Sword'));
+    assert.ok(html.includes('Aether-Forged Sword'));
   });
 
   it('escapes HTML in enemy name', () => {

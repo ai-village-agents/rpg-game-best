@@ -123,13 +123,13 @@ describe('Wire Combat Rewards into Victory Phase', () => {
         xpGained: 100,
         goldGained: 50,
         phase: 'victory',
-        rewards: { lootItems: ['Iron Sword', { name: 'Health Potion', quantity: 3 }] }
+        rewards: { lootItems: ['Aether-Forged Sword', { name: 'Health Potion', quantity: 3 }] }
       };
       const rs = createRewardsState(state);
       assert.equal(rs.lootItems.length, 2);
       
       const html = renderRewardsHtml(rs, 'complete');
-      assert.ok(html.includes('Iron Sword'));
+      assert.ok(html.includes('Aether-Forged Sword'));
       assert.ok(html.includes('Health Potion'));
     });
   });

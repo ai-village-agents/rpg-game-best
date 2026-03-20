@@ -38,7 +38,7 @@ describe('Shop UI', () => {
       const shopState = createShopState('merchant_bram', 'exploration');
       const player = makePlayer();
       const html = renderShopPanel(shopState, player);
-      assert.ok(html.includes('Healing Potion'));
+      assert.ok(html.includes('Aetherial Draught'));
       assert.ok(html.includes('shop-buy-btn'));
     });
 
@@ -47,7 +47,7 @@ describe('Shop UI', () => {
       const player = makePlayer({ inventory: { potion: 3 } });
       const html = renderShopPanel(shopState, player);
       assert.ok(html.includes('shop-sell-btn'));
-      assert.ok(html.includes('Healing Potion'));
+      assert.ok(html.includes('Aetherial Draught'));
     });
 
     it('should show empty message on sell tab with no items', () => {
@@ -58,10 +58,10 @@ describe('Shop UI', () => {
     });
 
     it('should render shop message when present', () => {
-      const shopState = { ...createShopState('merchant_bram', 'exploration'), message: 'Bought 1x Healing Potion!' };
+      const shopState = { ...createShopState('merchant_bram', 'exploration'), message: 'Bought 1x Aetherial Draught!' };
       const player = makePlayer();
       const html = renderShopPanel(shopState, player);
-      assert.ok(html.includes('Bought 1x Healing Potion!'));
+      assert.ok(html.includes('Bought 1x Aetherial Draught!'));
     });
 
     it('renders error shop messages with error styling', () => {
@@ -122,7 +122,7 @@ describe('Shop UI', () => {
       const shopState = createShopState('merchant_bram', 'exploration');
       const player = makePlayer();
       const html = renderShopPanel(shopState, player);
-      // Rusty Sword has attack: 5
+      // Corroded Blade has attack: 5
       assert.ok(html.includes('ATK'));
     });
 

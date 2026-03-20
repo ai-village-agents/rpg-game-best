@@ -258,7 +258,7 @@ assert(emptyLootState.lootedItems.length === 0, 'Empty loot produces empty loote
 assert(emptyLootState.player.inventory.potion === 2, 'Empty loot preserves existing inventory');
 
 // Single item loot
-const singleLoot = [{ itemId: 'ironSword', name: 'Iron Sword', rarity: 'Uncommon' }];
+const singleLoot = [{ itemId: 'ironSword', name: 'Aether-Forged Sword', rarity: 'Uncommon' }];
 const singleLootState = applyLootToState(baseState, singleLoot);
 assert(singleLootState.player.inventory.ironSword === 1, 'Single loot adds new item to inventory');
 assert(singleLootState.player.inventory.potion === 2, 'Single loot preserves existing items');
@@ -266,14 +266,14 @@ assert(singleLootState.lootedItems.length === 1, 'lootedItems has 1 entry');
 assert(singleLootState.lootedItems[0].itemId === 'ironSword', 'lootedItems contains correct item');
 
 // Stacking loot
-const stackLoot = [{ itemId: 'potion', name: 'Healing Potion', rarity: 'Common' }];
+const stackLoot = [{ itemId: 'potion', name: 'Aetherial Draught', rarity: 'Common' }];
 const stackState = applyLootToState(baseState, stackLoot);
 assert(stackState.player.inventory.potion === 3, 'Loot stacks with existing inventory (2 + 1 = 3)');
 
 // Multiple items loot
 const multiLoot = [
-  { itemId: 'ether', name: 'Ether', rarity: 'Rare' },
-  { itemId: 'bomb', name: 'Fire Bomb', rarity: 'Uncommon' },
+  { itemId: 'ether', name: 'Mana Essence', rarity: 'Rare' },
+  { itemId: 'bomb', name: 'Cinder Flask', rarity: 'Uncommon' },
 ];
 const multiState = applyLootToState(baseState, multiLoot);
 assert(multiState.player.inventory.ether === 1, 'Multi-loot adds first item');

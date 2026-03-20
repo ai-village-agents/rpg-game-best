@@ -383,7 +383,7 @@ describe('Combat Integration: enemyAct with equipment defense', () => {
       const dmgWithArmor = 100 - resultWithArmor.player.hp;
       assert.ok(dmgWithArmor < dmgNoArmor, `Armored damage ${dmgWithArmor} should be less than unarmored ${dmgNoArmor}`);
       // chainmail defense = 12, so damage diff should be 12
-      assert.strictEqual(dmgNoArmor - dmgWithArmor, 11, 'Chainmail reduces damage from 12 to 1 (min dmg), diff=11');
+      assert.strictEqual(dmgNoArmor - dmgWithArmor, 11, 'Aether-Linked Mail reduces damage from 12 to 1 (min dmg), diff=11');
     } else {
       // Enemy defends - HP unchanged for both
       assert.strictEqual(resultNoArmor.player.hp, 100);
