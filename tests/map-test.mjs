@@ -174,7 +174,7 @@ console.log('\n--- Exit preview helpers ---');
   const centerAligned = { roomRow: 1, roomCol: 1, x: MID_X, y: MID_Y };
   const northPreview = getExitPreview(centerAligned, 'north');
   assert(northPreview.available, 'North preview available from center room');
-  assert(northPreview.roomName === 'Northern Path', 'North preview includes adjacent room name');
+  assert(northPreview.roomName === 'The Shimmer Trail', 'North preview includes adjacent room name');
   assert(northPreview.aligned, 'North preview aligned when x is in doorway lane');
   assert(!northPreview.ready, 'North preview not ready while away from edge');
 
@@ -199,7 +199,7 @@ console.log('\n--- Exit preview helpers ---');
   assert(blockedNorth.roomName === null, 'Preview roomName null when exit is unavailable');
 
   const adjacentSouth = getAdjacentRoom({ roomRow: 0, roomCol: 0, x: MID_X, y: MID_Y }, 'south');
-  assert(adjacentSouth?.name === 'Western Crossing', 'Adjacent south room resolves correctly');
+  assert(adjacentSouth?.name === 'Traders Rift', 'Adjacent south room resolves correctly');
 
   const previews = getExitPreviews({ roomRow: 0, roomCol: 0, x: MID_X, y: MID_Y });
   assert(previews.east.available, 'East preview available in northwest corner room');

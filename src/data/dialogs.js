@@ -12,7 +12,7 @@ const DIALOGS = {
         id: 'start',
         type: 'TEXT',
         speaker: 'Village Elder',
-        text: 'Ah, a traveler! Welcome to our humble village of Millbrook.',
+        text: 'Ah, a traveler! Welcome to Millbrook Crossing, at the heart of the Convergence.',
         next: 'choice1'
       },
       {
@@ -44,7 +44,7 @@ const DIALOGS = {
         id: 'trouble',
         type: 'TEXT',
         speaker: 'Village Elder',
-        text: 'Your ears serve you well. Dark times have fallen upon Millbrook.',
+        text: 'Your ears serve you well. Dark times have fallen upon Aethermere. The Convergence grows unstable.',
         next: 'quest_offer'
       },
       {
@@ -257,7 +257,7 @@ const DIALOGS = {
         id: 'start',
         type: 'TEXT',
         speaker: 'Mira the Innkeeper',
-        text: 'Welcome to the Rusty Anchor! Best ale and softest beds in Millbrook.',
+        text: 'Welcome to the Rusty Anchor! Best Shimmer-tea and softest beds in all Aethermere.',
         next: 'services'
       },
       {
@@ -387,7 +387,7 @@ const DIALOGS = {
         id: 'start',
         type: 'TEXT',
         speaker: 'Village Guard',
-        text: 'Halt! State your business in Millbrook.',
+        text: 'Halt! State your business in Millbrook Crossing.',
         next: 'check_pass'
       },
       {
@@ -444,7 +444,7 @@ const DIALOGS = {
         id: 'welcome',
         type: 'TEXT',
         speaker: 'Village Guard',
-        text: 'Fair enough. Welcome to Millbrook. Stay out of trouble.',
+        text: 'Fair enough. Welcome to the Crossing. Stay out of trouble.',
         next: 'end'
       },
       {

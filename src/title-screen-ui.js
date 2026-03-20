@@ -25,8 +25,8 @@ function escapeHtml(value) {
  * @param {string} [options.subtitle]
  */
 export function renderTitleScreen(options = {}) {
-  const title = options.title ?? 'AI Village RPG';
-  const subtitle = options.subtitle ?? 'Turn-based adventure';
+  const title = options.title ?? 'Chronicles of Aethermere';
+  const subtitle = options.subtitle ?? 'A tale of two dimensions';
 
   return (
     '<div class="title-screen">' +

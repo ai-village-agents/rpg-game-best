@@ -26,28 +26,28 @@ describe('Area Scene Renderer', () => {
     assert.equal(renderAreaScene(state), '');
   });
 
-  it('renders area scene for Village Square (center)', () => {
+  it('renders area scene for Millbrook Crossing (center)', () => {
     const state = { phase: 'exploration', world: { roomRow: 1, roomCol: 1 } };
     const html = renderAreaScene(state);
     assert.ok(html.includes('area-scene'), 'Should contain area-scene class');
     assert.ok(html.includes('data-room="center"'), 'Should identify center room');
-    assert.ok(html.includes('Village Square'), 'Should show Village Square label');
+    assert.ok(html.includes('Millbrook Crossing'), 'Should show Millbrook Crossing label');
     assert.ok(html.includes('area-player-marker'), 'Should have player marker');
   });
 
-  it('renders area scene for Northwest Grove', () => {
+  it('renders area scene for The Whispering Glade', () => {
     const state = { phase: 'exploration', world: { roomRow: 0, roomCol: 0 } };
     const html = renderAreaScene(state);
     assert.ok(html.includes('data-room="nw"'), 'Should identify nw room');
-    assert.ok(html.includes('Northwest Grove'), 'Should show Northwest Grove label');
+    assert.ok(html.includes('The Whispering Glade'), 'Should show The Whispering Glade label');
     assert.ok(html.includes('tree'), 'NW should have tree elements');
   });
 
-  it('renders area scene for Southeast Dock', () => {
+  it('renders area scene for Tideglass Harbor', () => {
     const state = { phase: 'exploration', world: { roomRow: 2, roomCol: 2 } };
     const html = renderAreaScene(state);
     assert.ok(html.includes('data-room="se"'), 'Should identify se room');
-    assert.ok(html.includes('Southeast Dock'), 'Should show Southeast Dock label');
+    assert.ok(html.includes('Tideglass Harbor'), 'Should show Tideglass Harbor label');
     assert.ok(html.includes('dock'), 'SE should have dock elements');
     assert.ok(html.includes('wave'), 'SE should have wave elements');
   });
@@ -88,7 +88,7 @@ describe('Area Scene Renderer', () => {
   });
 
   it('renders NPC icons when NPCs are present in room', () => {
-    // Village Square (center) has NPCs defined in npc-dialog.js
+    // Millbrook Crossing (center) has NPCs defined in npc-dialog.js
     const state = { phase: 'exploration', world: { roomRow: 1, roomCol: 1 } };
     const html = renderAreaScene(state);
     assert.ok(html.includes('area-scene-npc'), 'Center should show NPC icons');
@@ -101,7 +101,7 @@ describe('Area Scene Renderer', () => {
     assert.ok(html.includes('area-scene-exit-cue cue-south'), 'Should render south cue');
     assert.ok(html.includes('area-scene-exit-cue cue-west'), 'Should render west cue');
     assert.ok(html.includes('area-scene-exit-cue cue-east'), 'Should render east cue');
-    assert.ok(html.includes('↑ Northern Path'), 'Should include north destination room name');
+    assert.ok(html.includes('↑ The Shimmer Trail'), 'Should include north destination room name');
   });
 
   it('renders ready highlight on cues when player is aligned at edge', () => {
@@ -121,7 +121,7 @@ describe('Area Scene Renderer', () => {
     // All room labels are safe, but the esc function should work
     const state = { phase: 'exploration', world: { roomRow: 0, roomCol: 1 } };
     const html = renderAreaScene(state);
-    assert.ok(html.includes('Northern Path'), 'Should render Northern Path label');
+    assert.ok(html.includes('The Shimmer Trail'), 'Should render The Shimmer Trail label');
     assert.ok(!html.includes('<script'), 'Should not contain raw HTML tags');
   });
 });

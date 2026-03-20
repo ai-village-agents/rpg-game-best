@@ -232,13 +232,13 @@ describe('Quest Log UI - UI handler aliases', () => {
 });
 
 describe('Quest Log UI - ACCEPT_QUEST live handler regression', () => {
-  it('successful accept in Village Square creates QUEST_UPDATE notification, tracks quest, and includes next objective guidance', async () => {
+  it('successful accept in Millbrook Crossing creates QUEST_UPDATE notification, tracks quest, and includes next objective guidance', async () => {
     const { handleUIAction } = await import('../src/handlers/ui-handler.js');
     const state = {
       phase: 'quests',
       previousPhase: 'exploration',
       log: [],
-      world: createWorldState(), // starts in center (Village Square)
+      world: createWorldState(), // starts in center (Millbrook Crossing)
       questState: initQuestState(),
       pendingQuestRewards: [],
       notifications: [],
@@ -254,16 +254,16 @@ describe('Quest Log UI - ACCEPT_QUEST live handler regression', () => {
     assert.strictEqual(toast.type, NOTIFICATION_TYPES.QUEST_UPDATE);
     assert.ok(toast.message.includes('Quest accepted: The Guardian of the Grove'));
     assert.ok(toast.detail.includes('Next objective:'));
-    assert.ok(toast.detail.includes('Reach the Northwest Grove'));
+    assert.ok(toast.detail.includes('Reach the The Whispering Glade'));
   });
 
-  it('accepting "Know Your Surroundings" in Village Square auto-completes the first room objective and still creates a helpful acceptance notification', async () => {
+  it('accepting "Know Your Surroundings" in Millbrook Crossing auto-completes the first room objective and still creates a helpful acceptance notification', async () => {
     const { handleUIAction } = await import('../src/handlers/ui-handler.js');
     const state = {
       phase: 'quests',
       previousPhase: 'exploration',
       log: [],
-      world: createWorldState(), // starts in center (Village Square)
+      world: createWorldState(), // starts in center (Millbrook Crossing)
       questState: initQuestState(),
       pendingQuestRewards: [],
       notifications: [],
@@ -283,7 +283,7 @@ describe('Quest Log UI - ACCEPT_QUEST live handler regression', () => {
     assert.ok(toast.message.includes('Quest accepted: Know Your Surroundings'));
     assert.ok(toast.detail.includes('Next objective:'));
     assert.ok(
-      toast.detail.includes('Visit the Northern Path') || toast.detail.includes('Visit the Southern Road')
+      toast.detail.includes('Visit The Shimmer Trail') || toast.detail.includes('Visit the Pilgrim Road')
     );
 
     assert.deepStrictEqual(next.pendingQuestRewards, []);
@@ -306,7 +306,7 @@ describe('Quest Log UI - ACCEPT_QUEST live handler regression', () => {
             {
               id: 'visit_center_now',
               type: 'EXPLORE',
-              description: 'Stand in Village Square',
+              description: 'Stand in Millbrook Crossing',
               locationId: 'center',
               required: true
             }

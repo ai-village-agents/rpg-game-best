@@ -4,10 +4,10 @@ import { renderAtmospherePanel, getLocationData, getAmbientEvent, getAllLocation
 
 describe('Location Atmosphere Integration', () => {
   it('renderAtmospherePanel returns HTML for valid exploration state', () => {
-    const state = { world: { roomRow: 1, roomCol: 1 } }; // Village Square
+    const state = { world: { roomRow: 1, roomCol: 1 } }; // Millbrook Crossing
     const html = renderAtmospherePanel(state);
     assert.ok(html.includes('atmosphere-panel'), 'Should contain atmosphere-panel class');
-    assert.ok(html.includes('Village Square'), 'Should show Village Square for center position');
+    assert.ok(html.includes('Millbrook Crossing'), 'Should show Millbrook Crossing for center position');
   });
 
   it('renderAtmospherePanel returns fallback for unknown coordinates', () => {
@@ -61,12 +61,12 @@ describe('Location Atmosphere Integration', () => {
 
   it('getLocationData returns data by roomId', () => {
     const data = getLocationData({ roomId: 'center' });
-    assert.equal(data.name, 'Village Square');
+    assert.equal(data.name, 'Millbrook Crossing');
   });
 
   it('getLocationData returns data by coordinates', () => {
     const data = getLocationData({ roomRow: 0, roomCol: 0 });
-    assert.equal(data.name, 'Northwest Grove');
+    assert.equal(data.name, 'The Whispering Glade');
   });
 
   it('getLocationData returns null for unknown room', () => {

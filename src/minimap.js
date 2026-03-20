@@ -14,29 +14,29 @@ export const MINIMAP_ROOM_ID_MAP = [
 
 // Room names for display
 export const ROOM_NAMES = {
-  nw:     'Northwest Grove',
-  n:      'Northern Path',
-  ne:     'Northeast Ridge',
-  w:      'Western Crossing',
-  center: 'Village Square',
-  e:      'Eastern Fields',
-  sw:     'Southwest Marsh',
-  s:      'Southern Road',
-  se:     'Southeast Dock',
+  nw:     'The Whispering Glade',
+  n:      'The Shimmer Trail',
+  ne:     'Crystalspine Heights',
+  w:      'Traders Rift',
+  center: 'Millbrook Crossing',
+  e:      'Lumingrass Meadows',
+  sw:     'The Miregloom',
+  s:      'Pilgrim Road',
+  se:     'Tideglass Harbor',
 };
 
 // Danger level per room (0 = safe, 1 = low, 2 = medium, 3 = high)
 // Based on encounter probability and enemy difficulty
 export const ROOM_DANGER_LEVEL = {
-  center: 0,  // Village Square — safe hub
-  n:      1,  // Northern Path — low danger
-  w:      1,  // Western Crossing — low danger
-  s:      1,  // Southern Road — low danger
-  e:      2,  // Eastern Fields — medium danger
-  nw:     2,  // Northwest Grove — medium danger
-  ne:     2,  // Northeast Ridge — medium danger
-  sw:     3,  // Southwest Marsh — high danger
-  se:     3,  // Southeast Dock — high danger
+  center: 0,  // Millbrook Crossing — safe hub
+  n:      1,  // The Shimmer Trail — low danger
+  w:      1,  // Traders Rift — low danger
+  s:      1,  // Pilgrim Road — low danger
+  e:      2,  // Lumingrass Meadows — medium danger
+  nw:     2,  // The Whispering Glade — medium danger
+  ne:     2,  // Crystalspine Heights — medium danger
+  sw:     3,  // The Miregloom — high danger
+  se:     3,  // Tideglass Harbor — high danger
 };
 
 // Danger level labels for tooltip/display

@@ -36,7 +36,7 @@ if (IS_BROWSER) {
   applyReducedMotion(initialSettings.display?.reducedMotion || false);
   let state = {
     phase: 'class-select',
-    log: ['Welcome to AI Village RPG! Select your class.'],
+    log: ['Welcome to the Chronicles of Aethermere! The Convergence awaits — choose your path.'],
     tutorialState: createTutorialState(),
     dailyChallengeState: initializeDailyChallenges(createDailyChallengeState()),
     showDailyChallenges: false,

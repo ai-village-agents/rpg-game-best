@@ -443,7 +443,7 @@ function renderQuestBreadcrumb(state) {
     if (questState.completedQuests.length === 0) {
       return `<div class="card quest-breadcrumb" style="border-left:3px solid var(--accent);background:color-mix(in srgb, var(--panel) 85%, var(--accent) 15%);">
         <h3 style="margin:0 0 4px 0;font-size:13px;color:var(--accent);">💡 Getting Started</h3>
-        <div style="font-size:12px;color:var(--tab-text);">Visit the <b>Village Square</b> and talk to the <b>Village Elder</b> to begin your adventure. Press <b>Quests 📜</b> to see available quests.</div>
+        <div style="font-size:12px;color:var(--tab-text);">Visit <b>Millbrook Crossing</b> and speak with <b>Elder Aldric</b> to begin your journey through Aethermere. Press <b>Quests 📜</b> to see available quests.</div>
       </div>`;
     }
     return '';
@@ -811,7 +811,7 @@ export function render(state, dispatch) {
     hud.innerHTML = `
       <div class="card quickstart-card">
         <h2>⚡ Quick Start Builds</h2>
-        <div class="quickstart-sub">Recommended combos for new adventurers</div>
+        <div class="quickstart-sub">Proven builds for those new to Aethermere</div>
         <div class="quickstart-list">
           <button class="quickstart-button" data-quickstart-class="warrior" data-quickstart-bg="soldier">
             <div class="quickstart-title">🛡️ Iron Guardian</div>

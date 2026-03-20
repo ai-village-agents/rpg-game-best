@@ -38,20 +38,20 @@ describe('Manual save location regression', () => {
     clearSaveSlots();
   });
 
-  it('system-handler SAVE_TO_SLOT stores Village Square for manual saves', () => {
+  it('system-handler SAVE_TO_SLOT stores Millbrook Crossing for manual saves', () => {
     const state = makeVillageSquareState();
 
     const next = handleSystemAction(state, { type: 'SAVE_TO_SLOT', slotIndex: 0 });
 
-    assert.equal(next.saveSlots[0].location, 'Village Square');
+    assert.equal(next.saveSlots[0].location, 'Millbrook Crossing');
     assert.notEqual(next.saveSlots[0].location, 'Unknown Location');
 
     const saved = loadFromSlot(0);
-    assert.equal(saved.saveMetadata?.location, 'Village Square');
-    assert.equal(saved.location, 'Village Square');
+    assert.equal(saved.saveMetadata?.location, 'Millbrook Crossing');
+    assert.equal(saved.location, 'Millbrook Crossing');
   });
 
-  it('save-management-ui manual save flow stores Village Square for displayed slot location', () => {
+  it('save-management-ui manual save flow stores Millbrook Crossing for displayed slot location', () => {
     const originalPrompt = globalThis.prompt;
     const originalAlert = globalThis.alert;
     const originalDocument = globalThis.document;
@@ -85,12 +85,12 @@ describe('Manual save location regression', () => {
     }
 
     const slots = getSaveSlots();
-    assert.equal(slots[1].location, 'Village Square');
+    assert.equal(slots[1].location, 'Millbrook Crossing');
     assert.notEqual(slots[1].location, 'Unknown Location');
 
     const saved = loadFromSlot(1);
     assert.equal(saved.customName, 'manual-save');
-    assert.equal(saved.saveMetadata?.location, 'Village Square');
-    assert.equal(saved.location, 'Village Square');
+    assert.equal(saved.saveMetadata?.location, 'Millbrook Crossing');
+    assert.equal(saved.location, 'Millbrook Crossing');
   });
 });

@@ -107,7 +107,7 @@ console.log('\n--- Room Info ---');
   const room = getCurrentRoom(state.world);
   assert(room !== null, 'getCurrentRoom returns room');
   assert(room.name !== undefined, 'room has name');
-  assert(room.name === 'Village Square', 'starting room is Village Square');
+  assert(room.name === 'Millbrook Crossing', 'starting room is Millbrook Crossing');
 
   const exits = getRoomExits(state.world);
   assert(Array.isArray(exits), 'getRoomExits returns array');
@@ -140,7 +140,7 @@ console.log('\n--- Room Transitions ---');
 
   const room = getCurrentRoom(world);
   assert(room !== null, 'new room exists after transition');
-  assert(room.name !== 'Village Square', 'moved to different room');
+  assert(room.name !== 'Millbrook Crossing', 'moved to different room');
 }
 
 // --- Test: Encounter generation with RNG ---

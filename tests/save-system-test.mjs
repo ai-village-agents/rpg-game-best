@@ -124,7 +124,7 @@ describe('createSaveMetadata', () => {
     };
     const meta = saveSystem.createSaveMetadata(state);
 
-    assert.strictEqual(meta.location, 'Village Square');
+    assert.strictEqual(meta.location, 'Millbrook Crossing');
   });
 });
 

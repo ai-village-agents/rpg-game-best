@@ -15,13 +15,13 @@ const EXPLORATION_QUESTS = {
     stages: [
       {
         id: 'explore_center',
-        name: 'Visit the Village Square',
+        name: 'Visit the Millbrook Crossing',
         description: 'Start by exploring the village center.',
         objectives: [
           {
             id: 'visit_center',
             type: 'EXPLORE',
-            description: 'Explore Village Square',
+            description: 'Explore Millbrook Crossing',
             locationId: 'center',
             required: true
           }
@@ -36,14 +36,14 @@ const EXPLORATION_QUESTS = {
           {
             id: 'visit_north',
             type: 'EXPLORE',
-            description: 'Visit the Northern Path',
+            description: 'Visit The Shimmer Trail',
             locationId: 'n',
             required: true
           },
           {
             id: 'visit_south',
             type: 'EXPLORE',
-            description: 'Visit the Southern Road',
+            description: 'Visit the Pilgrim Road',
             locationId: 's',
             required: true
           }
@@ -63,19 +63,19 @@ const EXPLORATION_QUESTS = {
   marsh_mystery: {
     id: 'marsh_mystery',
     name: 'Whispers in the Marsh',
-    description: 'Strange lights have been seen in the Southwest Marsh. Investigate the phenomenon.',
+    description: 'Strange lights have been seen in the The Miregloom. Investigate the phenomenon.',
     type: 'SIDE',
     level: 2,
     stages: [
       {
         id: 'reach_marsh',
         name: 'Enter the Marsh',
-        description: 'Travel to the Southwest Marsh to investigate.',
+        description: 'Travel to the The Miregloom to investigate.',
         objectives: [
           {
             id: 'explore_sw',
             type: 'EXPLORE',
-            description: 'Reach the Southwest Marsh',
+            description: 'Reach the The Miregloom',
             locationId: 'sw',
             required: true
           }
@@ -112,7 +112,7 @@ const EXPLORATION_QUESTS = {
   grove_guardian: {
     id: 'grove_guardian',
     name: 'The Guardian of the Grove',
-    description: 'An ancient spirit guards the Northwest Grove. Seek its wisdom.',
+    description: 'An ancient spirit guards the The Whispering Glade. Seek its wisdom.',
     type: 'SIDE',
     level: 3,
     stages: [
@@ -124,7 +124,7 @@ const EXPLORATION_QUESTS = {
           {
             id: 'explore_nw',
             type: 'EXPLORE',
-            description: 'Reach the Northwest Grove',
+            description: 'Reach the The Whispering Glade',
             locationId: 'nw',
             required: true
           }
@@ -167,20 +167,20 @@ const EXPLORATION_QUESTS = {
   // Ridge Expedition Quest
   ridge_expedition: {
     id: 'ridge_expedition',
-    name: 'The Northeast Ridge',
-    description: 'Scouts report bandits using the Northeast Ridge as a lookout. Clear them out.',
+    name: 'The Crystalspine Heights',
+    description: 'Scouts report bandits using the Crystalspine Heights as a lookout. Clear them out.',
     type: 'MAIN',
     level: 3,
     stages: [
       {
         id: 'scout_ridge',
         name: 'Scout the Ridge',
-        description: 'Carefully approach the Northeast Ridge.',
+        description: 'Carefully approach the Crystalspine Heights.',
         objectives: [
           {
             id: 'explore_ne',
             type: 'EXPLORE',
-            description: 'Reach the Northeast Ridge',
+            description: 'Reach the Crystalspine Heights',
             locationId: 'ne',
             required: true
           }
@@ -226,7 +226,7 @@ const EXPLORATION_QUESTS = {
   dock_investigation: {
     id: 'dock_investigation',
     name: 'Trouble at the Docks',
-    description: 'Smugglers have been spotted at the Southeast Dock. Investigate their activities.',
+    description: 'Smugglers have been spotted at the Tideglass Harbor. Investigate their activities.',
     type: 'SIDE',
     level: 4,
     stages: [
@@ -238,7 +238,7 @@ const EXPLORATION_QUESTS = {
           {
             id: 'explore_se',
             type: 'EXPLORE',
-            description: 'Reach the Southeast Dock',
+            description: 'Reach the Tideglass Harbor',
             locationId: 'se',
             required: true
           }
@@ -311,63 +311,63 @@ const EXPLORATION_QUESTS = {
           {
             id: 'visit_nw',
             type: 'EXPLORE',
-            description: 'Visit Northwest Grove',
+            description: 'Visit The Whispering Glade',
             locationId: 'nw',
             required: true
           },
           {
             id: 'visit_n',
             type: 'EXPLORE',
-            description: 'Visit Northern Path',
+            description: 'Visit The Shimmer Trail',
             locationId: 'n',
             required: true
           },
           {
             id: 'visit_ne',
             type: 'EXPLORE',
-            description: 'Visit Northeast Ridge',
+            description: 'Visit Crystalspine Heights',
             locationId: 'ne',
             required: true
           },
           {
             id: 'visit_w',
             type: 'EXPLORE',
-            description: 'Visit Western Crossing',
+            description: 'Visit Traders Rift',
             locationId: 'w',
             required: true
           },
           {
             id: 'visit_center',
             type: 'EXPLORE',
-            description: 'Visit Village Square',
+            description: 'Visit Millbrook Crossing',
             locationId: 'center',
             required: true
           },
           {
             id: 'visit_e',
             type: 'EXPLORE',
-            description: 'Visit Eastern Fields',
+            description: 'Visit Lumingrass Meadows',
             locationId: 'e',
             required: true
           },
           {
             id: 'visit_sw',
             type: 'EXPLORE',
-            description: 'Visit Southwest Marsh',
+            description: 'Visit The Miregloom',
             locationId: 'sw',
             required: true
           },
           {
             id: 'visit_s',
             type: 'EXPLORE',
-            description: 'Visit Southern Road',
+            description: 'Visit Pilgrim Road',
             locationId: 's',
             required: true
           },
           {
             id: 'visit_se',
             type: 'EXPLORE',
-            description: 'Visit Southeast Dock',
+            description: 'Visit Tideglass Harbor',
             locationId: 'se',
             required: true
           }

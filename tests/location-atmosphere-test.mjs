@@ -18,7 +18,7 @@ describe('Location Atmosphere System', () => {
     it('returns data for valid room ID', () => {
       const data = getLocationData({ roomId: 'center' });
       assert.ok(data);
-      assert.equal(data.name, 'Village Square');
+      assert.equal(data.name, 'Millbrook Crossing');
       assert.equal(data.icon, '🏘️');
       assert.ok(data.description.length > 0);
       assert.ok(data.ambientEvents.length > 0);
@@ -29,7 +29,7 @@ describe('Location Atmosphere System', () => {
     it('returns data for valid coordinates', () => {
       const data = getLocationData({ roomRow: 0, roomCol: 0 });
       assert.ok(data);
-      assert.equal(data.name, 'Northwest Grove');
+      assert.equal(data.name, 'The Whispering Glade');
     });
 
     it('returns null for invalid room ID', () => {
@@ -96,7 +96,7 @@ describe('Location Atmosphere System', () => {
   describe('renderAtmospherePanel', () => {
     it('renders panel for valid state', () => {
       const html = renderAtmospherePanel({ world: { roomRow: 1, roomCol: 1 } });
-      assert.ok(html.includes('Village Square'));
+      assert.ok(html.includes('Millbrook Crossing'));
       assert.ok(html.includes('atmosphere-panel'));
       assert.ok(html.includes('🏘️'));
     });
@@ -104,7 +104,7 @@ describe('Location Atmosphere System', () => {
     it('renders fallback for missing state', () => {
       const html = renderAtmospherePanel({});
       // defaults to roomRow: 1, roomCol: 1 (center)
-      assert.ok(html.includes('Village Square'));
+      assert.ok(html.includes('Millbrook Crossing'));
     });
 
     it('renders fallback for null state', () => {

@@ -36,7 +36,7 @@ describe('Fast Travel System', () => {
       const result = getUnlockedFastTravelDestinations(visitedRooms);
       assert.equal(result.length, 1);
       assert.equal(result[0].id, 'center');
-      assert.equal(result[0].name, 'Village Square');
+      assert.equal(result[0].name, 'Millbrook Crossing');
       assert.equal(result[0].row, 1);
       assert.equal(result[0].col, 1);
       assert.equal(result[0].dangerLevel, 0);
@@ -60,10 +60,10 @@ describe('Fast Travel System', () => {
       const visitedRooms = ['e', 'ne', 'nw'];
       const result = getUnlockedFastTravelDestinations(visitedRooms);
       assert.equal(result.length, 3);
-      // All danger 2, sorted alphabetically: Eastern Fields, Northeast Ridge, Northwest Grove
-      assert.equal(result[0].name, 'Eastern Fields');
-      assert.equal(result[1].name, 'Northeast Ridge');
-      assert.equal(result[2].name, 'Northwest Grove');
+      // All danger 2, sorted alphabetically: Lumingrass Meadows, Crystalspine Heights, The Whispering Glade
+      assert.equal(result[0].name, 'Lumingrass Meadows');
+      assert.equal(result[1].name, 'Crystalspine Heights');
+      assert.equal(result[2].name, 'The Whispering Glade');
     });
 
     it('should skip invalid room coordinates', () => {
@@ -190,7 +190,7 @@ describe('Fast Travel System', () => {
       assert.equal(newState.x, 4);  // Center of room
       assert.equal(newState.y, 3);  // Center of room
       assert.equal(newState.gold, 100);  // Other state preserved
-      assert.ok(message.includes('Village Square'));
+      assert.ok(message.includes('Millbrook Crossing'));
     });
 
     it('should return failure for unknown destination', () => {
@@ -237,10 +237,10 @@ describe('Fast Travel System', () => {
       const worldState = { roomRow: 1, roomCol: 1, x: 8, y: 6 };
       
       let result = executeFastTravel(worldState, 'nw');
-      assert.ok(result.message.includes('Northwest Grove'));
+      assert.ok(result.message.includes('The Whispering Glade'));
       
       result = executeFastTravel(worldState, 'se');
-      assert.ok(result.message.includes('Southeast Dock'));
+      assert.ok(result.message.includes('Tideglass Harbor'));
     });
   });
 

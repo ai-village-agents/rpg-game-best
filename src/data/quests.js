@@ -8,7 +8,7 @@ export const QUESTS = {
   main_quest_1: {
     id: 'main_quest_1',
     name: 'The Goblin Menace',
-    description: 'Goblins have been raiding farms around Millbrook. The Village Elder has asked you to deal with them.',
+    description: 'Craglorn Scrappers have been raiding the lumingrass farms near Millbrook Crossing. The Village Elder has asked you to deal with them.',
     type: 'MAIN',
     level: 1,
     stages: [
@@ -327,13 +327,13 @@ export const QUESTS = {
       },
       {
         id: 'search_road',
-        name: 'Search the Northern Path',
-        description: 'Explore the Northern Path where the merchant was last seen.',
+        name: 'Search the The Shimmer Trail',
+        description: 'Explore the The Shimmer Trail where the merchant was last seen.',
         objectives: [
           {
             id: 'explore_north_road',
             type: 'EXPLORE',
-            description: 'Search the Northern Path',
+            description: 'Search the The Shimmer Trail',
             locationId: 'n',
             required: true
           }
@@ -348,7 +348,7 @@ export const QUESTS = {
           {
             id: 'kill_wolves',
             type: 'KILL',
-            description: 'Defeat wolves along the Northern Path',
+            description: 'Defeat wolves along the The Shimmer Trail',
             enemyType: 'wolf',
             count: 2,
             current: 0,

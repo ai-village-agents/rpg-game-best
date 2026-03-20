@@ -46,9 +46,9 @@ export function initializeJournal(state) {
 
 function getWorldLocationName(state) {
   const ROOM_NAMES = [
-    ['Northwest Grove', 'Northern Path', 'Northeast Ridge'],
-    ['Western Crossing', 'Village Square', 'Eastern Fields'],
-    ['Southwest Marsh', 'Southern Road', 'Southeast Dock']
+    ['The Whispering Glade', 'The Shimmer Trail', 'Crystalspine Heights'],
+    ['Traders Rift', 'Millbrook Crossing', 'Lumingrass Meadows'],
+    ['The Miregloom', 'Pilgrim Road', 'Tideglass Harbor']
   ];
   const row = state.world?.roomRow;
   const col = state.world?.roomCol;

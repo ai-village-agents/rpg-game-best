@@ -3,15 +3,15 @@ import { DEFAULT_WORLD_DATA, getRoomExits, getCurrentRoom, getExitPreviews } fro
 import { getNPCsInRoom } from './npc-dialog.js';
 
 const ROOM_LABELS = {
-  nw: 'Northwest Grove',
-  n: 'Northern Path',
-  ne: 'Northeast Ridge',
-  w: 'Western Crossing',
-  center: 'Village Square',
-  e: 'Eastern Fields',
-  sw: 'Southwest Marsh',
-  s: 'Southern Road',
-  se: 'Southeast Dock',
+  nw: 'The Whispering Glade',
+  n: 'The Shimmer Trail',
+  ne: 'Crystalspine Heights',
+  w: 'Traders Rift',
+  center: 'Millbrook Crossing',
+  e: 'Lumingrass Meadows',
+  sw: 'The Miregloom',
+  s: 'Pilgrim Road',
+  se: 'Tideglass Harbor',
 };
 
 const ALL_DIRECTIONS = ['north', 'south', 'west', 'east'];
@@ -249,7 +249,7 @@ export function renderAreaScene(state) {
 
 export function getAreaSceneStyles() {
   return `
-    /* New Village Square Styles */
+    /* New Millbrook Crossing Styles */
     .area-scene[data-room="center"] {
       background: linear-gradient(180deg, #8cb5d6 0%, #b8cddb 45%, #d4caa8 45%, #e6dfc3 100%);
     }

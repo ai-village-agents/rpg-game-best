@@ -7,7 +7,7 @@ const ROOM_NPCS = {
       id: 'village_elder',
       name: 'Village Elder Aldric',
       greeting:
-        'Greetings, adventurer! Welcome to Millbrook Village. The road ahead is perilous — take care.',
+        'Greetings, traveler! Welcome to Millbrook Crossing, heart of the Convergence. The Aether stirs — take care on these roads.',
       dialog: ['elder_1', 'elder_2', 'elder_3'],
     },
     {
@@ -94,7 +94,7 @@ const ROOM_NPCS = {
       id: 'old_fisherman',
       name: 'Old Fisherman Pete',
       greeting:
-        'Finest dock this side of the realm! Though the waters have been restless lately...',
+        'Finest dock in all Aethermere! Though the waters have been restless lately...',
       dialog: ['fisher_1'],
     },
   ],
@@ -121,7 +121,7 @@ const DIALOG_LINES = {
     'Many adventurers have passed through here. Not all returned...',
   ],
   scout_1: [
-    'We patrol the perimeter to keep Millbrook safe.',
+    'We patrol the perimeter to keep the Crossing safe. The Convergence draws strange creatures.',
     'Report any unusual activity to Guard Captain Rolf in the village square.',
   ],
   sage_1: [
@@ -154,7 +154,7 @@ const DIALOG_LINES = {
   ],
   fisher_1: [
     "Strange lights in the water lately. Not natural, I'd wager.",
-    'The old sailors say the sea serpent wakes when the land troubles grow. Maybe just superstition...',
+    'The old sailors say the sea serpent wakes when the Convergence pulses. With the veil this thin... maybe not just superstition.',
   ],
 };
 
@@ -165,11 +165,11 @@ const RELATIONSHIP_GREETINGS = {
     [RelationshipLevel.UNFRIENDLY]:
       'Elder Aldric regards you coolly. "State your business quickly."',
     [RelationshipLevel.NEUTRAL]:
-      'Greetings, adventurer! Welcome to Millbrook Village. The road ahead is perilous — take care.',
+      'Greetings, traveler! Welcome to Millbrook Crossing, heart of the Convergence. The Aether stirs — take care on these roads.',
     [RelationshipLevel.FRIENDLY]:
       'Elder Aldric smiles warmly. "Ah, a trusted friend! The village is grateful for your aid."',
     [RelationshipLevel.ALLIED]:
-      'Elder Aldric beams with pride. "Our greatest champion returns! Millbrook stands with you always."',
+      'Elder Aldric beams with pride. "Our greatest champion returns! All of Aethermere stands with you."',
   },
   inn_keeper: {
     [RelationshipLevel.HOSTILE]:
@@ -285,7 +285,7 @@ const RELATIONSHIP_GREETINGS = {
     [RelationshipLevel.UNFRIENDLY]:
       'Pete grumbles. "What do you want? I\'m busy."',
     [RelationshipLevel.NEUTRAL]:
-      'Finest dock this side of the realm! Though the waters have been restless lately...',
+      'Finest dock in all Aethermere! Though the waters have been restless lately...',
     [RelationshipLevel.FRIENDLY]:
       'Pete smiles. "Good to see you. The fish have been biting since you came by."',
     [RelationshipLevel.ALLIED]:
@@ -354,8 +354,8 @@ function getAldricQuestDialogOverride(questState) {
   if (!progress.isActive) return null;
 
   const remainingTargets = [];
-  if (!progress.objectiveProgress.visit_north) remainingTargets.push('Northern Path');
-  if (!progress.objectiveProgress.visit_south) remainingTargets.push('Southern Road');
+  if (!progress.objectiveProgress.visit_north) remainingTargets.push('The Shimmer Trail');
+  if (!progress.objectiveProgress.visit_south) remainingTargets.push('Pilgrim Road');
 
   return {
     dialogIds: ['elder_explore_village_active'],

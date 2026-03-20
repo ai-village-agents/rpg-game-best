@@ -23,9 +23,9 @@ test('EXPLORE_ADJACENT transitions immediately and keeps exploration transition 
   assert.equal(next.world.roomCol, 1);
   assert.ok(next.visitedRooms.includes('n'), 'adjacent room should be marked visited');
   assert.equal(next.weatherState.totalMoves, 1, 'weather should tick on adjacent travel');
-  assert.ok(next.log.some((line) => line.includes('You travel north and arrive at Northern Path.')));
+  assert.ok(next.log.some((line) => line.includes('You travel north and arrive at The Shimmer Trail.')));
   assert.ok(next.log.some((line) => line.startsWith('Exits: ')));
-  assert.equal(next.journal?.entries?.[0]?.title, 'Discovered Northern Path');
+  assert.equal(next.journal?.entries?.[0]?.title, 'Discovered The Shimmer Trail');
 });
 
 test('EXPLORE_ADJACENT with no adjacent room logs and does not move', () => {

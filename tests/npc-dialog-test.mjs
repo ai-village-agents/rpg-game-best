@@ -119,8 +119,8 @@ describe('createDialogState', () => {
     const ds = createDialogState(npc, undefined, { questState });
 
     assert.notStrictEqual(ds.lines, DIALOG_LINES.elder_1);
-    assert.match(ds.lines[0], /Northern Path/);
-    assert.match(ds.lines[0], /Southern Road/);
+    assert.match(ds.lines[0], /The Shimmer Trail/);
+    assert.match(ds.lines[0], /Pilgrim Road/);
   });
 });
 

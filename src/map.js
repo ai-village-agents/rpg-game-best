@@ -87,42 +87,42 @@ function buildRoom(id, name, obstacles = []) {
 // Basic 3x3 world layout with light obstruction variety.
 const defaultRooms = [
   [
-    buildRoom('nw', 'Northwest Grove', [
+    buildRoom('nw', 'The Whispering Glade', [
       { x: 2, y: 1, w: 1, h: 1 },
       { x: 4, y: 2, w: 1, h: 1 },
     ]),
-    buildRoom('n', 'Northern Path', [
+    buildRoom('n', 'The Shimmer Trail', [
       { x: 3, y: 1, w: 1, h: 3 },
     ]),
-    buildRoom('ne', 'Northeast Ridge', [
+    buildRoom('ne', 'Crystalspine Heights', [
       { x: 1, y: 3, w: 1, h: 1 },
       { x: 5, y: 1, w: 1, h: 1 },
     ]),
   ],
   [
-    buildRoom('w', 'Western Crossing', [
+    buildRoom('w', 'Traders Rift', [
       { x: 3, y: 2, w: 1, h: 1 },
       { x: 6, y: 4, w: 1, h: 1 },
     ]),
-    buildRoom('center', 'Village Square', [
+    buildRoom('center', 'Millbrook Crossing', [
       { x: 2, y: 2, w: 1, h: 1 },
       { x: 5, y: 2, w: 1, h: 1 },
       { x: 2, y: 4, w: 1, h: 1 },
     ]),
-    buildRoom('e', 'Eastern Fields', [
+    buildRoom('e', 'Lumingrass Meadows', [
       { x: 5, y: 1, w: 1, h: 2 },
       { x: 1, y: 4, w: 1, h: 1 },
     ]),
   ],
   [
-    buildRoom('sw', 'Southwest Marsh', [
+    buildRoom('sw', 'The Miregloom', [
       { x: 2, y: 3, w: 1, h: 1 },
     ]),
-    buildRoom('s', 'Southern Road', [
+    buildRoom('s', 'Pilgrim Road', [
       { x: 2, y: 3, w: 2, h: 1 },
       { x: 5, y: 2, w: 1, h: 2 },
     ]),
-    buildRoom('se', 'Southeast Dock', [
+    buildRoom('se', 'Tideglass Harbor', [
       { x: 2, y: 1, w: 1, h: 1 },
       { x: 4, y: 3, w: 1, h: 1 },
     ]),

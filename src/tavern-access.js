@@ -1,7 +1,7 @@
 import { getCurrentRoomId } from './minimap.js';
 
 /**
- * Town activities are only available while exploring the Village Square.
+ * Town activities are only available while exploring the Millbrook Crossing.
  * @param {object} state
  * @returns {boolean}
  */
@@ -11,7 +11,7 @@ export function canAccessVillageSquareActivity(state) {
 }
 
 /**
- * Tavern shares the Village Square activity access rule.
+ * Tavern shares the Millbrook Crossing activity access rule.
  * @param {object} state
  * @returns {boolean}
  */
