@@ -10,6 +10,7 @@ import {
   getCurrentDialogLine,
   getDialogProgress,
 } from '../src/npc-dialog.js';
+import { initQuestState, acceptQuest } from '../src/quest-integration.js';
 
 describe('ROOM_NPCS', () => {
   it('contains NPCs for center room with correct structure', () => {
@@ -110,6 +111,16 @@ describe('createDialogState', () => {
     const ds = createDialogState(npc);
     assert.strictEqual(ds.dialogIds.length, 1);
     assert.strictEqual(ds.lines, DIALOG_LINES.scout_1);
+  });
+
+  it('gives Aldric quest-aware guidance after accepting Know Your Surroundings', () => {
+    const npc = getNPCsInRoom('center')[0];
+    const { questState } = acceptQuest(initQuestState(), 'explore_village', { currentRoom: 'center' });
+    const ds = createDialogState(npc, undefined, { questState });
+
+    assert.notStrictEqual(ds.lines, DIALOG_LINES.elder_1);
+    assert.match(ds.lines[0], /Northern Path/);
+    assert.match(ds.lines[0], /Southern Road/);
   });
 });
 

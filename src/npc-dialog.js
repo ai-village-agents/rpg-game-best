@@ -1,4 +1,5 @@
 import { RelationshipLevel } from './npc-relationships.js';
+import { getQuestProgress } from './quest-integration.js';
 
 const ROOM_NPCS = {
   center: [
@@ -104,6 +105,10 @@ const DIALOG_LINES = {
   ],
   elder_3: [
     'Should you face great danger, remember: courage is the heart of every hero.',
+  ],
+  elder_explore_village_complete: [
+    'Excellent. You have seen the roads around Millbrook and should be harder to surprise now.',
+    'Collect your reward when you are ready, and then we will speak of greater dangers beyond the village.',
   ],
   inn_1: [
     'A room costs 20 gold per night. Our stew is the best in the realm!',
@@ -320,19 +325,66 @@ function getNPCsInRoom(roomId) {
   return ROOM_NPCS[roomId] ? ROOM_NPCS[roomId].map((npc) => ({ ...npc })) : [];
 }
 
-function createDialogState(npc, relationshipLevel) {
+function formatQuestTargetList(targets) {
+  if (targets.length === 0) return 'the nearby roads';
+  if (targets.length === 1) return `the ${targets[0]}`;
+  if (targets.length === 2) return `the ${targets[0]} and the ${targets[1]}`;
+  return `the ${targets.slice(0, -1).join(', ')}, and the ${targets[targets.length - 1]}`;
+}
+
+function getAldricQuestDialogOverride(questState) {
+  if (!questState) return null;
+
+  const progress = getQuestProgress(questState, 'explore_village');
+  if (!progress) return null;
+
+  if (progress.isComplete) {
+    return {
+      dialogIds: ['elder_explore_village_complete'],
+      lines: DIALOG_LINES.elder_explore_village_complete,
+    };
+  }
+
+  if (!progress.isActive) return null;
+
+  const remainingTargets = [];
+  if (!progress.objectiveProgress.visit_north) remainingTargets.push('Northern Path');
+  if (!progress.objectiveProgress.visit_south) remainingTargets.push('Southern Road');
+
+  return {
+    dialogIds: ['elder_explore_village_active'],
+    lines: [
+      `Good. Before you wander farther, scout ${formatQuestTargetList(remainingTargets)}.`,
+      'Return once you know the lay of the land and I will point you toward the next danger brewing beyond Millbrook.',
+    ],
+  };
+}
+
+function getQuestDialogOverride(npc, gameState) {
+  if (!npc || !gameState?.questState) return null;
+
+  if (npc.id === 'village_elder') {
+    return getAldricQuestDialogOverride(gameState.questState);
+  }
+
+  return null;
+}
+
+function createDialogState(npc, relationshipLevel, gameState) {
   const hasRelationshipLevel = relationshipLevel !== undefined && relationshipLevel !== null;
   const greeting = hasRelationshipLevel
     ? getRelationshipGreeting(npc.id, relationshipLevel)
     : npc.greeting;
+  const questDialogOverride = getQuestDialogOverride(npc, gameState);
+  const dialogIds = questDialogOverride?.dialogIds || npc.dialog;
   const dialogState = {
     npcId: npc.id,
     npcName: npc.name,
     greeting,
-    dialogIds: npc.dialog,
+    dialogIds,
     dialogIndex: 0,
     lineIndex: 0,
-    lines: DIALOG_LINES[npc.dialog[0]] || [],
+    lines: questDialogOverride?.lines || DIALOG_LINES[dialogIds[0]] || [],
     done: false,
   };
   if (hasRelationshipLevel) {

@@ -380,7 +380,7 @@ export function handleExplorationAction(state, action) {
     const relationshipLevel =
       npcRelationshipManager.getRelationshipLevel(npc.id) || RelationshipLevel.NEUTRAL;
 
-    const dialogState = createDialogState(npc, relationshipLevel);
+    const dialogState = createDialogState(npc, relationshipLevel, next);
 
     // Track NPC interaction for companion recruitment gating
     const npcInteractions = next.npcInteractions || {};
