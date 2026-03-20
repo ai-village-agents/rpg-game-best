@@ -54,7 +54,7 @@ console.log('\n--- checkLevelUps: basic detection ---');
   assert(warrior.level === 1, 'warrior starts at level 1');
   assert(warrior.xp === 0, 'warrior starts with 0 XP');
 
-  // 100 XP should reach level 2
+  // 50 XP should reach level 2
   const results = checkLevelUps([warrior], 100);
   assert(results.length === 1, 'one member levels up');
   assert(results[0].name === 'Hero', 'correct member name');
@@ -67,15 +67,15 @@ console.log('\n--- checkLevelUps: no level up ---');
 
 {
   const warrior = makeMember('Hero', 'warrior', 0);
-  const results = checkLevelUps([warrior], 50);
-  assert(results.length === 0, 'no level up with 50 XP (need 100)');
+  const results = checkLevelUps([warrior], 49);
+  assert(results.length === 0, 'no level up with 49 XP (need 50)');
 }
 
 console.log('\n--- checkLevelUps: multi-level jump ---');
 
 {
   const warrior = makeMember('Hero', 'warrior', 0);
-  // 250 XP should reach level 3 (thresholds: 0, 100, 250)
+  // 200 XP should reach level 3 (thresholds: 0, 50, 200)
   const results = checkLevelUps([warrior], 250);
   assert(results.length === 1, 'one member levels up');
   assert(results[0].oldLevel === 1, 'from level 1');
@@ -89,7 +89,7 @@ console.log('\n--- checkLevelUps: multiple party members ---');
   const mage = makeMember('Sage', 'mage', 0);
   const rogue = makeMember('Shadow', 'rogue', 40);
 
-  // 100 XP: warrior 0→100 (lv2), mage 0→100 (lv2), rogue 40→140 (lv2)
+  // 50 XP: warrior 0→50 (lv2), mage 0→50 (lv2), rogue 40→90 (lv2)
   const results = checkLevelUps([warrior, mage, rogue], 100);
   assert(results.length === 3, 'all three level up');
   assert(results[0].name === 'Hero', 'Hero levels up');
@@ -103,7 +103,7 @@ console.log('\n--- checkLevelUps: already at threshold ---');
   const warrior = makeMember('Hero', 'warrior', 100);
   assert(warrior.level === 2, 'starts at level 2');
 
-  // Need 250 total for level 3, already at 100, so 150 more
+  // Need 200 total for level 3, already at 50, so 150 more
   const results = checkLevelUps([warrior], 150);
   assert(results.length === 1, 'levels up');
   assert(results[0].oldLevel === 2, 'from level 2');
@@ -332,8 +332,8 @@ console.log('\n--- formatStatName ---');
 console.log('\n--- xpForNextLevel ---');
 
 {
-  assert(xpForNextLevel(1) === 50, 'level 1 → need 100 XP for level 2');
-  assert(xpForNextLevel(2) === 200, 'level 2 → need 250 total for level 3');
+  assert(xpForNextLevel(1) === 50, 'level 1 → need 50 XP for level 2');
+  assert(xpForNextLevel(2) === 200, 'level 2 → need 200 total for level 3');
   assert(xpForNextLevel(19) === 10450, 'level 19 → need 10450 for level 20');
   assert(xpForNextLevel(20) === 0, 'level 20 → max level, 0 needed');
   assert(xpForNextLevel(99) === 0, 'beyond max → 0');
@@ -419,7 +419,7 @@ console.log('\n--- Rogue multi-level: verify all stats ---');
 
 {
   const rogue = makeMember('Shadow', 'rogue', 0);
-  // 450 XP → level 4 (thresholds: 0, 100, 250, 450)
+  // 400 XP → level 4 (thresholds: 0, 50, 200, 400)
   const results = checkLevelUps([rogue], 450);
   assert(results.length === 1, 'rogue levels up');
   assert(results[0].newLevel === 4, 'reaches level 4 (3 level-ups)');
