@@ -31,15 +31,15 @@ function withMockedRandom(value, fn) {
 console.log('\n--- getEnemy ---');
 const goblin = getEnemy('goblin');
 assert(goblin !== null, 'Goblin exists');
-assert(goblin.name === 'Goblin', 'Goblin name correct');
-assert(goblin.hp === 22, 'Goblin HP correct');
+assert(goblin.name === 'Craglorn Scrapper', 'Goblin name correct');
+assert(goblin.hp === 30, 'Goblin HP correct');
 assert(goblin.abilities.includes('power-strike'), 'Goblin has power-strike');
 
 // Deep copy verification
 goblin.hp = 1;
 goblin.abilities.push('cheat-code');
 const goblinReloaded = getEnemy('goblin');
-assert(goblinReloaded.hp === 22, 'getEnemy returns a fresh copy');
+assert(goblinReloaded.hp === 30, 'getEnemy returns a fresh copy');
 assert(!goblinReloaded.abilities.includes('cheat-code'), 'Ability mutations do not persist');
 
 const unknown = getEnemy('does-not-exist');
@@ -75,7 +75,7 @@ assert(lvl2.length === 2 && lvl2.includes('wolf') && lvl2.includes('goblin'), 'R
   assert(boss.hp === 280, 'abyss_overlord has 280 hp');
   assert(boss.isBoss === true, 'abyss_overlord is flagged as boss');
   assert(boss.aiBehavior === 'boss', 'abyss_overlord has boss AI behavior');
-  assert(boss.element === 'shadow', 'abyss_overlord is shadow element');
+  assert(boss.element === 'dark', 'abyss_overlord is dark element');
   assert(boss.abilities.includes('void-eruption'), 'abyss_overlord has void-eruption');
   assert(boss.abilities.includes('soul-drain'), 'abyss_overlord has soul-drain');
 }
