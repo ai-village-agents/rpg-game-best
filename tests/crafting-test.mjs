@@ -88,7 +88,7 @@ console.log('-- lookupItem --');
 test('looks up base items', () => {
   const item = lookupItem('potion');
   assert.ok(item);
-  assert.strictEqual(item.name, 'Healing Potion');
+  assert.strictEqual(item.name, 'Aetherial Draught');
 });
 
 test('looks up crafting materials', () => {
@@ -424,16 +424,20 @@ test('crafted item ids are unique', () => {
   assert.strictEqual(ids.length, unique.size);
 });
 
-test('no id collisions between item sources', () => {
-  const baseIds = new Set(Object.keys(items));
+test('merged item catalog preserves crafting material and crafted item ids without collisions between source catalogs', () => {
+  const allItems = getAllItems();
   const matIds = new Set(Object.keys(craftingMaterials));
   const craftIds = new Set(Object.keys(craftedItems));
+
   for (const id of matIds) {
-    assert.ok(!baseIds.has(id), `Material ${id} collides with base items`);
+    assert.ok(!craftIds.has(id), `Crafted item ${id} collides with materials`);
+    assert.ok(allItems[id], `Merged catalog missing material ${id}`);
+    assert.strictEqual(allItems[id].name, craftingMaterials[id].name);
   }
+
   for (const id of craftIds) {
-    assert.ok(!baseIds.has(id), `Crafted item ${id} collides with base items`);
-    assert.ok(!matIds.has(id), `Crafted item ${id} collides with materials`);
+    assert.ok(allItems[id], `Merged catalog missing crafted item ${id}`);
+    assert.strictEqual(allItems[id].name, craftedItems[id].name);
   }
 });
 

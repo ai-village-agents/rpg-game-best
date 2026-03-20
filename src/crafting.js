@@ -15,7 +15,7 @@ export function createCraftingState() {
  * @returns {Record<string, object>}
  */
 export function getAllItems() {
-  return { ...items, ...craftingMaterials, ...craftedItems };
+  return items;
 }
 
 /**
