@@ -77,7 +77,7 @@ export const generateProceduralName = generateRandomName;
 export const ENEMIES = {
   slime: {
     id: 'slime',
-    name: 'Slime',
+    name: 'Aetherial Ooze',
     hp: 25,
     maxHp: 25,
     mp: 0,
@@ -93,7 +93,7 @@ export const ENEMIES = {
   },
   goblin: {
     id: 'goblin',
-    name: 'Goblin',
+    name: 'Craglorn Scrapper',
     hp: 30,
     maxHp: 30,
     mp: 5,
@@ -173,7 +173,7 @@ export const ENEMIES = {
   },
   wolf: {
     id: 'wolf',
-    name: 'Wolf',
+    name: 'Timberfang',
     hp: 28,
     maxHp: 28,
     mp: 0,
@@ -189,7 +189,7 @@ export const ENEMIES = {
   },
   skeleton: {
     id: 'skeleton',
-    name: 'Skeleton',
+    name: 'Hollowed One',
     hp: 40,
     maxHp: 40,
     mp: 6,
@@ -205,7 +205,7 @@ export const ENEMIES = {
   },
   orc: {
     id: 'orc',
-    name: 'Orc',
+    name: 'Bloodtusk Raider',
     hp: 40,
     maxHp: 40,
     mp: 6,
@@ -285,7 +285,7 @@ export const ENEMIES = {
   },
   bandit: {
     id: 'bandit',
-    name: 'Bandit',
+    name: 'Shadow-Walker',
     hp: 42,
     maxHp: 42,
     mp: 4,
@@ -349,7 +349,7 @@ export const ENEMIES = {
   },
   dragon: {
     id: 'dragon',
-    name: 'Dragon',
+    name: 'Elder Wyrm',
     hp: 120,
     maxHp: 120,
     mp: 50,
