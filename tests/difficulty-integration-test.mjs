@@ -71,21 +71,13 @@ describe('Difficulty Integration - Combat Encounters', () => {
   });
   
   it('difficulty multipliers are applied correctly to known enemy', () => {
-    // Get a known enemy's base HP
     const slime = getEnemy('slime');
     const baseHp = slime.maxHp ?? slime.hp;
-    
-    // Calculate expected values
-    const easyExpected = Math.round(baseHp * 0.8);
-    const normalExpected = Math.round(baseHp * 1.0);
-    const hardExpected = Math.round(baseHp * 1.25);
-    const nightmareExpected = Math.round(baseHp * 1.5);
-    
-    // Verify our multiplier functions produce correct results
-    assert.strictEqual(applyDifficultyToEnemyHp(baseHp, DIFFICULTY_LEVELS.EASY), easyExpected);
-    assert.strictEqual(applyDifficultyToEnemyHp(baseHp, DIFFICULTY_LEVELS.NORMAL), normalExpected);
-    assert.strictEqual(applyDifficultyToEnemyHp(baseHp, DIFFICULTY_LEVELS.HARD), hardExpected);
-    assert.strictEqual(applyDifficultyToEnemyHp(baseHp, DIFFICULTY_LEVELS.NIGHTMARE), nightmareExpected);
+
+    for (const difficulty of Object.values(DIFFICULTY_LEVELS)) {
+      const expected = Math.round(baseHp * DIFFICULTY_MULTIPLIERS[difficulty].enemyHp);
+      assert.strictEqual(applyDifficultyToEnemyHp(baseHp, difficulty), expected);
+    }
   });
   
   it('nightmare difficulty enemy HP is higher than easy difficulty for same base HP', () => {
@@ -104,7 +96,7 @@ describe('Difficulty Integration - Damage Multipliers', () => {
   it('easy difficulty reduces enemy damage', () => {
     const baseDamage = 100;
     const easyDamage = applyDifficultyToEnemyDamage(baseDamage, DIFFICULTY_LEVELS.EASY);
-    assert.strictEqual(easyDamage, 75, 'Easy difficulty should deal 75% damage');
+    assert.strictEqual(easyDamage, 85, 'Easy difficulty should deal 85% damage');
   });
 
   it('normal difficulty keeps enemy damage unchanged', () => {
@@ -116,13 +108,13 @@ describe('Difficulty Integration - Damage Multipliers', () => {
   it('hard difficulty increases enemy damage', () => {
     const baseDamage = 100;
     const hardDamage = applyDifficultyToEnemyDamage(baseDamage, DIFFICULTY_LEVELS.HARD);
-    assert.strictEqual(hardDamage, 125, 'Hard difficulty should deal 125% damage');
+    assert.strictEqual(hardDamage, 135, 'Hard difficulty should deal 135% damage');
   });
 
   it('nightmare difficulty increases enemy damage significantly', () => {
     const baseDamage = 100;
     const nightmareDamage = applyDifficultyToEnemyDamage(baseDamage, DIFFICULTY_LEVELS.NIGHTMARE);
-    assert.strictEqual(nightmareDamage, 150, 'Nightmare difficulty should deal 150% damage');
+    assert.strictEqual(nightmareDamage, 175, 'Nightmare difficulty should deal 175% damage');
   });
 });
 
@@ -136,13 +128,13 @@ describe('Difficulty Integration - Reward Multipliers', () => {
   it('hard difficulty increases XP rewards', () => {
     const baseXp = 100;
     const hardXp = applyDifficultyToXpReward(baseXp, DIFFICULTY_LEVELS.HARD);
-    assert.strictEqual(hardXp, 120, 'Hard difficulty should give 120% XP');
+    assert.strictEqual(hardXp, 125, 'Hard difficulty should give 125% XP');
   });
 
   it('nightmare difficulty increases XP rewards significantly', () => {
     const baseXp = 100;
     const nightmareXp = applyDifficultyToXpReward(baseXp, DIFFICULTY_LEVELS.NIGHTMARE);
-    assert.strictEqual(nightmareXp, 150, 'Nightmare difficulty should give 150% XP');
+    assert.strictEqual(nightmareXp, 160, 'Nightmare difficulty should give 160% XP');
   });
 
   it('easy difficulty keeps gold rewards unchanged', () => {
@@ -154,13 +146,13 @@ describe('Difficulty Integration - Reward Multipliers', () => {
   it('hard difficulty increases gold rewards', () => {
     const baseGold = 100;
     const hardGold = applyDifficultyToGoldReward(baseGold, DIFFICULTY_LEVELS.HARD);
-    assert.strictEqual(hardGold, 120, 'Hard difficulty should give 120% gold');
+    assert.strictEqual(hardGold, 125, 'Hard difficulty should give 125% gold');
   });
 
   it('nightmare difficulty increases gold rewards significantly', () => {
     const baseGold = 100;
     const nightmareGold = applyDifficultyToGoldReward(baseGold, DIFFICULTY_LEVELS.NIGHTMARE);
-    assert.strictEqual(nightmareGold, 150, 'Nightmare difficulty should give 150% gold');
+    assert.strictEqual(nightmareGold, 160, 'Nightmare difficulty should give 160% gold');
   });
 });
 
@@ -168,7 +160,7 @@ describe('Difficulty Integration - HP Multipliers', () => {
   it('easy difficulty reduces enemy HP', () => {
     const baseHp = 100;
     const easyHp = applyDifficultyToEnemyHp(baseHp, DIFFICULTY_LEVELS.EASY);
-    assert.strictEqual(easyHp, 80, 'Easy difficulty should have 80% HP');
+    assert.strictEqual(easyHp, 85, 'Easy difficulty should have 85% HP');
   });
 
   it('normal difficulty keeps enemy HP unchanged', () => {
@@ -180,13 +172,13 @@ describe('Difficulty Integration - HP Multipliers', () => {
   it('hard difficulty increases enemy HP', () => {
     const baseHp = 100;
     const hardHp = applyDifficultyToEnemyHp(baseHp, DIFFICULTY_LEVELS.HARD);
-    assert.strictEqual(hardHp, 125, 'Hard difficulty should have 125% HP');
+    assert.strictEqual(hardHp, 140, 'Hard difficulty should have 140% HP');
   });
 
   it('nightmare difficulty increases enemy HP significantly', () => {
     const baseHp = 100;
     const nightmareHp = applyDifficultyToEnemyHp(baseHp, DIFFICULTY_LEVELS.NIGHTMARE);
-    assert.strictEqual(nightmareHp, 150, 'Nightmare difficulty should have 150% HP');
+    assert.strictEqual(nightmareHp, 180, 'Nightmare difficulty should have 180% HP');
   });
 });
 
@@ -226,10 +218,10 @@ describe('Difficulty Integration - Edge Cases', () => {
   });
 
   it('rounds values correctly', () => {
-    // 33 * 1.25 = 41.25, should round to 41
-    assert.strictEqual(applyDifficultyToEnemyHp(33, DIFFICULTY_LEVELS.HARD), 41);
-    // 33 * 0.80 = 26.4, should round to 26
-    assert.strictEqual(applyDifficultyToEnemyHp(33, DIFFICULTY_LEVELS.EASY), 26);
+    // 33 * 1.40 = 46.2, should round to 46
+    assert.strictEqual(applyDifficultyToEnemyHp(33, DIFFICULTY_LEVELS.HARD), 46);
+    // 33 * 0.85 = 28.05, should round to 28
+    assert.strictEqual(applyDifficultyToEnemyHp(33, DIFFICULTY_LEVELS.EASY), 28);
   });
 
   it('preserves difficulty in state after encounter', () => {

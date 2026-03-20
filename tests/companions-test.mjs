@@ -45,17 +45,59 @@ function assertEqual(actual, expected, msg) {
   if (actual !== expected) throw new Error(msg || 'Expected ' + expected + ', got ' + actual);
 }
 
-function freshState() {
+function roomToWorld(roomId) {
+  const coords = {
+    center: { roomRow: 1, roomCol: 1 },
+    ne: { roomRow: 0, roomCol: 2 },
+  };
+  return coords[roomId] ?? { roomRow: 1, roomCol: 1 };
+}
+
+function freshState(overrides = {}) {
   return {
     companions: [],
     maxCompanions: 2,
     enemy: { name: 'Slime', hp: 20, maxHp: 20, def: 2, atk: 5 },
     log: [],
     rngSeed: 12345,
+    player: { gold: 200 },
+    world: roomToWorld('center'),
+    npcInteractions: {
+      companion_fenris: { talked: true },
+      companion_lyra: { talked: true },
+    },
+    ...overrides,
   };
 }
 
-const recruit = (state, id) => recruitCompanion(state, id);
+function prepRecruitState(state, companionId) {
+  const baseState = freshState(state);
+  if (companionId === 'companion_lyra') {
+    return {
+      ...baseState,
+      world: roomToWorld('ne'),
+      player: {
+        ...(baseState.player || {}),
+        gold: Math.max(baseState?.player?.gold ?? 0, 75),
+      },
+    };
+  }
+
+  if (companionId === 'companion_fenris') {
+    return {
+      ...baseState,
+      world: roomToWorld('center'),
+      player: {
+        ...(baseState.player || {}),
+        gold: Math.max(baseState?.player?.gold ?? 0, 50),
+      },
+    };
+  }
+
+  return baseState;
+}
+
+const recruit = (state, id) => recruitCompanion(prepRecruitState(state, id), id);
 
 // 1. createCompanionState
 console.log('\n--- createCompanionState ---');
@@ -75,6 +117,7 @@ test('recruits companion_fenris successfully', () => {
   assertEqual(fenris.class, 'Warrior', 'class is Warrior');
   assertEqual(fenris.alive, true, 'alive is true');
   assertEqual(fenris.loyalty, 50, 'loyalty is 50');
+  assertEqual(state.player.gold, 150, 'recruit cost deducted');
   assert(isCompanionRecruited(state, 'companion_fenris'), 'isCompanionRecruited returns true');
 });
 
@@ -82,14 +125,14 @@ test('recruits companion_lyra', () => {
   const state1 = recruit(freshState(), 'companion_fenris');
   const state2 = recruit(state1, 'companion_lyra');
   assertEqual(state2.companions.length, 2, 'two companions recruited');
+  assertEqual(state2.player.gold, 75, 'both recruit costs deducted');
 });
 
 test('rejects recruiting when party full', () => {
-  const state = {
-    ...freshState(),
+  const state = freshState({
     companions: [{ id: 'companion_alpha' }, { id: 'companion_beta' }],
     maxCompanions: 2,
-  };
+  });
   const after = recruit(state, 'companion_fenris');
   assertEqual(after.companions.length, 2, 'party size unchanged');
   assert(after.log.some((entry) => entry.includes('party is full')),

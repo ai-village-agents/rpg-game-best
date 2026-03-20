@@ -139,7 +139,7 @@ describe('Difficulty Settings Module', () => {
       const baseHp = 100;
       const adjusted = applyDifficultyToEnemyHp(baseHp, DIFFICULTY_LEVELS.EASY);
       assert.ok(adjusted < baseHp);
-      assert.strictEqual(adjusted, 80); // 0.80 multiplier
+      assert.strictEqual(adjusted, 85); // 0.85 multiplier
     });
 
     it('should keep HP unchanged on normal', () => {
@@ -152,19 +152,19 @@ describe('Difficulty Settings Module', () => {
       const baseHp = 100;
       const adjusted = applyDifficultyToEnemyHp(baseHp, DIFFICULTY_LEVELS.HARD);
       assert.ok(adjusted > baseHp);
-      assert.strictEqual(adjusted, 125); // 1.25 multiplier
+      assert.strictEqual(adjusted, 140); // 1.40 multiplier
     });
 
     it('should increase HP significantly on nightmare', () => {
       const baseHp = 100;
       const adjusted = applyDifficultyToEnemyHp(baseHp, DIFFICULTY_LEVELS.NIGHTMARE);
-      assert.strictEqual(adjusted, 150); // 1.50 multiplier
+      assert.strictEqual(adjusted, 180); // 1.80 multiplier
     });
 
     it('should round results', () => {
       const baseHp = 33;
       const adjusted = applyDifficultyToEnemyHp(baseHp, DIFFICULTY_LEVELS.EASY);
-      assert.strictEqual(adjusted, Math.round(33 * 0.80));
+      assert.strictEqual(adjusted, Math.round(33 * 0.85));
     });
   });
 
@@ -172,7 +172,7 @@ describe('Difficulty Settings Module', () => {
     it('should reduce damage on easy', () => {
       const baseDmg = 40;
       const adjusted = applyDifficultyToEnemyDamage(baseDmg, DIFFICULTY_LEVELS.EASY);
-      assert.strictEqual(adjusted, 30); // 0.75 multiplier
+      assert.strictEqual(adjusted, 34); // 0.85 multiplier
     });
 
     it('should keep damage unchanged on normal', () => {
@@ -184,13 +184,13 @@ describe('Difficulty Settings Module', () => {
     it('should increase damage on hard', () => {
       const baseDmg = 40;
       const adjusted = applyDifficultyToEnemyDamage(baseDmg, DIFFICULTY_LEVELS.HARD);
-      assert.strictEqual(adjusted, 50); // 1.25 multiplier
+      assert.strictEqual(adjusted, 54); // 1.35 multiplier
     });
 
     it('should increase damage on nightmare', () => {
       const baseDmg = 40;
       const adjusted = applyDifficultyToEnemyDamage(baseDmg, DIFFICULTY_LEVELS.NIGHTMARE);
-      assert.strictEqual(adjusted, 60); // 1.50 multiplier
+      assert.strictEqual(adjusted, 70); // 1.75 multiplier
     });
   });
 
@@ -210,13 +210,13 @@ describe('Difficulty Settings Module', () => {
     it('should increase XP on hard', () => {
       const baseXp = 100;
       const adjusted = applyDifficultyToXpReward(baseXp, DIFFICULTY_LEVELS.HARD);
-      assert.strictEqual(adjusted, 120); // 1.20 multiplier
+      assert.strictEqual(adjusted, 125); // 1.25 multiplier
     });
 
     it('should increase XP significantly on nightmare', () => {
       const baseXp = 100;
       const adjusted = applyDifficultyToXpReward(baseXp, DIFFICULTY_LEVELS.NIGHTMARE);
-      assert.strictEqual(adjusted, 150); // 1.50 multiplier
+      assert.strictEqual(adjusted, 160); // 1.60 multiplier
     });
   });
 
@@ -236,13 +236,13 @@ describe('Difficulty Settings Module', () => {
     it('should increase gold on hard', () => {
       const baseGold = 50;
       const adjusted = applyDifficultyToGoldReward(baseGold, DIFFICULTY_LEVELS.HARD);
-      assert.strictEqual(adjusted, 60); // 1.20 multiplier
+      assert.strictEqual(adjusted, 63); // 1.25 multiplier
     });
 
     it('should increase gold significantly on nightmare', () => {
       const baseGold = 50;
       const adjusted = applyDifficultyToGoldReward(baseGold, DIFFICULTY_LEVELS.NIGHTMARE);
-      assert.strictEqual(adjusted, 75); // 1.50 multiplier
+      assert.strictEqual(adjusted, 80); // 1.60 multiplier
     });
   });
 
