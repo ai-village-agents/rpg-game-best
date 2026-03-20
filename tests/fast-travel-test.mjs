@@ -60,9 +60,9 @@ describe('Fast Travel System', () => {
       const visitedRooms = ['e', 'ne', 'nw'];
       const result = getUnlockedFastTravelDestinations(visitedRooms);
       assert.equal(result.length, 3);
-      // All danger 2, sorted alphabetically: Lumingrass Meadows, Crystalspine Heights, The Whispering Glade
-      assert.equal(result[0].name, 'Lumingrass Meadows');
-      assert.equal(result[1].name, 'Crystalspine Heights');
+      // All danger 2, sorted alphabetically: Crystalspine Heights, Lumingrass Meadows, The Whispering Glade
+      assert.equal(result[0].name, 'Crystalspine Heights');
+      assert.equal(result[1].name, 'Lumingrass Meadows');
       assert.equal(result[2].name, 'The Whispering Glade');
     });
 
