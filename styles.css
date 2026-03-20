@@ -907,3 +907,189 @@ textarea:focus {
 .spec-choice-card-hover {
   border-color: var(--gold-text) !important;
 }
+
+/* Journal UI Styles */
+.journal-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--panel);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+}
+
+.journal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid var(--border, rgba(255,255,255,0.1));
+}
+
+.journal-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.journal-unread {
+  background: var(--bad);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.journal-close {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.journal-close:hover {
+  color: var(--text);
+}
+
+.journal-toolbar {
+  padding: 8px 16px;
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px solid var(--border, rgba(255,255,255,0.1));
+}
+
+.journal-important-toggle {
+  background: var(--card);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  color: var(--muted);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.journal-important-toggle.active {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: gold;
+  color: gold;
+}
+
+.journal-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border, rgba(255,255,255,0.1));
+}
+
+.journal-tab {
+  background: var(--card);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.journal-tab:hover {
+  border-color: var(--accent);
+}
+
+.journal-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.journal-entries {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.journal-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 32px 0;
+  font-style: italic;
+}
+
+.journal-entry {
+  background: var(--card);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.journal-entry.important {
+  border-left: 3px solid gold;
+}
+
+.journal-entry-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.journal-entry-icon {
+  font-size: 16px;
+}
+
+.journal-entry-title {
+  flex: 1;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.journal-star {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--muted);
+  padding: 0;
+}
+
+.journal-star.starred {
+  color: gold;
+}
+
+.journal-entry-body {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.journal-entry-body p {
+  margin: 0;
+}
+
+.journal-entry-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.journal-badge {
+  background: var(--bad);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  margin-left: 4px;
+  vertical-align: middle;
+}
