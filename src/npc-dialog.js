@@ -23,6 +23,12 @@ const ROOM_NPCS = {
       name: 'Scout Patrol',
       greeting:
         'Halt! Identify yourself... Oh, a traveler. Proceed, but be wary — wolves have been prowling these roads after dark.',
+      dynamicGreeting: (state) => {
+        if (state?.questState?.activeQuests?.includes('merchant_escort')) {
+           return 'Ah, you must be looking for the merchant. We saw strange tracks heading further north.';
+        }
+        return null; // Fallback to standard
+      },
       dialog: ['scout_1'],
     },
   ],
@@ -372,9 +378,11 @@ function getQuestDialogOverride(npc, gameState) {
 
 function createDialogState(npc, relationshipLevel, gameState) {
   const hasRelationshipLevel = relationshipLevel !== undefined && relationshipLevel !== null;
+  const state = typeof window !== 'undefined' ? window.gameState : {};
+  const rawGreeting = (typeof npc.dynamicGreeting === 'function') ? (npc.dynamicGreeting(state) || npc.greeting) : npc.greeting;
   const greeting = hasRelationshipLevel
     ? getRelationshipGreeting(npc.id, relationshipLevel)
-    : npc.greeting;
+    : rawGreeting;
   const questDialogOverride = getQuestDialogOverride(npc, gameState);
   const dialogIds = questDialogOverride?.dialogIds || npc.dialog;
   const dialogState = {
