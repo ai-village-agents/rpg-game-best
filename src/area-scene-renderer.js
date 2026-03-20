@@ -143,10 +143,20 @@ function renderSceneElements(roomId) {
       ].join('');
     case 'center':
       return [
-        '<div class="area-scene-element building" style="left: 12%; bottom: 46px;"></div>',
-        '<div class="area-scene-element building" style="left: 36%; bottom: 50px;"></div>',
-        '<div class="area-scene-element building" style="left: 62%; bottom: 48px;"></div>',
-        '<div class="area-scene-element fountain" style="left: 46%; bottom: 24px;"></div>',
+        // Background buildings
+        '<div class="area-scene-element v-building" style="left: 5%; bottom: 65px; transform: scale(0.85); filter: brightness(0.8);"></div>',
+        '<div class="area-scene-element v-building" style="left: 75%; bottom: 62px; transform: scale(0.8); filter: brightness(0.75);"></div>',
+        // Main buildings (Inn, Shops)
+        '<div class="area-scene-element v-building inn" style="left: 15%; bottom: 45px;"></div>',
+        '<div class="area-scene-element v-building shop" style="left: 65%; bottom: 48px;"></div>',
+        // Village Elder House (center-back)
+        '<div class="area-scene-element v-building elder" style="left: 40%; bottom: 55px; transform: scale(1.1);"></div>',
+        // Fountain in center
+        '<div class="area-scene-element v-fountain" style="left: 44%; bottom: 22px;"></div>',
+        // Decor
+        '<div class="area-scene-element v-barrel" style="left: 28%; bottom: 40px;"></div>',
+        '<div class="area-scene-element v-barrel" style="left: 31%; bottom: 38px;"></div>',
+        '<div class="area-scene-element v-crate" style="left: 70%; bottom: 42px;"></div>',
       ].join('');
     case 'e':
       return [
@@ -238,6 +248,142 @@ export function renderAreaScene(state) {
 }
 
 export function getAreaSceneStyles() {
+  return `
+    /* New Village Square Styles */
+    .area-scene[data-room="center"] {
+      background: linear-gradient(180deg, #8cb5d6 0%, #b8cddb 45%, #d4caa8 45%, #e6dfc3 100%);
+    }
+    
+    .area-scene-element.v-building {
+      width: 54px;
+      height: 42px;
+      background: #e8dcc3;
+      border: 2px solid #5a4b3c;
+      border-radius: 2px;
+      box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.1), 3px 3px 0 rgba(0, 0, 0, 0.15);
+    }
+    .area-scene-element.v-building::before {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: -24px;
+      width: 0;
+      height: 0;
+      border-left: 31px solid transparent;
+      border-right: 31px solid transparent;
+      border-bottom: 24px solid #a34839;
+      filter: drop-shadow(0 2px 0 #7a3124);
+    }
+    .area-scene-element.v-building::after {
+      content: '';
+      position: absolute;
+      left: 20px;
+      bottom: 0;
+      width: 14px;
+      height: 20px;
+      background: #61442f;
+      border-radius: 2px 2px 0 0;
+    }
+    
+    .area-scene-element.v-building.inn {
+      background: #dfd1b8;
+    }
+    .area-scene-element.v-building.inn::before {
+      border-bottom-color: #4a5d82;
+      filter: drop-shadow(0 2px 0 #2c3a57);
+    }
+    
+    .area-scene-element.v-building.shop {
+      background: #d4c8b2;
+    }
+    .area-scene-element.v-building.shop::before {
+      border-bottom-color: #587a52;
+      filter: drop-shadow(0 2px 0 #3a5435);
+    }
+    
+    .area-scene-element.v-building.elder {
+      background: #ebdaca;
+    }
+    
+    .area-scene-element.v-fountain {
+      width: 46px;
+      height: 18px;
+      background: #8b9bb4;
+      border-radius: 50%;
+      border: 2px solid #5c6c82;
+      box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .area-scene-element.v-fountain::before {
+      content: '';
+      position: absolute;
+      left: 18px;
+      bottom: 12px;
+      width: 10px;
+      height: 24px;
+      background: #a4b4cc;
+      border-radius: 4px 4px 0 0;
+      border: 2px solid #5c6c82;
+    }
+    .area-scene-element.v-fountain::after {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: -8px;
+      width: 30px;
+      height: 16px;
+      background: rgba(186, 222, 255, 0.85);
+      border-radius: 50%;
+      animation: ripple 2s infinite linear;
+    }
+    
+    .area-scene-element.v-barrel {
+      width: 12px;
+      height: 16px;
+      background: #875c36;
+      border: 1px solid #4a301a;
+      border-radius: 2px;
+    }
+    .area-scene-element.v-barrel::before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #333;
+    }
+    .area-scene-element.v-barrel::after {
+      content: '';
+      position: absolute;
+      bottom: 3px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #333;
+    }
+    
+    .area-scene-element.v-crate {
+      width: 18px;
+      height: 18px;
+      background: #c29b69;
+      border: 1px solid #735531;
+    }
+    .area-scene-element.v-crate::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent 45%, #735531 45%, #735531 55%, transparent 55%);
+    }
+    
+    @keyframes ripple {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 0.5; }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+  ` + `
   return `
     .area-scene-collision-cell {
       position: absolute;
