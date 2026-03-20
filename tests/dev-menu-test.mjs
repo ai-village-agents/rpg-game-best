@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { XP_THRESHOLDS } from '../src/characters/stats.js';
 import { afterEach, describe, it } from 'node:test';
 
 import {
@@ -131,7 +132,7 @@ describe('setPlayerLevel', () => {
     assert.equal(next.player.spd, 10);
     assert.equal(next.player.int, 3);
     assert.equal(next.player.lck, 9);
-    assert.equal(next.player.xp, 700);
+    assert.equal(next.player.xp, XP_THRESHOLDS[4]);
     assert.deepStrictEqual(next.player.stats, {
       hp: 90,
       maxHp: 90,
