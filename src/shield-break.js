@@ -10,8 +10,11 @@ export const ELEMENT_ICONS = {
   ice: "❄️",
   lightning: "⚡",
   earth: "🌿",
+  nature: "🌿",
   light: "✨",
+  holy: "✨",
   dark: "🌑",
+  shadow: "🌑",
   arcane: "🔮",
 };
 
@@ -281,7 +284,7 @@ export function processBreakState(enemy) {
 export function getWeaknessIcons(weaknesses) {
   if (!Array.isArray(weaknesses) || weaknesses.length === 0) return "";
   return weaknesses
-    .map((entry) => ELEMENT_ICONS[normalizeElement(entry)])
+    .map((entry) => ELEMENT_ICONS[canonicalElement(entry)])
     .filter(Boolean)
     .join("");
 }

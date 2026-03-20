@@ -45,7 +45,7 @@ assert(typeof ENEMY_SHIELD_DATABASE === 'object' && ENEMY_SHIELD_DATABASE !== nu
 // ── Constants ───────────────────────────────────────────────────────────
 console.log('\n--- Constants ---');
 assert(BREAK_DURATION === 2, 'BREAK_DURATION equals 2');
-const expectedElements = ['physical', 'fire', 'ice', 'lightning', 'shadow', 'nature', 'holy'];
+const expectedElements = ['physical', 'fire', 'ice', 'lightning', 'dark', 'earth', 'light'];
 for (const el of expectedElements) {
   assert(el in ELEMENT_ICONS, `ELEMENT_ICONS has ${el}`);
   assert(typeof ELEMENT_ICONS[el] === 'string' && ELEMENT_ICONS[el].length > 0, `ELEMENT_ICONS[${el}] is non-empty string`);
@@ -76,8 +76,8 @@ console.log('\n--- Special enemy properties ---');
 assert(ENEMY_SHIELD_DATABASE.training_dummy.breakImmune === true, 'Training dummy is break immune');
 assert(ENEMY_SHIELD_DATABASE.dragon.shieldCount === 8, 'Dragon has 8 shields');
 assert(ENEMY_SHIELD_DATABASE.wraith.immunities.includes('physical'), 'Wraith immune to physical');
-assert(ENEMY_SHIELD_DATABASE.wraith.immunities.includes('shadow'), 'Wraith immune to shadow');
-assert(ENEMY_SHIELD_DATABASE.wraith.absorbs.includes('shadow'), 'Wraith absorbs shadow');
+assert(ENEMY_SHIELD_DATABASE.wraith.immunities.includes('dark'), 'Wraith immune to dark');
+assert(ENEMY_SHIELD_DATABASE.wraith.absorbs.includes('dark'), 'Wraith absorbs dark');
 assert(ENEMY_SHIELD_DATABASE['fire-spirit'].immunities.includes('fire'), 'Fire-spirit immune to fire');
 assert(ENEMY_SHIELD_DATABASE['fire-spirit'].absorbs.includes('fire'), 'Fire-spirit absorbs fire');
 assert(ENEMY_SHIELD_DATABASE['ice-spirit'].immunities.includes('ice'), 'Ice-spirit immune to ice');
@@ -149,12 +149,12 @@ assert(gs.shieldCount === 2 || gs.currentShields === 2, 'Goblin has 2 shields');
 assert(gs.maxShields === 2, 'Goblin max shields = 2');
 assert(Array.isArray(gs.weaknesses), 'Goblin weaknesses is array');
 assert(gs.weaknesses.includes('fire'), 'Goblin weak to fire');
-assert(gs.weaknesses.includes('holy'), 'Goblin weak to holy');
+assert(gs.weaknesses.includes('light'), 'Goblin weak to light');
 assert(gs.isBroken === false, 'Starts not broken');
 
 const ds = initializeEnemyShields('dragon', 4);
 assert(ds.shieldCount === 8 || ds.currentShields === 8, 'Dragon has 8 shields');
-assert(ds.weaknesses.includes('ice'), 'Dragon weak to ice');
+assert(ds.weaknesses.includes('earth'), 'Dragon weak to earth');
 
 const us = initializeEnemyShields('unknown_enemy', 1);
 assert(us.shieldCount === 2 || us.currentShields === 2, 'Unknown gets default 2');

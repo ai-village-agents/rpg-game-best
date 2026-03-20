@@ -132,8 +132,8 @@ describe('Shield/Break - Boss Phase Shield Refresh', () => {
   it('should preserve weaknesses and immunities across phase transitions', () => {
     const dragonShields = initializeEnemyShields('dragon', 4);
     
-    assert.ok(dragonShields.weaknesses.includes('ice'), 'Dragon should be weak to ice');
-    assert.ok(dragonShields.weaknesses.includes('holy'), 'Dragon should be weak to holy');
+    assert.ok(dragonShields.weaknesses.includes('earth'), 'Dragon should be weak to earth');
+    assert.ok(dragonShields.weaknesses.includes('light'), 'Dragon should be weak to light');
     assert.ok(dragonShields.immunities.includes('fire'), 'Dragon should be immune to fire');
   });
 });
@@ -403,7 +403,7 @@ describe('Shield/Break - Constants Validation', () => {
   });
 
   it('should have all expected elements in ELEMENT_ICONS', () => {
-    const expectedElements = ['physical', 'fire', 'ice', 'lightning', 'shadow', 'nature', 'holy'];
+    const expectedElements = ['physical', 'fire', 'ice', 'lightning', 'dark', 'earth', 'light'];
     
     for (const element of expectedElements) {
       assert.ok(ELEMENT_ICONS[element], `ELEMENT_ICONS should have ${element}`);

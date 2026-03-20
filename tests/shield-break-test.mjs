@@ -78,10 +78,10 @@ test("F11-F15 enemy shield entries", async (t) => {
     assert.ok(emberDrake.absorbs.includes("fire"), "ember-drake absorbs fire");
   });
 
-  await t.test("void-knight absorbs shadow", () => {
+  await t.test("void-knight absorbs dark", () => {
     assert.ok(
-      ENEMY_SHIELD_DATABASE["void-knight"].absorbs.includes("shadow"),
-      "void-knight absorbs shadow"
+      ENEMY_SHIELD_DATABASE["void-knight"].absorbs.includes("dark"),
+      "void-knight absorbs dark"
     );
   });
 
@@ -91,8 +91,8 @@ test("F11-F15 enemy shield entries", async (t) => {
 
   await t.test("lich-king weak to holy", () => {
     assert.ok(
-      ENEMY_SHIELD_DATABASE["lich-king"].weaknesses.includes("holy"),
-      "lich-king has holy weakness"
+      ENEMY_SHIELD_DATABASE["lich-king"].weaknesses.includes("light"),
+      "lich-king has light weakness"
     );
   });
 });
