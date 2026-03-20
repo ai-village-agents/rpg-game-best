@@ -750,8 +750,50 @@ export function render(state, dispatch) {
     const cards = order.map((classId) => {
       const def = CLASS_DEFINITIONS[classId];
       if (!def) return '';
+      const art = {
+        warrior: `
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="120" style="margin-bottom:10px; border-radius:8px; background:linear-gradient(to bottom, #2c3e50, #34495e); border: 2px solid #7f8c8d;">
+  <path d="M40 20 L60 20 L65 50 L55 85 L45 85 L35 50 Z" fill="#95a5a6" stroke="#ecf0f1" stroke-width="2"/>
+  <rect x="45" y="85" width="10" height="15" fill="#8e44ad"/>
+  <circle cx="50" cy="85" r="4" fill="#f1c40f"/>
+  <path d="M20 40 L80 40 L85 45 L15 45 Z" fill="#7f8c8d" stroke="#bdc3c7" stroke-width="1"/>
+  <circle cx="50" cy="42.5" r="6" fill="#e74c3c"/>
+</svg>`,
+        mage: `
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="120" style="margin-bottom:10px; border-radius:8px; background:linear-gradient(to bottom, #2980b9, #8e44ad); border: 2px solid #9b59b6;">
+  <path d="M48 20 Q50 10 52 20 L55 85 L45 85 Z" fill="#8e44ad" stroke="#9b59b6" stroke-width="2"/>
+  <circle cx="50" cy="15" r="8" fill="#f1c40f" opacity="0.8">
+    <animate attributeName="r" values="7;9;7" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="50" cy="15" r="4" fill="#fff" />
+  <path d="M40 85 Q50 90 60 85 L55 95 L45 95 Z" fill="#e67e22"/>
+  <path d="M10 50 Q50 20 90 50" fill="none" stroke="#3498db" stroke-width="2" opacity="0.6">
+    <animate attributeName="stroke-width" values="1;3;1" dur="1.5s" repeatCount="indefinite"/>
+  </path>
+</svg>`,
+        rogue: `
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="120" style="margin-bottom:10px; border-radius:8px; background:linear-gradient(to bottom, #111, #333); border: 2px solid #555;">
+  <path d="M48 20 L52 20 L55 70 L45 70 Z" fill="#7f8c8d" stroke="#bdc3c7" stroke-width="1"/>
+  <path d="M45 70 L55 70 L55 90 L45 90 Z" fill="#555"/>
+  <path d="M30 40 L45 35 L45 45 Z" fill="#c0392b"/>
+  <path d="M70 40 L55 35 L55 45 Z" fill="#c0392b"/>
+  <circle cx="50" cy="50" r="2" fill="#e74c3c" opacity="0.8">
+    <animate attributeName="r" values="1;3;1" dur="0.5s" repeatCount="indefinite"/>
+  </circle>
+</svg>`,
+        cleric: `
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="120" style="margin-bottom:10px; border-radius:8px; background:linear-gradient(to bottom, #f1c40f, #e67e22); border: 2px solid #d35400;">
+  <rect x="45" y="20" width="10" height="60" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1"/>
+  <rect x="30" y="35" width="40" height="10" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1"/>
+  <circle cx="50" cy="40" r="15" fill="none" stroke="#f39c12" stroke-width="3" opacity="0.7">
+    <animate attributeName="r" values="12;18;12" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <path d="M40 80 L60 80 L55 90 L45 90 Z" fill="#f39c12"/>
+</svg>`
+      }[def.id] || '';
       return `
         <div class="card">
+          ${art}
           <h2>${({ warrior: '⚔️', mage: '🔮', rogue: '🗡️', cleric: '⛪' }[def.id] ?? '')} ${esc(def.name)}</h2>
           <div>${esc(def.description)}</div>
           <div class="kv">
