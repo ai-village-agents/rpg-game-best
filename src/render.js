@@ -721,6 +721,8 @@ export function render(state, dispatch) {
       hud.innerHTML += tutorialHtml;
       attachTutorialHandlers(dispatch);
     }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // --- Class Select Phase ---
@@ -1085,7 +1087,6 @@ export function render(state, dispatch) {
         ${renderCompanionHUD(state)}
       </div>
       ${provisionBuffBar}
-      ${renderBattleLogPanel(getBattleLogEntries(), { maxVisible: 12, grouped: true, showSummary: true, activeFilters: [] })}
     `;
 
     const isPlayerTurn = state.phase === 'player-turn';
@@ -1150,7 +1151,8 @@ export function render(state, dispatch) {
       intentToggle.onclick = () => dispatch({ type: 'TOGGLE_INTENT_FORECAST' });
     }
 
-    log.innerHTML = state.log
+    log.innerHTML = renderBattleLogPanel(getBattleLogEntries(), { maxVisible: 12, grouped: true, showSummary: true, activeFilters: [] })
+      + state.log
       .slice()
       .reverse()
       .map((line) => formatLogEntryHtml(line))

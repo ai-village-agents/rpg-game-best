@@ -92,7 +92,8 @@ function injectStyles() {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 180px;
+      max-width: 300px;
+      word-wrap: break-word;
     }
 
     .enemy-intent-damage {

@@ -191,7 +191,7 @@ export function getBattleLogStyles() {
       border-radius: 10px;
       padding: 10px 12px;
       color: #e6e8ef;
-      max-width: 520px;
+      max-width: 100%;
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
     }
     .battle-log-header {

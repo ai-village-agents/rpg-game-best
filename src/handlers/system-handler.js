@@ -11,6 +11,25 @@ import { consumeAchievementNotifications } from '../achievements.js';
 import { DIFFICULTY_LEVELS } from '../difficulty.js';
 import { createEmptyStatistics } from '../statistics-dashboard.js';
 
+// Profanity filter for player names
+const PROFANITY_LIST = [
+  'fuck', 'shit', 'ass', 'bitch', 'damn', 'hell', 'dick', 'cock', 'pussy',
+  'bastard', 'slut', 'whore', 'cunt', 'piss', 'crap', 'nigger', 'nigga',
+  'faggot', 'fag', 'retard', 'kike', 'chink', 'spic', 'wetback', 'tranny'
+];
+
+function containsProfanity(name) {
+  const lower = name.toLowerCase().replace(/[^a-z]/g, '');
+  return PROFANITY_LIST.some(word => lower.includes(word));
+}
+
+function sanitizeName(rawName) {
+  const trimmed = typeof rawName === 'string' ? rawName.trim() : '';
+  if (!trimmed) return 'Adventurer';
+  if (containsProfanity(trimmed)) return 'Adventurer';
+  return trimmed;
+}
+
 function getRoomDescription(worldState) {
   const room = getCurrentRoom(worldState);
   if (!room) return 'You stand in an unknown place.';
@@ -39,8 +58,7 @@ export function handleSystemAction(state, action) {
       return pushLog(state, 'Unknown background selected.');
     }
 
-    const rawName = typeof action.name === 'string' ? action.name.trim() : '';
-    const selectedName = rawName || 'Adventurer';
+    const selectedName = sanitizeName(action.name);
     const difficulty = Object.values(DIFFICULTY_LEVELS).includes(action.difficulty)
       ? action.difficulty
       : DIFFICULTY_LEVELS.NORMAL;
@@ -107,8 +125,7 @@ export function handleSystemAction(state, action) {
       return pushLog(state, 'Unknown class selected.');
     }
 
-    const rawName = typeof action.name === 'string' ? action.name.trim() : '';
-    const selectedName = rawName || 'Adventurer';
+    const selectedName = sanitizeName(action.name);
     const difficulty = Object.values(DIFFICULTY_LEVELS).includes(action.difficulty)
       ? action.difficulty
       : DIFFICULTY_LEVELS.NORMAL;
