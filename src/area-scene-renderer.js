@@ -383,8 +383,6 @@ export function getAreaSceneStyles() {
       50% { transform: scale(1.05); opacity: 0.5; }
       100% { transform: scale(0.9); opacity: 0.8; }
     }
-  ` + `
-  return `
     .area-scene-collision-cell {
       position: absolute;
       background: linear-gradient(135deg, rgba(80, 60, 40, 0.65) 0%, rgba(50, 35, 20, 0.75) 100%);
