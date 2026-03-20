@@ -103,8 +103,10 @@ export function renderCombatStatsHtml(combatStatsDisplay) {
             ${rating}
           </div>
           <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;opacity:0.6;">BATTLE RATING</div>
             <div style="font-size:18px;font-weight:700;">${title}</div>
             <div style="font-size:13px;opacity:0.8;">${subtitle}</div>
+            <div style="font-size:12px;opacity:0.72;">Based on HP left, damage output, and speed.</div>
           </div>
         </div>
       `;
