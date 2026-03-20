@@ -35,8 +35,14 @@ import { applyDifficultyToEnemyHp, applyDifficultyToEnemyDamage, applyDifficulty
 import { ACTION_TYPES, calculateMomentumGain, addMomentum, consumeOverdrive, applyMomentumDecay, getOverdriveAbility, calculateOverdriveDamage, calculateOverdriveHealing, canUseOverdrive, createMomentumState } from './momentum.js';
 import { registerHit, checkComboDecay, resetCombo, isComboBreaker, getChainBonus, getComboMultiplier } from './combo-system.js';
 import { initIntentState, updateIntentState } from './enemy-intent.js';
-import { modifyReputation } from './faction-reputation-system.js';
+import { modifyReputation, FACTIONS } from './faction-reputation-system.js';
 import { updateBountyProgress } from './bounty-board.js';
+
+// Format faction ID to display name
+function getFactionDisplayName(factionId) {
+  if (FACTIONS[factionId] && FACTIONS[factionId].name) return FACTIONS[factionId].name;
+  return factionId.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
 
 // Minimal deterministic RNG (Park-Miller LCG)
 export function nextRng(seed) {
@@ -281,7 +287,7 @@ function applyVictoryDefeat(state) {
          const kvResult = modifyReputation(state.factionReputation, 'kingdom_valor', kingdomValorExtra, 'Slew a dragon');
          if (!kvResult.error) {
            state.factionReputation = kvResult.state;
-           state = pushLog(state, `Faction Standing: +${kingdomValorExtra} with kingdom_valor`);
+           state = pushLog(state, `Faction Standing: +${kingdomValorExtra} with ${getFactionDisplayName('kingdom_valor')}`);
          }
       }
       
@@ -290,7 +296,7 @@ function applyVictoryDefeat(state) {
         if (!repResult.error) {
           state.factionReputation = repResult.state;
           const sign = repAmount > 0 ? '+' : '';
-          state = pushLog(state, `Faction Standing: ${sign}${repAmount} with ${repFaction}`);
+          state = pushLog(state, `Faction Standing: ${sign}${repAmount} with ${getFactionDisplayName(repFaction)}`);
         }
       }
     }
@@ -647,8 +653,13 @@ export function playerUseAbility(state, abilityId) {
       const abilityElement = ability.element ?? 'physical';
       // Apply equipment bonuses to player's attack stat for abilities
       const abilityPlayerStats = getEffectiveCombatStats(state.player);
+      // Use INT stat for magical abilities (non-physical element), ATK for physical
+      const isMagical = abilityElement !== 'physical';
+      const effectiveAttack = isMagical
+        ? Math.max(abilityPlayerStats.atk, abilityPlayerStats.int ?? abilityPlayerStats.atk)
+        : abilityPlayerStats.atk;
       const { damage, critical, elementMult } = calculateDamage({
-        attackerAtk: abilityPlayerStats.atk,
+        attackerAtk: effectiveAttack,
         targetDef: state.enemy.def,
         targetDefending: state.enemy.defending,
         element: abilityElement,

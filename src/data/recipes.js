@@ -106,11 +106,11 @@ export const craftingMaterials = {
   },
   beastFang: {
     id: 'beastFang',
-    name: 'Beast Fang',
+    name: 'Aether Fang',
     type: 'material',
     category: 'material',
     rarity: 'Common',
-    description: 'A sharp fang from a wild beast.',
+    description: 'A crystallized fang imbued with residual Aether energy.',
     value: 10,
   },
   enchantedThread: {

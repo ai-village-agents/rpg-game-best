@@ -16,6 +16,7 @@ export function getEffectiveCombatStats(combatant) {
   const baseAtk = combatant.atk ?? 0;
   const baseDef = combatant.def ?? 0;
   const baseSpd = combatant.spd ?? 0;
+  const baseInt = combatant.int ?? 0;
   const baseMagic = combatant.magic ?? 0;
   const baseCritChance = combatant.critChance ?? 0;
 
@@ -25,6 +26,7 @@ export function getEffectiveCombatStats(combatant) {
     atk: baseAtk + (bonuses.attack ?? 0),
     def: baseDef + (bonuses.defense ?? 0),
     spd: baseSpd + (bonuses.speed ?? 0),
+    int: baseInt + (bonuses.magic ?? 0),
     magic: baseMagic + (bonuses.magic ?? 0),
     critChance: baseCritChance + (bonuses.critChance ?? 0),
   };
