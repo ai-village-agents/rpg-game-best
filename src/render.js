@@ -1594,8 +1594,7 @@ if (state.phase === 'achievements') {
   // --- Journal Phase ---
   if (state.phase === 'journal') {
     hud.innerHTML = renderJournalPanel(state);
-    actions.innerHTML = '<div class="buttons"><button id="btnCloseJournal">Close 📔</button></div>';
-    document.getElementById('btnCloseJournal').onclick = () => dispatch({ type: 'CLOSE_JOURNAL' });
+    
     // Wire up journal filter tabs
     document.querySelectorAll('.journal-tab[data-category]').forEach(btn => {
       btn.onclick = () => {
@@ -2138,9 +2137,8 @@ if (state.phase === 'achievements') {
     };
     const talentHtml = renderTalentTree(talentRenderState);
     hud.innerHTML = talentHtml;
-    actions.innerHTML = '<div class="buttons"><button id="btnCloseTalents">Close Talents</button></div>';
+    
     attachTalentHandlers(hud, dispatch);
-    document.getElementById('btnCloseTalents').onclick = () => dispatch({ type: 'CLOSE_TALENTS' });
     log.innerHTML = state.log.slice().reverse().map(line => formatLogEntryHtml(line)).join('');
     finalizeRender();
     if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
@@ -2156,12 +2154,10 @@ if (state.phase === 'achievements') {
 
     actions.innerHTML = `
       <div class="buttons">
-        <button id="btnCloseCrafting">Close Crafting</button>
       </div>
     `;
 
     attachCraftingHandlers(hud, dispatch);
-    document.getElementById('btnCloseCrafting').onclick = () => dispatch({ type: 'CLOSE_CRAFTING' });
 
     log.innerHTML = state.log
       .slice()
@@ -2275,7 +2271,7 @@ if (state.phase === 'achievements') {
 
   if (state.phase === 'companions') {
     hud.innerHTML = renderCompanionPanel(state);
-    actions.innerHTML = '<div class="buttons"><button id="btnCloseCompanions">Close</button></div>';
+    
     const headerCloseBtn = hud.querySelector('[data-action="CLOSE_COMPANIONS"]');
     if (headerCloseBtn) headerCloseBtn.onclick = () => dispatch({ type: 'CLOSE_COMPANIONS' });
     const closeBtn = document.getElementById('btnCloseCompanions');
@@ -2586,12 +2582,10 @@ if (state.phase === 'achievements') {
 
     actions.innerHTML = `
       <div class="buttons">
-        <button id="btnCloseProvisionsBottom">Close Provisions</button>
       </div>
     `;
 
     attachProvisionsHandlers(dispatch);
-    document.getElementById('btnCloseProvisionsBottom').onclick = () => dispatch({ type: 'CLOSE_PROVISIONS' });
 
     log.innerHTML = state.log
       .slice()
