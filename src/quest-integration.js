@@ -645,7 +645,8 @@ function getQuestProgress(questState, questId) {
     currentStage: currentStage?.name || null,
     stageIndex: progress?.stageIndex || 0,
     totalStages: quest.stages.length,
-    objectiveProgress: progress?.objectiveProgress || {}
+    objectiveProgress: progress?.objectiveProgress || {},
+    objectives: currentStage?.objectives || []
   };
 }
 

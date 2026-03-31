@@ -1812,7 +1812,34 @@ if (state.phase === 'achievements') {
       ? '<p><i>No active quests. Explore to find new adventures!</i></p>'
       : summary.map(q => {
           const progress = q.stageIndex !== undefined ? `Stage ${q.stageIndex + 1}/${q.totalStages}` : '';
-          return `<div class="quest-item"><b>${esc(q.questName)}</b> <small>${progress}</small><br/><i>${esc(q.currentStage || '')}</i></div>`;
+          
+          let objectivesHtml = '';
+          if (q.objectives && q.objectives.length > 0) {
+            objectivesHtml = '<ul style="margin: 5px 0 0 20px; padding: 0; font-size: 0.9em; list-style-type: circle;">';
+            q.objectives.forEach(obj => {
+              const currentProgress = (q.objectiveProgress && q.objectiveProgress[obj.id]) || 0;
+              const target = obj.count || 1;
+              
+              // Handle boolean vs numeric progress
+              let isDone = false;
+              let progressText = '';
+              
+              if (typeof currentProgress === 'boolean') {
+                isDone = currentProgress;
+              } else {
+                isDone = currentProgress >= target;
+                if (target > 1) {
+                  progressText = ` (${currentProgress}/${target})`;
+                }
+              }
+              
+              const style = isDone ? 'text-decoration: line-through; color: var(--text-muted, #888);' : 'color: var(--text-dim, #ccc);';
+              objectivesHtml += `<li style="${style}">${esc(obj.description || obj.id)}${progressText}</li>`;
+            });
+            objectivesHtml += '</ul>';
+          }
+
+          return `<div class="quest-item"><b>${esc(q.questName)}</b> <small>${progress}</small><br/><i>${esc(q.currentStage || '')}</i>${objectivesHtml}</div>`;
         }).join('');
 
     // Build available quests HTML
