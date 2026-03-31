@@ -96,6 +96,12 @@ export function attachAchievementsHandlers(container, dispatch) {
   if (!container) return;
 
   container.addEventListener('click', (event) => {
+    const closeBtn = event.target.closest('[data-action="CLOSE_ACHIEVEMENTS"]');
+    if (closeBtn && container.contains(closeBtn)) {
+      dispatch({ type: 'CLOSE_ACHIEVEMENTS' });
+      return;
+    }
+
     const tab = event.target.closest('.achievement-tab');
     if (!tab || !container.contains(tab)) return;
 

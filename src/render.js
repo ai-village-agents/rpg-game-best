@@ -1029,6 +1029,8 @@ export function render(state, dispatch) {
         <div class="action-category">
           <h3>SYSTEM</h3>
           <div class="action-category-buttons">
+            <button id="btnBestiary">Bestiary 📖</button>
+            <button id="btnAchievements">Achievements 🏆</button>
             <button id="btnSaveSlots">Save/Load 💾</button>
             <button id="btnSettings">Settings ⚙️</button>
             <button id="btnHelp">Help ❓</button>
@@ -1047,6 +1049,8 @@ export function render(state, dispatch) {
     document.getElementById('btnInventory').onclick = () => dispatch({ type: 'VIEW_INVENTORY' });
     document.getElementById('btnQuests').onclick = () => dispatch({ type: 'VIEW_QUESTS' });
     document.getElementById('btnViewStats').onclick = () => dispatch({ type: 'VIEW_STATS' });
+    document.getElementById('btnBestiary').onclick = () => dispatch({ type: 'VIEW_BESTIARY' });
+    document.getElementById('btnAchievements').onclick = () => dispatch({ type: 'VIEW_ACHIEVEMENTS' });
     document.getElementById('btnSaveSlots').onclick = () => dispatch({ type: 'SAVE_SLOTS' });
     document.getElementById('btnSettings').onclick = () => dispatch({ type: 'VIEW_SETTINGS' });
     const btnCrafting = document.getElementById('btnCrafting');
@@ -2274,8 +2278,7 @@ if (state.phase === 'achievements') {
     
     const headerCloseBtn = hud.querySelector('[data-action="CLOSE_COMPANIONS"]');
     if (headerCloseBtn) headerCloseBtn.onclick = () => dispatch({ type: 'CLOSE_COMPANIONS' });
-    const closeBtn = document.getElementById('btnCloseCompanions');
-    if (closeBtn) closeBtn.onclick = () => dispatch({ type: 'CLOSE_COMPANIONS' });
+
     // Wire recruit buttons
     hud.querySelectorAll('[data-action="RECRUIT_COMPANION"]').forEach(btn => {
       btn.onclick = () => dispatch({ type: 'RECRUIT_COMPANION', companionId: btn.dataset.companionId });
@@ -2291,10 +2294,9 @@ if (state.phase === 'achievements') {
 
   if (state.phase === 'sporeling') {
     hud.innerHTML = renderSporelingEvolutionPanel(state);
-    actions.innerHTML = '<div class="buttons"><button id="btnCloseSporeling">Close</button></div>';
+    actions.innerHTML = '';
 
-    const closeBtn = document.getElementById('btnCloseSporeling');
-    if (closeBtn) closeBtn.onclick = () => dispatch({ type: 'CLOSE_SPORELING' });
+
 
     hud.querySelectorAll('[data-action="EVOLVE_SPORELING"]').forEach(btn => {
       btn.onclick = () => dispatch({ type: 'EVOLVE_SPORELING', traitId: btn.dataset.traitId });
@@ -2309,9 +2311,8 @@ if (state.phase === 'achievements') {
 
   if (state.phase === 'factions') {
     hud.innerHTML = renderReputationPanel(state.factionReputation);
-    actions.innerHTML = '<div class="buttons"><button id="btnCloseFactions">Close</button></div>';
-    const closeBtn = document.getElementById('btnCloseFactions');
-    if (closeBtn) closeBtn.onclick = () => dispatch({ type: 'CLOSE_FACTIONS' });
+    actions.innerHTML = '';
+
 
     // Wire reputation modification buttons if present
     hud.querySelectorAll('[data-action="MODIFY_REPUTATION"]').forEach(btn => {
@@ -2529,10 +2530,8 @@ if (state.phase === 'achievements') {
 
   if (state.phase === 'bestiary') {
     hud.innerHTML = renderBestiaryPanel(state);
-    actions.innerHTML = '<div class="buttons"><button id="btnCloseBestiary">Close Bestiary</button></div>';
-    // Wire close button
-    const closeBtn = document.getElementById('btnCloseBestiary');
-    if (closeBtn) closeBtn.onclick = () => dispatch({ type: 'CLOSE_BESTIARY' });
+    actions.innerHTML = '';
+
     // Also wire data-action close button from bestiary-ui
     const dataCloseBtn = hud.querySelector('[data-action="CLOSE_BESTIARY"]');
     if (dataCloseBtn) dataCloseBtn.onclick = () => dispatch({ type: 'CLOSE_BESTIARY' });
@@ -2601,10 +2600,9 @@ if (state.phase === 'achievements') {
     document.getElementById('hud').style.display = 'block';
     hud.innerHTML = renderBountyBoardPanel(state);
     
-    actions.innerHTML = '<div class="buttons"><button id="btnCloseBountyBoard">Leave Board</button></div>';
+    actions.innerHTML = '';
     
-    const closeBtn = document.getElementById('btnCloseBountyBoard');
-    if (closeBtn) closeBtn.onclick = () => dispatch({ type: 'CLOSE_BOUNTY_BOARD' });
+
     
     // Add listeners for dynamic buttons inside the board
     hud.querySelectorAll('[data-action="REFRESH_BOUNTIES"]').forEach(btn => {
@@ -2620,10 +2618,9 @@ if (state.phase === 'achievements') {
 
   if (state.phase === 'tavern-dice') {
     hud.innerHTML = renderTavernDicePanel(state);
-    actions.innerHTML = '<div class="buttons"><button id="btnCloseTavern">Leave Tavern</button></div>';
+    actions.innerHTML = '';
     
-    const closeBtn = document.getElementById('btnCloseTavern');
-    if (closeBtn) closeBtn.onclick = () => dispatch({ type: 'CLOSE_TAVERN' });
+
 
     const btnEls = hud.querySelectorAll('button[data-action]');
     for (const btn of btnEls) {
