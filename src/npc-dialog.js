@@ -25,7 +25,7 @@ const ROOM_NPCS = {
         'Halt! Identify yourself... Oh, a traveler. Proceed, but be wary — wolves have been prowling these roads after dark.',
       dynamicGreeting: (state) => {
         if (state?.questState?.activeQuests?.includes('merchant_escort')) {
-           return 'Ah, you must be looking for the merchant. We saw strange tracks heading further north.';
+           return 'Ah, you must be looking for the merchant. We saw strange tracks heading east towards the heights.';
         }
         return null; // Fallback to standard
       },
