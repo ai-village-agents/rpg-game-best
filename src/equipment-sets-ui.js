@@ -540,20 +540,20 @@ export function getEquipmentSetsPanelStyles() {
 .equipment-sets-panel {
   display: block;
   padding: 16px;
-  background: rgba(10, 12, 18, 0.9);
+  background: var(--panel, rgba(10, 12, 18, 0.9));
   border-radius: 12px;
-  color: #ccc;
+  color: var(--text, #ccc);
 }
 .equipment-sets-panel .set-card {
-  border: 1px solid #333;
+  border: 1px solid var(--border, #333);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 10px;
-  background: rgba(20, 22, 30, 0.8);
+  background: var(--card, rgba(20, 22, 30, 0.8));
 }
 .equipment-sets-panel .set-card--active {
   border-color: #4a9;
-  background: rgba(20, 60, 40, 0.6);
+  background: var(--accent-subtle, rgba(20, 60, 40, 0.6));
 }
 .equipment-sets-panel .set-card--compact {
   padding: 6px 10px;
@@ -562,22 +562,22 @@ export function getEquipmentSetsPanelStyles() {
 .equipment-sets-panel .set-bonuses {
   margin-top: 8px;
   font-size: 0.88em;
-  color: #aef;
+  color: var(--accent, #aef);
 }
 .equipment-sets-panel .set-header {
   font-weight: bold;
-  color: #ffd700;
+  color: var(--gold, #ffd700);
   margin-bottom: 4px;
 }
 .equipment-sets-panel .inactive-sets {
   margin-top: 14px;
 }
 .equipment-sets-panel .inactive-sets h3 {
-  color: #888;
+  color: var(--muted, #888);
   margin-bottom: 8px;
 }
 .equipment-sets-panel .set-progress {
-  color: #aaa;
+  color: var(--muted, #aaa);
   font-size: 0.85em;
 }
 `;
