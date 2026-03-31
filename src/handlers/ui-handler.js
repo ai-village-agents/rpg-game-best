@@ -599,7 +599,15 @@ export function handleUIAction(state, action) {
   }
 
   if (type === 'INN_RUMORS') {
-    return pushLog(state, '"Folk say there\'s something stirring in the old mines. Strange lights at night..."');
+    const rumors = [
+      '"Folk say there\'s something stirring in the old mines. Strange lights at night..."',
+      '"A traveling merchant mentioned seeing a massive, speckled egg hidden deep in the eastern woods..."',
+      '"Caravans from the south keep arriving short on guards. Something has been picking them off on the ridge road..."',
+      '"The old watchtower bell rang by itself three nights running. No one\'s lived there in years..."',
+      '"A fisherman swears he pulled up a rusted key etched with royal markings from the riverbed..."',
+    ];
+    const rumor = rumors[Math.floor(Math.random() * rumors.length)];
+    return pushLog(state, rumor);
   }
 
   if (type === 'CLAIM_QUEST_REWARDS') {
