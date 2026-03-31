@@ -12,7 +12,7 @@ export const NPCS = {
     location: 'village_square',
     sprite: 'elder',
     dialog: 'elder_intro',
-    quests: ['main_quest_1'],
+    quests: ['main_quest_1', 'main_quest_2'],
     schedule: {
       default: 'village_square',
       night: 'elder_house'
@@ -48,7 +48,7 @@ export const NPCS = {
     location: 'barracks',
     sprite: 'captain',
     dialog: 'captain_intro',
-    quests: ['daily_training', 'side_cave_clearing'],
+    quests: ['daily_training', 'side_cave_clearing', 'main_quest_3'],
     personality: {
       friendliness: 0.5,
       formality: 0.9,
