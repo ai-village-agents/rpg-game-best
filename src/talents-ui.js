@@ -27,7 +27,10 @@ export function renderTalentTree(state, sortMethod = 'tier', filterText = '') {
   
   let html = `<div class="talent-tree-container">
     <div class="talent-header">
-      <h2>⭐ Talent Tree</h2>
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <h2>⭐ Talent Tree</h2>
+        <button data-action="CLOSE_TALENTS" style="padding: 4px 8px; font-size: 0.9em; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; border-radius: 4px;">Close</button>
+      </div>
       <div class="talent-points-display">
         <span class="available-points">Available Points: <strong>${talentState.availablePoints}</strong></span>
         <span class="total-spent">Total Spent: ${talentState.totalPointsSpent}</span>
