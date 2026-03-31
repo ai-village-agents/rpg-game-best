@@ -24,7 +24,7 @@ export const TUTORIAL_STEPS = [
     id: 'inventory-intro',
     trigger: 'first-inventory',
     title: 'Your Inventory',
-    message: 'Equipment improves your stats. Use sort and filter controls to organize items quickly.',
+    message: 'Equipment improves your stats. Click on a weapon or armor piece in your inventory and click Equip to wear it.',
     position: 'top',
   },
   {
