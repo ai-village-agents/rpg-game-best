@@ -1142,7 +1142,7 @@ export function handleUIAction(state, action) {
 
   if (type === 'REFRESH_BOUNTIES') {
     if (state.phase !== 'bounty-board') return null;
-    return generateBounties({ ...state, bountyBoard: { ...state.bountyBoard, lastRefreshTime: 0 } });
+    return generateBounties(state);
   }
 
   if (type === 'ACCEPT_BOUNTY') {

@@ -52,9 +52,7 @@ export function generateBounties(state) {
 
 export function acceptBounty(state, bountyId) {
   if (!state.bountyBoard) return state;
-  const activeBounty = state.bountyBoard.bounties.find(b => b.status === 'ACTIVE');
-  if (activeBounty) return state;
-
+  
   return {
     ...state,
     bountyBoard: {
