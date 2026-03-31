@@ -81,6 +81,8 @@ export function handleDungeonAction(state, action) {
             enemy,
             phase: 'player-turn',
             turn: 1,
+            combatStats: null,
+            combatStatsSummary: null,
             player: {
               ...next.player,
               defending: false,
@@ -179,6 +181,8 @@ if (state.dungeonState.currentFloor >= TOTAL_FLOORS) {
           enemy,
           phase: 'player-turn',
           turn: 1,
+          combatStats: null,
+          combatStatsSummary: null,
           player: {
             ...state.player,
             defending: false,
