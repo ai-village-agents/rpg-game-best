@@ -197,7 +197,7 @@ export function getSporelingEvolutionStyles() {
   return `
     .sporeling-evolution-panel {
       background: linear-gradient(135deg, var(--panel) 0%, var(--card) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--subtle-border);
       border-radius: 12px;
       padding: 16px;
       color: var(--text);
@@ -209,7 +209,7 @@ export function getSporelingEvolutionStyles() {
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid var(--subtle-border);
       padding-bottom: 8px;
     }
 
@@ -265,7 +265,7 @@ export function getSporelingEvolutionStyles() {
     .stage-connector {
       flex: 1;
       height: 2px;
-      background: rgba(255, 255, 255, 0.2);
+      background: var(--subtle-border);
       margin: 0 4px;
     }
 
@@ -311,7 +311,7 @@ export function getSporelingEvolutionStyles() {
     }
 
     .stat-item {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--subtle-bg);
       padding: 4px 10px;
       border-radius: 4px;
     }
@@ -329,7 +329,7 @@ export function getSporelingEvolutionStyles() {
     }
 
     .sporeling-trait-badge {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--subtle-bg);
       border: 1px solid;
       border-radius: 6px;
       padding: 4px 8px;
@@ -428,7 +428,7 @@ export function getSporelingEvolutionStyles() {
     .sporeling-actions {
       margin-top: 16px;
       padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid var(--subtle-border);
     }
 
     .sporeling-empty {

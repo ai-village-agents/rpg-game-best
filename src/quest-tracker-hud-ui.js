@@ -163,7 +163,7 @@ export function getQuestTrackerStyles() {
       position: fixed;
       top: 10px;
       right: 10px;
-      background: rgba(20, 20, 30, 0.95);
+      background: var(--panel);
       border: 2px solid var(--accent);
       border-radius: 8px;
       padding: 8px 12px;
@@ -184,7 +184,7 @@ export function getQuestTrackerStyles() {
     
     .quest-tracker-minimized:hover {
       border-color: color-mix(in srgb, var(--accent) 70%, var(--text) 30%);
-      background: rgba(30, 30, 40, 0.95);
+      background: var(--card);
     }
     
     .tracker-icon {
@@ -268,7 +268,7 @@ export function getQuestTrackerStyles() {
     
     .tracker-progress-bar {
       height: 4px;
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--subtle-bg);
       border-radius: 2px;
       overflow: hidden;
     }
@@ -290,7 +290,7 @@ export function getQuestTrackerStyles() {
       align-items: flex-start;
       gap: 6px;
       padding: 4px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid var(--subtle-border);
     }
     
     .tracker-objective-item:last-child {
