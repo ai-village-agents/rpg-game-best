@@ -394,10 +394,12 @@ export function createDungeonState() {
 }
 
 export function enterDungeon(dungeonState) {
+  // Resume from the deepest floor reached, or start at floor 1
+  const startingFloor = Math.max(1, dungeonState.deepestFloor || 1);
   return {
     ...dungeonState,
     inDungeon: true,
-    currentFloor: 1,
+    currentFloor: startingFloor,
     stairsFound: false,
   };
 }

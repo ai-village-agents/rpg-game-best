@@ -994,7 +994,7 @@ export function render(state, dispatch) {
             <button id="btnWest"${movementTitle('west')}>West</button>
             <button id="btnEast"${movementTitle('east')}>East</button>
             <button id="btnSeek">Seek Battle</button>
-            ${shouldShowDungeonEntrance(state) ? '<button id="btnEnterDungeon" class="dungeon-enter-btn">Enter Dungeon \u26CF\uFE0F</button>' : ''}
+            ${shouldShowDungeonEntrance(state) ? `<button id="btnEnterDungeon" class="dungeon-enter-btn">${state.dungeonState && state.dungeonState.deepestFloor > 1 ? `Resume Dungeon (Floor ${state.dungeonState.deepestFloor})` : 'Enter Dungeon'} \u26CF\uFE0F</button>` : ''}
             ${unlocked.fastTravel ? '<button id="btnFastTravel">🗺️ Fast Travel</button>' : ''}
           </div>
         </div>
