@@ -276,7 +276,7 @@ export function renderAreaScene(state) {
       ${cues}
       ${locks}
       ${npcs}
-      <div class="area-player-marker" style="${playerStyle}">🧍</div>
+      <div class="area-player-marker" style="${playerStyle}">${state.player?.sprite || '🧍'}</div>
       <div class="area-scene-label">${esc(label)}</div>
     </div>
   `;

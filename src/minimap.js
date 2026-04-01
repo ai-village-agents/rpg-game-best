@@ -259,7 +259,7 @@ export function renderMinimap(worldState, visitedRooms) {
              data-roomid="${esc(cell.roomId)}"
              data-row="${cell.row}"
              data-col="${cell.col}">
-          <span class="minimap-player">🧍</span>
+          <span class="minimap-player">${state.player?.sprite || '🧍'}</span>
           <span class="minimap-danger-icon" aria-label="${esc(cell.dangerLabel)}">${cell.cellType !== 'unvisited' ? esc(cell.dangerIcon) : '?'}</span>
           <span class="minimap-cell-abbr">${cell.cellType !== 'unvisited' ? esc(abbr) : '?'}</span>
         </div>

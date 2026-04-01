@@ -64,6 +64,9 @@ export function handleSystemAction(state, action) {
       : DIFFICULTY_LEVELS.NORMAL;
 
     const baseState = initialStateWithClass(action.classId, selectedName, difficulty);
+    if (action.sprite) {
+      baseState.player.sprite = action.sprite;
+    }
     const bonuses = background.bonuses || {};
     const player = { ...(baseState.player || {}), backgroundId: background.id };
 

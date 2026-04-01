@@ -215,21 +215,6 @@ export function renderAtmospherePanel(state) {
   );
 }
 
-  return (
-    `<div class="atmosphere-panel" style="background:rgba(50,50,50,0.2);border-left:3px solid #666;padding:10px 14px;margin:6px 0;border-radius:6px;">` +
-      `<div style="font-size:1.1em;margin-bottom:4px;">` +
-        `<span style="margin-right:6px;">📍</span>` +
-        `<strong>${escapeHtml(biome)}</strong>` +
-      `</div>` +
-      `<div style="color:var(--muted);font-size:0.9em;font-style:italic;margin-bottom:6px;">` +
-        `You are traveling through the ${escapeHtml(biome)}.` +
-      `</div>` +
-    `</div>`
-  );
-
-
-}
-
 /**
  * Get the CSS inline styles for a location-themed card border.
  * @param {number} roomRow

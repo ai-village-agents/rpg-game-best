@@ -842,14 +842,33 @@ export function render(state, dispatch) {
           </button>
         </div>
       </div>
+      
       <div class="card">
-        <h2>Choose Your Name</h2>
+        <h2>Customize Your Character</h2>
         <input id="class-select-name" type="text" maxlength="24" placeholder="Enter your character name" autocomplete="off" />
+        <br/><br/>
+        <label for="sprite-select">Choose your look:</label>
+        <select id="sprite-select" style="font-size: 1.2em; padding: 4px; border-radius: 4px; background: var(--panel); color: var(--text); border: 1px solid var(--text);">
+          <option value="🧍">🧍 Adventurer</option>
+          <option value="🧝">🧝 Elf</option>
+          <option value="🧙">🧙 Mage</option>
+          <option value="🧛">🧛 Vampire</option>
+          <option value="🤖">🤖 Construct</option>
+          <option value="🐱">🐱 Feline</option>
+          <option value="🐸">🐸 Amphibian</option>
+          <option value="🐉">🐉 Dragonkin</option>
+          <option value="🧟">🧟 Undead</option>
+          <option value="🤡">🤡 Jester</option>
+          <option value="🤠">🤠 Ranger</option>
+          <option value="👤">👤 Shadow</option>
+        </select>
+        <br/><br/>
         <label for="difficulty-select">Select Difficulty</label>
         <select id="difficulty-select">
           ${difficultyOptions}
         </select>
       </div>
+
       <div class="row">${cards}</div>`;
     // Check for existing saves and show Load Game button
     {
@@ -873,6 +892,7 @@ export function render(state, dispatch) {
         type: 'SELECT_CLASS',
         classId: button.dataset.class,
         name: nameInput?.value ?? '',
+        sprite: document.getElementById('sprite-select')?.value || '🧍',
         difficulty: document.getElementById('difficulty-select')?.value || 'normal',
       });
     });
@@ -882,6 +902,7 @@ export function render(state, dispatch) {
         classId: button.dataset.quickstartClass,
         backgroundId: button.dataset.quickstartBg,
         name: nameInput?.value ?? '',
+        sprite: document.getElementById('sprite-select')?.value || '🧍',
         difficulty: document.getElementById('difficulty-select')?.value || 'normal',
       });
     });
