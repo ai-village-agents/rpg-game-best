@@ -85,49 +85,327 @@ function buildRoom(id, name, obstacles = []) {
 }
 
 // Basic 3x3 world layout with light obstruction variety.
+
 const defaultRooms = [
   [
-    buildRoom('nw', 'The Whispering Glade', [
-      { x: 2, y: 1, w: 1, h: 1 },
-      { x: 4, y: 2, w: 1, h: 1 },
+    buildRoom('r_0_0', 'Sunken City', [
     ]),
-    buildRoom('n', 'The Shimmer Trail', [
+    buildRoom('r_0_1', 'Cinder Wastes', [
+    ]),
+    buildRoom('r_0_2', 'Echoing Caverns', [
+      { x: 5, y: 3, w: 2, h: 1 },
       { x: 3, y: 1, w: 1, h: 2 },
     ]),
-    buildRoom('ne', 'Crystalspine Heights', [
+    buildRoom('r_0_3', 'Echoing Caverns', [
       { x: 2, y: 3, w: 1, h: 1 },
+      { x: 2, y: 2, w: 2, h: 1 },
+    ]),
+    buildRoom('r_0_4', 'Obsidian Peaks', [
+      { x: 5, y: 2, w: 1, h: 1 },
+      { x: 4, y: 1, w: 1, h: 2 },
+    ]),
+    buildRoom('r_0_5', 'Forgotten Woods', [
+      { x: 5, y: 1, w: 2, h: 2 },
+      { x: 5, y: 1, w: 1, h: 2 },
+    ]),
+    buildRoom('r_0_6', 'Millbrook Crossing', [
+    ]),
+    buildRoom('r_0_7', 'Forgotten Woods', [
+    ]),
+    buildRoom('r_0_8', 'Traders Rift', [
+    ]),
+    buildRoom('r_0_9', 'Howling Tundra', [
+      { x: 2, y: 2, w: 2, h: 2 },
+    ]),
+  ],
+  [
+    buildRoom('r_1_0', 'Lumingrass Meadows', [
+    ]),
+    buildRoom('r_1_1', 'Forgotten Woods', [
+      { x: 2, y: 1, w: 1, h: 2 },
+      { x: 1, y: 1, w: 2, h: 1 },
+    ]),
+    buildRoom('r_1_2', 'Shimmer Trail', [
+    ]),
+    buildRoom('r_1_3', 'Shimmer Trail', [
+      { x: 3, y: 3, w: 2, h: 1 },
+    ]),
+    buildRoom('r_1_4', 'Glimmering Oasis', [
+    ]),
+    buildRoom('r_1_5', 'Starfall Valley', [
+      { x: 3, y: 3, w: 2, h: 2 },
+    ]),
+    buildRoom('r_1_6', 'Ancient Ruins', [
+    ]),
+    buildRoom('r_1_7', 'Silent Wastes', [
+      { x: 1, y: 2, w: 2, h: 2 },
+      { x: 2, y: 2, w: 1, h: 1 },
+    ]),
+    buildRoom('r_1_8', 'Obsidian Peaks', [
+    ]),
+    buildRoom('r_1_9', 'Starfall Valley', [
+      { x: 1, y: 2, w: 2, h: 1 },
+    ]),
+  ],
+  [
+    buildRoom('r_2_0', 'Ancient Ruins', [
+      { x: 2, y: 1, w: 2, h: 2 },
+      { x: 4, y: 1, w: 2, h: 2 },
+    ]),
+    buildRoom('r_2_1', 'Whispering Glade', [
+      { x: 5, y: 2, w: 2, h: 1 },
+      { x: 5, y: 1, w: 2, h: 1 },
+    ]),
+    buildRoom('r_2_2', 'Glimmering Oasis', [
+      { x: 4, y: 1, w: 2, h: 2 },
+    ]),
+    buildRoom('r_2_3', 'Glimmering Oasis', [
+      { x: 4, y: 3, w: 1, h: 1 },
+    ]),
+    buildRoom('r_2_4', 'Obsidian Peaks', [
+    ]),
+    buildRoom('r_2_5', 'Tideglass Harbor', [
+      { x: 4, y: 1, w: 2, h: 2 },
+      { x: 1, y: 1, w: 2, h: 1 },
+    ]),
+    buildRoom('r_2_6', 'Verdant Canopy', [
+      { x: 3, y: 2, w: 1, h: 1 },
+      { x: 1, y: 1, w: 2, h: 2 },
+    ]),
+    buildRoom('r_2_7', 'Ancient Ruins', [
+    ]),
+    buildRoom('r_2_8', 'Lumingrass Meadows', [
+    ]),
+    buildRoom('r_2_9', 'Lumingrass Meadows', [
+    ]),
+  ],
+  [
+    buildRoom('r_3_0', 'Miregloom', [
+      { x: 1, y: 2, w: 1, h: 2 },
+      { x: 2, y: 2, w: 2, h: 1 },
+    ]),
+    buildRoom('r_3_1', 'Sunken City', [
+      { x: 3, y: 2, w: 2, h: 1 },
+      { x: 1, y: 1, w: 2, h: 2 },
+    ]),
+    buildRoom('r_3_2', 'Lumingrass Meadows', [
+      { x: 5, y: 3, w: 1, h: 1 },
+    ]),
+    buildRoom('r_3_3', 'Ancient Ruins', [
+      { x: 4, y: 2, w: 1, h: 1 },
+    ]),
+    buildRoom('r_3_4', 'Ancient Ruins', [
+    ]),
+    buildRoom('r_3_5', 'Obsidian Peaks', [
+      { x: 3, y: 3, w: 1, h: 2 },
+    ]),
+    buildRoom('r_3_6', 'Lumingrass Meadows', [
+    ]),
+    buildRoom('r_3_7', 'Verdant Canopy', [
+    ]),
+    buildRoom('r_3_8', 'Millbrook Crossing', [
+      { x: 2, y: 3, w: 2, h: 2 },
+      { x: 2, y: 3, w: 2, h: 2 },
+    ]),
+    buildRoom('r_3_9', 'Howling Tundra', [
+      { x: 4, y: 2, w: 1, h: 2 },
+      { x: 2, y: 1, w: 2, h: 1 },
+    ]),
+  ],
+  [
+    buildRoom('r_4_0', 'Glimmering Oasis', [
+      { x: 5, y: 3, w: 2, h: 1 },
+      { x: 5, y: 1, w: 2, h: 2 },
+    ]),
+    buildRoom('r_4_1', 'Howling Tundra', [
+      { x: 4, y: 1, w: 1, h: 1 },
+    ]),
+    buildRoom('r_4_2', 'Millbrook Crossing', [
+      { x: 2, y: 3, w: 1, h: 1 },
+    ]),
+    buildRoom('r_4_3', 'Echoing Caverns', [
+      { x: 1, y: 1, w: 2, h: 2 },
+    ]),
+    buildRoom('r_4_4', 'Pilgrim Road', [
+      { x: 1, y: 3, w: 1, h: 2 },
+      { x: 5, y: 3, w: 1, h: 1 },
+    ]),
+    buildRoom('r_4_5', 'Starfall Valley', [
+      { x: 1, y: 3, w: 2, h: 2 },
+      { x: 2, y: 1, w: 1, h: 2 },
+    ]),
+    buildRoom('r_4_6', 'Pilgrim Road', [
+      { x: 2, y: 3, w: 2, h: 1 },
+      { x: 4, y: 3, w: 2, h: 2 },
+    ]),
+    buildRoom('r_4_7', 'Lumingrass Meadows', [
+      { x: 1, y: 3, w: 1, h: 1 },
+      { x: 2, y: 2, w: 1, h: 2 },
+    ]),
+    buildRoom('r_4_8', 'Shimmer Trail', [
+      { x: 3, y: 3, w: 2, h: 1 },
+    ]),
+    buildRoom('r_4_9', 'Forgotten Woods', [
+      { x: 5, y: 3, w: 2, h: 2 },
+    ]),
+  ],
+  [
+    buildRoom('r_5_0', 'Shimmer Trail', [
+    ]),
+    buildRoom('r_5_1', 'Tideglass Harbor', [
+    ]),
+    buildRoom('r_5_2', 'Lumingrass Meadows', [
+      { x: 1, y: 2, w: 2, h: 2 },
+      { x: 3, y: 3, w: 1, h: 1 },
+    ]),
+    buildRoom('r_5_3', 'Ancient Ruins', [
+      { x: 4, y: 3, w: 1, h: 2 },
+    ]),
+    buildRoom('r_5_4', 'Glimmering Oasis', [
+    ]),
+    buildRoom('r_5_5', 'Millbrook Crossing', [
+      { x: 3, y: 2, w: 2, h: 1 },
+    ]),
+    buildRoom('r_5_6', 'Traders Rift', [
+    ]),
+    buildRoom('r_5_7', 'Ancient Ruins', [
+      { x: 3, y: 2, w: 1, h: 1 },
+    ]),
+    buildRoom('r_5_8', 'Verdant Canopy', [
+      { x: 5, y: 2, w: 2, h: 1 },
+    ]),
+    buildRoom('r_5_9', 'Whispering Glade', [
+      { x: 3, y: 1, w: 2, h: 1 },
+      { x: 3, y: 1, w: 2, h: 2 },
+    ]),
+  ],
+  [
+    buildRoom('r_6_0', 'Silent Wastes', [
+      { x: 3, y: 3, w: 2, h: 1 },
+      { x: 2, y: 3, w: 1, h: 2 },
+    ]),
+    buildRoom('r_6_1', 'Verdant Canopy', [
+    ]),
+    buildRoom('r_6_2', 'Miregloom', [
+    ]),
+    buildRoom('r_6_3', 'Howling Tundra', [
+      { x: 5, y: 2, w: 1, h: 2 },
+      { x: 3, y: 2, w: 1, h: 1 },
+    ]),
+    buildRoom('r_6_4', 'Silent Wastes', [
+      { x: 5, y: 2, w: 2, h: 1 },
+      { x: 3, y: 2, w: 1, h: 1 },
+    ]),
+    buildRoom('r_6_5', 'Shattered Isles', [
+    ]),
+    buildRoom('r_6_6', 'Howling Tundra', [
+      { x: 4, y: 2, w: 1, h: 2 },
+    ]),
+    buildRoom('r_6_7', 'Ancient Ruins', [
+      { x: 1, y: 2, w: 2, h: 2 },
+      { x: 2, y: 1, w: 2, h: 2 },
+    ]),
+    buildRoom('r_6_8', 'Millbrook Crossing', [
+      { x: 5, y: 3, w: 2, h: 2 },
+    ]),
+    buildRoom('r_6_9', 'Whispering Glade', [
+    ]),
+  ],
+  [
+    buildRoom('r_7_0', 'Shimmer Trail', [
+      { x: 2, y: 3, w: 1, h: 1 },
+    ]),
+    buildRoom('r_7_1', 'Echoing Caverns', [
+      { x: 1, y: 3, w: 1, h: 1 },
+    ]),
+    buildRoom('r_7_2', 'Shattered Isles', [
+    ]),
+    buildRoom('r_7_3', 'Cinder Wastes', [
+      { x: 2, y: 3, w: 1, h: 1 },
+      { x: 1, y: 2, w: 2, h: 1 },
+    ]),
+    buildRoom('r_7_4', 'Whispering Glade', [
+      { x: 2, y: 1, w: 2, h: 1 },
+      { x: 2, y: 1, w: 2, h: 1 },
+    ]),
+    buildRoom('r_7_5', 'Glimmering Oasis', [
+    ]),
+    buildRoom('r_7_6', 'Howling Tundra', [
+      { x: 1, y: 2, w: 1, h: 2 },
+    ]),
+    buildRoom('r_7_7', 'Pilgrim Road', [
+      { x: 3, y: 2, w: 2, h: 1 },
+    ]),
+    buildRoom('r_7_8', 'Lumingrass Meadows', [
+      { x: 5, y: 1, w: 1, h: 2 },
+    ]),
+    buildRoom('r_7_9', 'Millbrook Crossing', [
+      { x: 4, y: 3, w: 1, h: 2 },
+    ]),
+  ],
+  [
+    buildRoom('r_8_0', 'Millbrook Crossing', [
+    ]),
+    buildRoom('r_8_1', 'Traders Rift', [
+    ]),
+    buildRoom('r_8_2', 'Traders Rift', [
+    ]),
+    buildRoom('r_8_3', 'Millbrook Crossing', [
+      { x: 3, y: 2, w: 2, h: 2 },
+    ]),
+    buildRoom('r_8_4', 'Sunken City', [
+    ]),
+    buildRoom('r_8_5', 'Sunken City', [
+    ]),
+    buildRoom('r_8_6', 'Forgotten Woods', [
+    ]),
+    buildRoom('r_8_7', 'Pilgrim Road', [
+    ]),
+    buildRoom('r_8_8', 'Pilgrim Road', [
+    ]),
+    buildRoom('r_8_9', 'Sunken City', [
+      { x: 3, y: 2, w: 1, h: 1 },
+    ]),
+  ],
+  [
+    buildRoom('r_9_0', 'Lumingrass Meadows', [
+      { x: 5, y: 3, w: 2, h: 1 },
+    ]),
+    buildRoom('r_9_1', 'Echoing Caverns', [
+      { x: 5, y: 1, w: 2, h: 1 },
+      { x: 3, y: 1, w: 1, h: 1 },
+    ]),
+    buildRoom('r_9_2', 'Whispering Glade', [
+      { x: 1, y: 1, w: 2, h: 2 },
+      { x: 3, y: 1, w: 1, h: 2 },
+    ]),
+    buildRoom('r_9_3', 'Pilgrim Road', [
+      { x: 3, y: 1, w: 2, h: 1 },
+      { x: 2, y: 1, w: 1, h: 2 },
+    ]),
+    buildRoom('r_9_4', 'Verdant Canopy', [
+      { x: 1, y: 3, w: 1, h: 1 },
+      { x: 1, y: 3, w: 2, h: 1 },
+    ]),
+    buildRoom('r_9_5', 'Pilgrim Road', [
+      { x: 1, y: 2, w: 1, h: 1 },
+      { x: 1, y: 2, w: 1, h: 2 },
+    ]),
+    buildRoom('r_9_6', 'Lumingrass Meadows', [
+    ]),
+    buildRoom('r_9_7', 'Shimmer Trail', [
+      { x: 1, y: 1, w: 1, h: 2 },
+      { x: 3, y: 1, w: 2, h: 2 },
+    ]),
+    buildRoom('r_9_8', 'Echoing Caverns', [
+      { x: 3, y: 2, w: 1, h: 2 },
+    ]),
+    buildRoom('r_9_9', 'Shattered Isles', [
       { x: 5, y: 1, w: 1, h: 1 },
     ]),
   ],
-  [
-    buildRoom('w', 'Traders Rift', [
-      { x: 3, y: 2, w: 1, h: 1 },
-      { x: 6, y: 4, w: 1, h: 1 },
-    ]),
-    buildRoom('center', 'Millbrook Crossing', [
-      { x: 2, y: 2, w: 1, h: 1 },
-      { x: 5, y: 2, w: 1, h: 1 },
-      { x: 2, y: 4, w: 1, h: 1 },
-    ]),
-    buildRoom('e', 'Lumingrass Meadows', [
-      { x: 5, y: 1, w: 1, h: 2 },
-      { x: 1, y: 4, w: 1, h: 1 },
-    ]),
-  ],
-  [
-    buildRoom('sw', 'The Miregloom', [
-      { x: 2, y: 3, w: 1, h: 1 },
-    ]),
-    buildRoom('s', 'Pilgrim Road', [
-      { x: 2, y: 3, w: 2, h: 1 },
-      { x: 5, y: 2, w: 1, h: 2 },
-    ]),
-    buildRoom('se', 'Tideglass Harbor', [
-      { x: 2, y: 1, w: 1, h: 1 },
-      { x: 4, y: 3, w: 1, h: 1 },
-    ]),
-  ],
 ];
+
 
 export const DEFAULT_WORLD_DATA = {
   tileSize: TILE_SIZE,
@@ -136,7 +414,7 @@ export const DEFAULT_WORLD_DATA = {
   roomWidth: ROOM_WIDTH,
   roomHeight: ROOM_HEIGHT,
   rooms: defaultRooms,
-  startRoom: { row: 1, col: 1 }, // Center room
+  startRoom: { row: 5, col: 5 }, // Center room
   startPosition: {
     x: Math.floor(ROOM_WIDTH / 2),
     y: Math.floor(ROOM_HEIGHT / 2),

@@ -368,7 +368,7 @@ export function renderMinimap(worldState, visitedRooms) {
 
   return `
     <div class="card minimap-card">
-      <h2>Minimap <small style="font-size:11px;color:var(--dim-text);">(${visitedCount}/9)</small></h2>
+      <h2>Minimap <small style="font-size:11px;color:var(--dim-text);">(${visitedCount}/100)</small></h2>
       <div class="minimap-grid">${gridHtml}</div>
       <div class="minimap-room-info">${currentRoomInfo}</div>
       ${legendHtml}
