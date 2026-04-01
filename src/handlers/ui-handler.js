@@ -306,6 +306,10 @@ export function handleUIAction(state, action) {
       ));
     }
 
+    // Trigger tutorial popup for first quest acceptance
+    if (next.tutorialState && !next.tutorialState.completedSteps.includes('first-quest')) {
+      next = { ...next, tutorialState: showHint(next.tutorialState, 'first-quest') };
+    }
     return pushLog(next, result.message);
   }
 

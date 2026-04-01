@@ -216,7 +216,7 @@ export function getBattleLogStyles() {
       font-size: 11px;
     }
     .battle-log-entries {
-      max-height: 200px;
+      max-height: 350px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;

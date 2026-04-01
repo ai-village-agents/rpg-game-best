@@ -1641,6 +1641,7 @@ if (state.phase === 'achievements') {
   // --- Journal Phase ---
   if (state.phase === 'journal') {
     hud.innerHTML = renderJournalPanel(state);
+    actions.innerHTML = '';
     
     // Wire up journal filter tabs
     document.querySelectorAll('.journal-tab[data-category]').forEach(btn => {

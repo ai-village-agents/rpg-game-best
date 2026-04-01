@@ -129,7 +129,11 @@ if (IS_BROWSER) {
     transitionedState = ensureDailyChallengeState(transitionedState);
     transitionedState = applyDailyProgressFromTransition(state, transitionedState, action);
     
+    const prevPhaseInternal = state.phase;
     state = transitionedState; window.state = state;
+    if (prevPhaseInternal !== state.phase) {
+      window.scrollTo(0, 0);
+    }
     // --- Play time tracking ---
     if (state.player && state._lastTickTime) {
       const now = Date.now();
