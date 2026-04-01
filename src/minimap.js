@@ -74,7 +74,7 @@ export function buildMinimapData(worldState, visitedRooms) {
       const roomObj = DEFAULT_WORLD_DATA.rooms[row]?.[col];
       const roomName = roomObj ? roomObj.name : 'Out of Bounds';
       
-      let cellType = 'unvisited';
+      let cellType = 'unvisited-void';
       let danger = 0;
       
       if (roomObj) {
@@ -87,7 +87,7 @@ export function buildMinimapData(worldState, visitedRooms) {
         col,
         roomId,
         roomName,
-        cellType: roomObj ? cellType : 'unvisited-void',
+        cellType,
         danger,
         dangerLabel: DANGER_LABELS[danger] ?? 'Unknown',
         dangerIcon: DANGER_ICONS[danger] ?? '?',
