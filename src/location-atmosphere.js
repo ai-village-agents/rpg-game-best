@@ -149,11 +149,7 @@ const LOCATION_DATA = {
 };
 
 /** Map from (row, col) coordinates to room ID */
-export const COORD_TO_ROOM = {
-  '0,0': 'nw', '0,1': 'n', '0,2': 'ne',
-  '1,0': 'w',  '1,1': 'center', '1,2': 'e',
-  '2,0': 'sw', '2,1': 's', '2,2': 'se',
-};
+
 
 /**
  * Get location data for a given room.
@@ -186,7 +182,7 @@ export function getAmbientEvent(roomId) {
  * @returns {string|null}
  */
 export function getAmbientEventByCoords(roomRow, roomCol) {
-  const roomId = COORD_TO_ROOM[`${roomRow},${roomCol}`];
+  const roomId = `r_${roomRow}_${roomCol}`;
   return roomId ? getAmbientEvent(roomId) : null;
 }
 
