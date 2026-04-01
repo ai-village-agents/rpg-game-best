@@ -361,11 +361,11 @@ function renderMapPanel(state, dispatch) {
   const currentRoom = rooms[roomRow]?.[roomCol];
   const roomName = currentRoom?.name ?? 'Unknown';
 
-  return \`<div class="info-card">
+  return `<div class="info-card">
       <div class="card-header">Local Map</div>
-      <div class="info-row">Location: <span class="highlight">\${roomName}</span></div>
-      <div class="info-row">Coordinates: [\${roomCol}, \${roomRow}]</div>
-    </div>\`;
+      <div class="info-row">Location: <span class="highlight">${roomName}</span></div>
+      <div class="info-row">Coordinates: [${roomCol}, ${roomRow}]</div>
+    </div>`;
 }
 
 function getUnlockedFeatures(state) {
@@ -395,7 +395,7 @@ function renderQuestBreadcrumb(state) {
   
   if (activeQuests.length === 0) {
     // No active quests - show a hint about where to find quests
-    const roomId = state.world ? \`r_${state.world.roomRow}_${state.world.roomCol}\` : 'center';
+    const roomId = state.world ? `r_${state.world.roomRow}_${state.world.roomCol}` : 'center';
     const availableQuests = getAvailableQuestsInRoom(questState, roomId, state);
     if (availableQuests.length > 0) {
       return `<div class="card quest-breadcrumb" style="border-left:3px solid var(--gold-text);background:color-mix(in srgb, var(--panel) 85%, var(--gold-text) 15%);">
@@ -942,7 +942,7 @@ export function render(state, dispatch) {
       return ` title="${esc(`Move ${direction} toward ${destination}`)}"`;
     };
     const mapHtml = renderMapPanel(state, dispatch);
-    const exploreRoomId = state?.world ? \`r_${state.world.roomRow}_${state.world.roomCol}\` : null;
+    const exploreRoomId = state?.world ? `r_${state.world.roomRow}_${state.world.roomCol}` : null;
     const exploreNpcs = exploreRoomId ? getNPCsInRoom(exploreRoomId) : [];
     const npcListHtml = exploreNpcs.length > 0
       ? exploreNpcs.map(n => `<button class="npc-talk-btn" data-npcid="${esc(n.id)}">${esc(n.name)}</button>`).join('')
@@ -1738,7 +1738,7 @@ if (state.phase === 'achievements') {
     const questState = state.questState || { activeQuests: {}, completedQuests: [] };
     const questUiState = state.questUiState || { sortBy: 'name', sortOrder: 'asc', filter: 'active' };
     const summary = getActiveQuestsSummary(questState);
-    const currentRoomId = state.world ? \`r_${state.world.roomRow}_${state.world.roomCol}\` : 'center';
+    const currentRoomId = state.world ? `r_${state.world.roomRow}_${state.world.roomCol}` : 'center';
     const availableQuests = currentRoomId ? getAvailableQuestsInRoom(questState, currentRoomId) : [];
 
     

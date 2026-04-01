@@ -3,7 +3,8 @@ import {
   getCompanionBonuses,
 } from './companions.js';
 import { NPCS } from './data/npcs.js';
-import { getCurrentRoomId, ROOM_NAMES } from './minimap.js';
+import { getCurrentRoomId } from './minimap.js';
+import { DEFAULT_WORLD_DATA } from './map.js';
 
 // Map NPC building locations to their room-grid IDs
 const LOCATION_TO_ROOM = {
@@ -97,7 +98,7 @@ const renderAvailableCompanion = (npc, playerRoom, state) => {
       </div>
       <div class="companion-location">Location: ${npc.location ? formatLocationId(npc.location) : 'Unknown'}${(() => {
         const roomId = LOCATION_TO_ROOM[npc.location];
-        const roomName = roomId ? ROOM_NAMES[roomId] : null;
+        const roomName = roomId ? (DEFAULT_WORLD_DATA.rooms?.[roomId]?.name || roomId) : null;
         return roomName ? ` (${roomName})` : '';
       })()}</div>
       <div class="companion-cost">${recruitCost ? `💰 ${recruitCost} gold` : '🆓 Free'}</div>
@@ -113,7 +114,7 @@ const renderAvailableCompanion = (npc, playerRoom, state) => {
           }
           return `<button class="companion-button" data-action="RECRUIT_COMPANION" data-companion-id="${npc.id}">Recruit (${recruitCost || 'Free'}${recruitCost ? 'g' : ''})</button>`;
         } else {
-          const roomName = ROOM_NAMES[companionRoom] || 'their location';
+          const roomName = DEFAULT_WORLD_DATA.rooms?.[companionRoom]?.name || 'their location';
           return `<button class="companion-button" disabled title="Travel to ${roomName} to recruit">Not Here</button>`;
         }
       })()}</div>
