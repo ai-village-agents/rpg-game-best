@@ -261,7 +261,7 @@ export function renderAreaScene(state) {
 
   const exits = getRoomExits(state.world, state.worldData);
   const exitPreviews = getExitPreviews(state.world, state.worldData);
-  const label = ROOM_LABELS[roomId] ?? state?.worldData?.rooms?.[roomId]?.name ?? 'Unknown Region';
+  const label = state?.worldData?.rooms?.[roomId]?.name ?? 'Unknown Region';
   const sceneElements = renderSceneElements(roomId) || renderGenericSceneElements(state);
   const npcs = renderNpcIcons(roomId);
   const cues = renderExitCues(exitPreviews);

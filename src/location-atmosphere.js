@@ -198,9 +198,22 @@ export function renderAtmospherePanel(state) {
   const activeRoomId = roomId || `r_${roomRow}_${roomCol}`;
   
   let biome = 'Unknown Region';
-  if (state?.worldData?.rooms && state.worldData.rooms[roomRow] && state.worldData.rooms[roomRow][roomCol]) {
-    biome = state.worldData.rooms[roomRow][roomCol].name;
+  if (state?.worldData?.rooms && state.worldData.rooms[activeRoomId]) {
+    biome = state.worldData.rooms[activeRoomId].name;
   }
+
+  return (
+    `<div class="atmosphere-panel" style="background:rgba(50,50,50,0.2);border-left:3px solid #666;padding:10px 14px;margin:6px 0;border-radius:6px;">` +
+      `<div style="font-size:1.1em;margin-bottom:4px;">` +
+        `<span style="margin-right:6px;">📍</span>` +
+        `<strong>${escapeHtml(biome)}</strong>` +
+      `</div>` +
+      `<div style="color:var(--muted);font-size:0.9em;font-style:italic;margin-bottom:6px;">` +
+        `You are traveling through the ${escapeHtml(biome)}.` +
+      `</div>` +
+    `</div>`
+  );
+}
 
   return (
     `<div class="atmosphere-panel" style="background:rgba(50,50,50,0.2);border-left:3px solid #666;padding:10px 14px;margin:6px 0;border-radius:6px;">` +
