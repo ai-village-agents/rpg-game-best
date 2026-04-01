@@ -160,7 +160,7 @@ const LOCATION_DATA = {
  * @returns {object|null} Location data or null if not found
  */
 export function getLocationData({ roomId, roomRow, roomCol } = {}) {
-  const id = roomId || COORD_TO_ROOM[`${roomRow},${roomCol}`];
+  const id = roomId || `r_${roomRow}_${roomCol}`;
   return id ? (LOCATION_DATA[id] || null) : null;
 }
 
@@ -193,53 +193,28 @@ export function getAmbientEventByCoords(roomRow, roomCol) {
  */
 export function renderAtmospherePanel(state) {
   const roomId = state?.world?.roomId;
-  
-  // If we have dynamic world data, construct generic atmosphere based on biome or coordinates
-  if (roomId && roomId.startsWith('r_')) {
-    const biome = state?.worldData?.rooms?.[roomId]?.name || 'Unknown Region';
-    // Provide a generic, fallback procedural atmosphere
-    return (
-      `<div class="atmosphere-panel" style="background:rgba(50,50,50,0.2);border-left:3px solid #666;padding:10px 14px;margin:6px 0;border-radius:6px;">` +
-        `<div style="font-size:1.1em;margin-bottom:4px;">` +
-          `<span style="margin-right:6px;">📍</span>` +
-          `<strong>${escapeHtml(biome)}</strong>` +
-        `</div>` +
-        `<div style="color:var(--muted);font-size:0.9em;font-style:italic;margin-bottom:6px;">` +
-          `You are traveling through the ${escapeHtml(biome)}.` +
-        `</div>` +
-      `</div>`
-    );
-  }
-
   const roomRow = state?.world?.roomRow ?? 1;
   const roomCol = state?.world?.roomCol ?? 1;
-  const legacyId = COORD_TO_ROOM[`${roomRow},${roomCol}`];
-  const data = LOCATION_DATA[legacyId];
-
-  if (!data) {
-    return '<div class="atmosphere-panel"><em>An unremarkable area.</em></div>';
+  const activeRoomId = roomId || `r_${roomRow}_${roomCol}`;
+  
+  let biome = 'Unknown Region';
+  if (state?.worldData?.rooms && state.worldData.rooms[roomRow] && state.worldData.rooms[roomRow][roomCol]) {
+    biome = state.worldData.rooms[roomRow][roomCol].name;
   }
 
-  const ambient = getAmbientEvent(legacyId);
-
   return (
-    `<div class="atmosphere-panel" style="` +
-      `background:${data.themeColor};` +
-      `border-left:3px solid ${data.borderAccent};` +
-      `padding:10px 14px;margin:6px 0;border-radius:6px;">` +
+    `<div class="atmosphere-panel" style="background:rgba(50,50,50,0.2);border-left:3px solid #666;padding:10px 14px;margin:6px 0;border-radius:6px;">` +
       `<div style="font-size:1.1em;margin-bottom:4px;">` +
-        `<span style="margin-right:6px;">${data.icon}</span>` +
-        `<strong>${escapeHtml(data.name)}</strong>` +
+        `<span style="margin-right:6px;">📍</span>` +
+        `<strong>${escapeHtml(biome)}</strong>` +
       `</div>` +
       `<div style="color:var(--muted);font-size:0.9em;font-style:italic;margin-bottom:6px;">` +
-        `${escapeHtml(data.description)}` +
+        `You are traveling through the ${escapeHtml(biome)}.` +
       `</div>` +
-      (ambient
-        ? `<div style="color:var(--text);font-size:0.85em;opacity:0.7;">` +
-          `${escapeHtml(ambient)}</div>`
-        : '') +
     `</div>`
   );
+
+
 }
 
 /**
@@ -249,7 +224,7 @@ export function renderAtmospherePanel(state) {
  * @returns {string} CSS inline style string
  */
 export function getLocationBorderStyle(roomRow, roomCol) {
-  const roomId = COORD_TO_ROOM[`${roomRow},${roomCol}`];
+  const roomId = `r_${roomRow}_${roomCol}`;
   const data = LOCATION_DATA[roomId];
   if (!data) return '';
   return `border-top:2px solid ${data.borderAccent};`;
@@ -260,17 +235,7 @@ export function getLocationBorderStyle(roomRow, roomCol) {
  * @returns {Array<{id: string, name: string, icon: string, row: number, col: number}>}
  */
 export function getAllLocations() {
-  return Object.entries(COORD_TO_ROOM).map(([coords, roomId]) => {
-    const [row, col] = coords.split(',').map(Number);
-    const data = LOCATION_DATA[roomId];
-    return {
-      id: roomId,
-      name: data?.name ?? roomId,
-      icon: data?.icon ?? '❓',
-      row,
-      col,
-    };
-  });
+  return [];
 }
 
 function escapeHtml(value) {
