@@ -356,53 +356,17 @@ function summarizeBonuses(bonuses) {
 
 function renderMapPanel(state, dispatch) {
   if (!state.world) return '';
-
   const { roomRow, roomCol } = state.world;
   const rooms = state.worldData?.rooms ?? DEFAULT_WORLD_DATA.rooms;
-  const exits = getRoomExits(state.world, state.worldData);
-  const exitPreviews = getExitPreviews(state.world, state.worldData);
   const currentRoom = rooms[roomRow]?.[roomCol];
   const roomName = currentRoom?.name ?? 'Unknown';
 
-  // Build 3x3 ASCII world overview grid
-  const gridRows = rooms.map((row, r) =>
-    row.map((room, c) => {
-      const isCurrent = r === roomRow && c === roomCol;
-      const label = room.name.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase();
-      if (isCurrent) {
-        return `<span class="map-cur" title="${esc(room.name)}">[${esc(label)}]</span>`;
-      }
-      return `<span class="map-room" title="${esc(room.name)}">&nbsp;${esc(label)}&nbsp;</span>`;
-    }).join('<span class="map-sep">|</span>')
-  ).map(row => `<div class="map-row">${row}</div>`).join('<div class="map-div">---+---+---</div>');
-
-  const exitBtns = ['north', 'south', 'west', 'east']
-    .filter(d => exits.includes(d))
-    .map(d => {
-      const shortLabel = { north: 'N', south: 'S', west: 'W', east: 'E' }[d];
-      const destination = exitPreviews[d]?.roomName;
-      const label = destination ? `${shortLabel} → ${destination}` : shortLabel;
-      return `<button class="move-btn" data-dir="${d}">${esc(label)}</button>`;
-    }).join('');
-
-  const controlsHtml = state.phase === 'exploration'
-    ? `<div class="map-controls">${exitBtns}</div>`
-    : '';
-
-  return `
-    <div class="card map-panel">
-      <h2>World Map</h2>
-      <div class="map-grid">${gridRows}</div>
-      <div class="map-info">
-        <b>Location:</b> ${esc(roomName)}<br>
-        <b>Exits:</b> ${exits.length ? exits.join(', ') : 'none'}
-      </div>
-      ${controlsHtml}
-    </div>
-  `;
+  return \`<div class="info-card">
+      <div class="card-header">Local Map</div>
+      <div class="info-row">Location: <span class="highlight">\${roomName}</span></div>
+      <div class="info-row">Coordinates: [\${roomCol}, \${roomRow}]</div>
+    </div>\`;
 }
-
-
 
 function getUnlockedFeatures(state) {
   const player = state.player || {};
@@ -431,7 +395,7 @@ function renderQuestBreadcrumb(state) {
   
   if (activeQuests.length === 0) {
     // No active quests - show a hint about where to find quests
-    const roomId = state.world?.roomId || 'center';
+    const roomId = state.world ? \`r_${state.world.roomRow}_${state.world.roomCol}\` : 'center';
     const availableQuests = getAvailableQuestsInRoom(questState, roomId, state);
     if (availableQuests.length > 0) {
       return `<div class="card quest-breadcrumb" style="border-left:3px solid var(--gold-text);background:color-mix(in srgb, var(--panel) 85%, var(--gold-text) 15%);">
@@ -978,7 +942,7 @@ export function render(state, dispatch) {
       return ` title="${esc(`Move ${direction} toward ${destination}`)}"`;
     };
     const mapHtml = renderMapPanel(state, dispatch);
-    const exploreRoomId = state?.world?.roomId ?? null;
+    const exploreRoomId = state?.world ? \`r_${state.world.roomRow}_${state.world.roomCol}\` : null;
     const exploreNpcs = exploreRoomId ? getNPCsInRoom(exploreRoomId) : [];
     const npcListHtml = exploreNpcs.length > 0
       ? exploreNpcs.map(n => `<button class="npc-talk-btn" data-npcid="${esc(n.id)}">${esc(n.name)}</button>`).join('')
@@ -1774,7 +1738,7 @@ if (state.phase === 'achievements') {
     const questState = state.questState || { activeQuests: {}, completedQuests: [] };
     const questUiState = state.questUiState || { sortBy: 'name', sortOrder: 'asc', filter: 'active' };
     const summary = getActiveQuestsSummary(questState);
-    const currentRoomId = state.world?.roomId || 'center';
+    const currentRoomId = state.world ? \`r_${state.world.roomRow}_${state.world.roomCol}\` : 'center';
     const availableQuests = currentRoomId ? getAvailableQuestsInRoom(questState, currentRoomId) : [];
 
     

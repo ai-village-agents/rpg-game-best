@@ -440,6 +440,7 @@ export class WorldMap {
 
     const merged = { ...baseState, ...(persistedState ?? {}) };
     this.state = this._validateState(merged);
+    this.state.roomId = `r_${this.state.roomRow}_${this.state.roomCol}`;
   }
 
   _validateState(nextState) {
@@ -470,13 +471,13 @@ export class WorldMap {
           }
         }
       }
-      return { roomRow: fallbackRow, roomCol: fallbackCol, x: fx, y: fy };
+      return { roomRow: fallbackRow, roomCol: fallbackCol, x: fx, y: fy, roomId: `r_${fallbackRow}_${fallbackCol}` };
     }
-    return { ...nextState, x, y };
+    return { ...nextState, x, y, roomId: `r_${nextState.roomRow}_${nextState.roomCol}` };
   }
 
   snapshot() {
-    return { ...this.state };
+    return { ...this.state, roomId: `r_${this.state.roomRow}_${this.state.roomCol}` };
   }
 
   getCurrentRoom() {
@@ -601,6 +602,7 @@ export class WorldMap {
           roomCol: nextRoomCol,
           x: targetSlide.x,
           y: targetSlide.y,
+          roomId: `r_${nextRoomRow}_${nextRoomCol}`,
         };
         return { moved: true, blocked: null, transitioned: true, state: this.snapshot() };
       }
@@ -618,6 +620,7 @@ export class WorldMap {
       roomCol: nextRoomCol,
       x: nextX,
       y: nextY,
+      roomId: `r_${nextRoomRow}_${nextRoomCol}`,
     };
 
     return { moved: true, blocked: null, transitioned: true, state: this.snapshot() };
@@ -684,6 +687,7 @@ export class WorldMap {
       roomCol: nextRoomCol,
       x: nextX,
       y: nextY,
+      roomId: `r_${nextRoomRow}_${nextRoomCol}`,
     };
 
     return { moved: true, blocked: null, transitioned: true, state: this.snapshot() };
