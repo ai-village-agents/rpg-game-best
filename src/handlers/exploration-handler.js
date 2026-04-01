@@ -30,7 +30,7 @@ import {
 
 function getRoomId(worldState) {
   if (!worldState) return null;
-  return \`r_${worldState.roomRow}_${worldState.roomCol}\`;
+  return `r_${worldState.roomRow}_${worldState.roomCol}`;
 }
 
 function getRoomDescription(worldState) {
