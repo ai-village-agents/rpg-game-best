@@ -143,23 +143,48 @@ function renderSceneElements(roomId) {
         '<div class="area-scene-element trail" style="left: 0; bottom: 18px; width: 100%;"></div>',
         '<div class="area-scene-element trail" style="left: 0; bottom: 34px; width: 100%; opacity: 0.6;"></div>',
       ].join('');
+    
     case 'center':
       return [
+        // Ground and paths
+        '<div class="area-scene-element path-circle" style="left: 30%; bottom: 20px; width: 40%; height: 30px;"></div>',
+        '<div class="area-scene-element path-line" style="left: 45%; bottom: 0; width: 10%; height: 25px;"></div>',
+        
         // Background buildings
-        '<div class="area-scene-element v-building" style="left: 5%; bottom: 65px; transform: scale(0.85); filter: brightness(0.8);"></div>',
-        '<div class="area-scene-element v-building" style="left: 75%; bottom: 62px; transform: scale(0.8); filter: brightness(0.75);"></div>',
-        // Main buildings (Inn, Shops)
-        '<div class="area-scene-element v-building inn" style="left: 15%; bottom: 45px;"></div>',
-        '<div class="area-scene-element v-building shop" style="left: 65%; bottom: 48px;"></div>',
+        '<div class="area-scene-element v-building house-small" style="left: 8%; bottom: 60px;"></div>',
+        '<div class="area-scene-element v-building house-small" style="left: 78%; bottom: 65px;"></div>',
+        
+        // Main buildings
+        // Inn (left)
+        '<div class="area-scene-element v-building inn" style="left: 12%; bottom: 42px;">' +
+          '<div class="v-door"></div><div class="v-window w-left"></div><div class="v-window w-right"></div>' +
+          '<div class="v-sign">🍺</div>' +
+        '</div>',
+        
+        // Shop (right)
+        '<div class="area-scene-element v-building shop" style="left: 65%; bottom: 45px;">' +
+          '<div class="v-door"></div><div class="v-window w-left"></div><div class="v-window w-right"></div>' +
+          '<div class="v-sign">💰</div>' +
+        '</div>',
+        
         // Village Elder House (center-back)
-        '<div class="area-scene-element v-building elder" style="left: 40%; bottom: 55px; transform: scale(1.1);"></div>',
+        '<div class="area-scene-element v-building elder" style="left: 38%; bottom: 58px;">' +
+          '<div class="v-door"></div><div class="v-window w-left"></div><div class="v-window w-right"></div>' +
+          '<div class="v-chimney"></div>' +
+        '</div>',
+        
         // Fountain in center
-        '<div class="area-scene-element v-fountain" style="left: 44%; bottom: 22px;"></div>',
+        '<div class="area-scene-element v-fountain" style="left: 42%; bottom: 22px;">' +
+          '<div class="v-water-spout"></div>' +
+          '<div class="v-water-pool"></div>' +
+        '</div>',
+        
         // Decor
-        '<div class="area-scene-element v-barrel" style="left: 28%; bottom: 40px;"></div>',
-        '<div class="area-scene-element v-barrel" style="left: 31%; bottom: 38px;"></div>',
-        '<div class="area-scene-element v-crate" style="left: 70%; bottom: 42px;"></div>',
+        '<div class="area-scene-element v-barrel" style="left: 28%; bottom: 38px;"></div>',
+        '<div class="area-scene-element v-barrel" style="left: 31%; bottom: 35px;"></div>',
+        '<div class="area-scene-element v-crate" style="left: 62%; bottom: 38px;"></div>',
       ].join('');
+
     case 'e':
       return [
         '<div class="area-scene-element wheat" style="left: 10%; bottom: 38px;"></div>',
@@ -253,137 +278,336 @@ export function getAreaSceneStyles() {
   return `
     /* New Millbrook Crossing Styles */
     .area-scene[data-room="center"] {
-      background: linear-gradient(180deg, #8cb5d6 0%, #b8cddb 45%, #d4caa8 45%, #e6dfc3 100%);
+      background:
+        radial-gradient(circle at 50% 24%, rgba(255, 247, 188, 0.35) 0%, rgba(255, 247, 188, 0) 44%),
+        linear-gradient(180deg, #66b2ee 0%, #b8e1ff 45%, #e9cf9c 45%, #c89358 100%);
     }
-    
-    .area-scene-element.v-building {
-      width: 54px;
+
+    .area-scene-element.v-plaza {
+      height: 64px;
+      background:
+        linear-gradient(180deg, #e9d0a2 0%, #d8b17c 100%);
+      border-top: 2px solid rgba(148, 100, 56, 0.52);
+      box-shadow:
+        inset 0 8px 0 rgba(255, 236, 198, 0.28),
+        inset 0 -6px 0 rgba(122, 82, 42, 0.12);
+      z-index: 1;
+    }
+
+    .area-scene-element.v-square-ring {
+      width: 38%;
       height: 42px;
-      background: #e8dcc3;
-      border: 2px solid #5a4b3c;
-      border-radius: 2px;
-      box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.1), 3px 3px 0 rgba(0, 0, 0, 0.15);
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(173, 137, 94, 0.72) 0 10px,
+          rgba(198, 161, 117, 0.8) 10px 20px
+        );
+      border: 2px solid rgba(116, 78, 44, 0.58);
+      border-radius: 50%;
+      box-shadow: inset 0 3px 0 rgba(255, 233, 199, 0.4);
+      z-index: 2;
     }
+
+    .area-scene-element.v-path-north,
+    .area-scene-element.v-path-west,
+    .area-scene-element.v-path-east {
+      background: linear-gradient(180deg, rgba(186, 142, 93, 0.9) 0%, rgba(160, 115, 71, 0.9) 100%);
+      border: 2px solid rgba(116, 74, 40, 0.54);
+      z-index: 2;
+    }
+
+    .area-scene-element.v-path-north {
+      width: 6%;
+      height: 22px;
+      border-radius: 10px 10px 6px 6px;
+    }
+
+    .area-scene-element.v-path-west,
+    .area-scene-element.v-path-east {
+      width: 12%;
+      height: 10px;
+      border-radius: 8px;
+    }
+
+    .area-scene-element.v-building {
+      width: 80px;
+      height: 52px;
+      border: 2px solid #573726;
+      border-radius: 7px 7px 4px 4px;
+      box-shadow:
+        inset 0 -10px 0 rgba(0, 0, 0, 0.14),
+        3px 4px 0 rgba(0, 0, 0, 0.2);
+      z-index: 3;
+    }
+
     .area-scene-element.v-building::before {
       content: '';
       position: absolute;
-      left: -6px;
-      top: -24px;
+      left: -10px;
+      top: -28px;
       width: 0;
       height: 0;
-      border-left: 31px solid transparent;
-      border-right: 31px solid transparent;
-      border-bottom: 24px solid #a34839;
-      filter: drop-shadow(0 2px 0 #7a3124);
+      border-left: 50px solid transparent;
+      border-right: 50px solid transparent;
+      border-bottom: 30px solid #9d5a42;
+      filter: drop-shadow(0 2px 0 rgba(57, 28, 18, 0.65));
     }
-    .area-scene-element.v-building::after {
+
+    .area-scene-element.v-building .v-window {
+      position: absolute;
+      top: 17px;
+      width: 13px;
+      height: 14px;
+      background: linear-gradient(180deg, #d9f7ff 0%, #7ebee3 100%);
+      border: 2px solid #5f4630;
+      border-radius: 3px;
+      box-shadow: inset 0 -2px 0 rgba(40, 84, 118, 0.4);
+      z-index: 2;
+    }
+
+    .area-scene-element.v-building .v-window::before {
       content: '';
       position: absolute;
-      left: 20px;
+      left: 50%;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      transform: translateX(-50%);
+      background: rgba(95, 70, 48, 0.8);
+    }
+
+    .area-scene-element.v-building .v-window.w-left {
+      left: 11px;
+    }
+
+    .area-scene-element.v-building .v-window.w-right {
+      right: 11px;
+    }
+
+    .area-scene-element.v-building .v-window.w-center {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .area-scene-element.v-building .v-door {
+      position: absolute;
+      left: 50%;
       bottom: 0;
-      width: 14px;
-      height: 20px;
-      background: #61442f;
-      border-radius: 2px 2px 0 0;
+      width: 18px;
+      height: 26px;
+      transform: translateX(-50%);
+      border-radius: 4px 4px 0 0;
+      border: 2px solid #4a2f18;
+      border-bottom: 0;
+      background: linear-gradient(180deg, #84542f 0%, #5f3a1d 100%);
+      z-index: 1;
     }
-    
+
+    .area-scene-element.v-building .v-sign {
+      position: absolute;
+      left: 50%;
+      top: -16px;
+      transform: translateX(-50%);
+      padding: 1px 8px;
+      border: 2px solid #4f3a27;
+      border-radius: 10px;
+      color: #fff4d6;
+      font-size: 9px;
+      letter-spacing: 0.7px;
+      font-weight: 700;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+      z-index: 4;
+    }
+
     .area-scene-element.v-building.inn {
-      background: #dfd1b8;
+      width: 84px;
+      height: 54px;
+      background: linear-gradient(180deg, #f4ddba 0%, #dfc093 100%);
+      border-color: #5e422e;
     }
+
     .area-scene-element.v-building.inn::before {
-      border-bottom-color: #4a5d82;
-      filter: drop-shadow(0 2px 0 #2c3a57);
+      left: -11px;
+      border-left-width: 53px;
+      border-right-width: 53px;
+      border-bottom-color: #4168aa;
     }
-    
+
+    .area-scene-element.v-building.inn .v-sign {
+      background: #355487;
+    }
+
     .area-scene-element.v-building.shop {
-      background: #d4c8b2;
+      width: 82px;
+      height: 52px;
+      background: linear-gradient(180deg, #f0cf9c 0%, #d9b173 100%);
+      border-color: #6c4728;
     }
+
     .area-scene-element.v-building.shop::before {
-      border-bottom-color: #587a52;
-      filter: drop-shadow(0 2px 0 #3a5435);
+      border-bottom-color: #3f9461;
     }
-    
+
+    .area-scene-element.v-building.shop .v-sign {
+      background: #2f7b4a;
+    }
+
+    .area-scene-element.v-building.shop .v-awning {
+      position: absolute;
+      left: -1px;
+      top: 19px;
+      width: calc(100% + 2px);
+      height: 10px;
+      background: repeating-linear-gradient(90deg, #fff6df 0 8px, #d85a43 8px 16px);
+      border-top: 2px solid #7c3f2c;
+      border-bottom: 2px solid rgba(90, 38, 23, 0.5);
+      z-index: 3;
+    }
+
     .area-scene-element.v-building.elder {
-      background: #ebdaca;
+      width: 88px;
+      height: 58px;
+      background: linear-gradient(180deg, #f6e7c8 0%, #e4c996 100%);
+      border-color: #694a2f;
+      border-radius: 10px 10px 6px 6px;
+      z-index: 4;
     }
-    
+
+    .area-scene-element.v-building.elder::before {
+      left: -10px;
+      top: -34px;
+      border-left-width: 54px;
+      border-right-width: 54px;
+      border-bottom-width: 36px;
+      border-bottom-color: #7e4a8f;
+    }
+
+    .area-scene-element.v-building.elder .v-window {
+      top: 16px;
+      width: 12px;
+      height: 13px;
+      border-radius: 8px 8px 3px 3px;
+    }
+
+    .area-scene-element.v-building.elder .v-door {
+      width: 24px;
+      height: 30px;
+      border-radius: 13px 13px 0 0;
+      background: linear-gradient(180deg, #90623b 0%, #6e472a 100%);
+    }
+
     .area-scene-element.v-fountain {
-      width: 46px;
-      height: 18px;
-      background: #8b9bb4;
+      width: 50px;
+      height: 24px;
+      background: radial-gradient(circle at 50% 40%, #bef5ff 0%, #62c5ea 52%, #2f80b1 100%);
       border-radius: 50%;
-      border: 2px solid #5c6c82;
-      box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0,0,0,0.1);
+      border: 3px solid #3f708e;
+      box-shadow:
+        0 0 14px rgba(128, 220, 255, 0.75),
+        inset 0 -4px 0 rgba(18, 62, 94, 0.55);
+      z-index: 5;
     }
+
     .area-scene-element.v-fountain::before {
       content: '';
       position: absolute;
-      left: 18px;
-      bottom: 12px;
-      width: 10px;
-      height: 24px;
-      background: #a4b4cc;
-      border-radius: 4px 4px 0 0;
-      border: 2px solid #5c6c82;
+      left: 21px;
+      bottom: 14px;
+      width: 6px;
+      height: 30px;
+      background: linear-gradient(180deg, rgba(221, 250, 255, 0.95) 0%, rgba(93, 177, 219, 0.92) 100%);
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(167, 235, 255, 0.85);
     }
+
     .area-scene-element.v-fountain::after {
       content: '';
       position: absolute;
-      left: 8px;
-      top: -8px;
-      width: 30px;
-      height: 16px;
-      background: rgba(186, 222, 255, 0.85);
+      left: -12px;
+      top: -14px;
+      width: 72px;
+      height: 50px;
+      background: radial-gradient(circle, rgba(168, 237, 255, 0.44) 0%, rgba(168, 237, 255, 0) 72%);
       border-radius: 50%;
-      animation: ripple 2s infinite linear;
+      animation: fountain-glow 2s ease-in-out infinite;
     }
-    
-    .area-scene-element.v-barrel {
-      width: 12px;
-      height: 16px;
-      background: #875c36;
-      border: 1px solid #4a301a;
-      border-radius: 2px;
+
+    .area-scene-element.v-fountain .v-water-core {
+      position: absolute;
+      left: 50%;
+      top: 4px;
+      width: 22px;
+      height: 12px;
+      transform: translateX(-50%);
+      background: radial-gradient(circle, rgba(209, 250, 255, 0.9) 0%, rgba(118, 204, 240, 0.4) 65%, rgba(118, 204, 240, 0) 100%);
+      border-radius: 50%;
+      animation: fountain-ripple 1.7s linear infinite;
     }
-    .area-scene-element.v-barrel::before {
+
+    .area-scene-element.v-planter {
+      width: 24px;
+      height: 14px;
+      background: #99643c;
+      border: 2px solid #5f3b22;
+      border-radius: 3px;
+      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+      z-index: 4;
+    }
+
+    .area-scene-element.v-planter::before {
       content: '';
       position: absolute;
-      top: 3px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: #333;
-    }
-    .area-scene-element.v-barrel::after {
-      content: '';
-      position: absolute;
-      bottom: 3px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: #333;
-    }
-    
-    .area-scene-element.v-crate {
+      left: 3px;
+      top: -8px;
       width: 18px;
-      height: 18px;
-      background: #c29b69;
-      border: 1px solid #735531;
+      height: 8px;
+      background: #69ad57;
+      border-radius: 10px 10px 2px 2px;
     }
-    .area-scene-element.v-crate::before {
+
+    .area-scene-element.v-lantern {
+      width: 5px;
+      height: 22px;
+      background: #4d3a2a;
+      border-radius: 3px;
+      z-index: 2;
+    }
+
+    .area-scene-element.v-lantern::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(45deg, transparent 45%, #735531 45%, #735531 55%, transparent 55%);
+      left: -4px;
+      top: -10px;
+      width: 13px;
+      height: 11px;
+      background: radial-gradient(circle at 50% 45%, #ffeaa0 0%, #f4c357 75%, #bf892f 100%);
+      border: 2px solid #6a4d2d;
+      border-radius: 4px;
+      box-shadow: 0 0 8px rgba(255, 218, 132, 0.7);
     }
-    
-    @keyframes ripple {
-      0% { transform: scale(0.9); opacity: 0.8; }
-      50% { transform: scale(1.05); opacity: 0.5; }
-      100% { transform: scale(0.9); opacity: 0.8; }
+
+    .area-scene-element.v-lantern::after {
+      content: '';
+      position: absolute;
+      left: -11px;
+      top: -7px;
+      width: 27px;
+      height: 20px;
+      background: radial-gradient(circle, rgba(255, 224, 147, 0.28) 0%, rgba(255, 224, 147, 0) 75%);
+      border-radius: 50%;
+    }
+
+    @keyframes fountain-glow {
+      0% { transform: scale(0.94); opacity: 0.6; }
+      50% { transform: scale(1.06); opacity: 1; }
+      100% { transform: scale(0.94); opacity: 0.6; }
+    }
+
+    @keyframes fountain-ripple {
+      0% { transform: translateX(-50%) scale(0.85); opacity: 0.9; }
+      50% { transform: translateX(-50%) scale(1.08); opacity: 0.5; }
+      100% { transform: translateX(-50%) scale(0.85); opacity: 0.9; }
     }
     .area-scene-collision-cell {
       position: absolute;
@@ -551,7 +775,9 @@ export function getAreaSceneStyles() {
     }
 
     .area-scene[data-room="center"] {
-      background: linear-gradient(180deg, #cba97b 0%, #d8bb8a 55%, #e4cfa7 100%);
+      background:
+        radial-gradient(circle at 50% 24%, rgba(255, 247, 188, 0.35) 0%, rgba(255, 247, 188, 0) 44%),
+        linear-gradient(180deg, #66b2ee 0%, #b8e1ff 45%, #e9cf9c 45%, #c89358 100%);
     }
 
     .area-scene[data-room="e"] {

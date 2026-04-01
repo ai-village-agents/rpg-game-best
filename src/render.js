@@ -752,43 +752,86 @@ export function render(state, dispatch) {
       if (!def) return '';
       const art = {
         warrior: `
-<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="120" style="margin-bottom:10px; border-radius:8px; background:linear-gradient(to bottom, #2c3e50, #34495e); border: 2px solid #7f8c8d;">
-  <path d="M40 20 L60 20 L65 50 L55 85 L45 85 L35 50 Z" fill="#95a5a6" stroke="#ecf0f1" stroke-width="2"/>
-  <rect x="45" y="85" width="10" height="15" fill="#8e44ad"/>
-  <circle cx="50" cy="85" r="4" fill="#f1c40f"/>
-  <path d="M20 40 L80 40 L85 45 L15 45 Z" fill="#7f8c8d" stroke="#bdc3c7" stroke-width="1"/>
-  <circle cx="50" cy="42.5" r="6" fill="#e74c3c"/>
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="100%" height="200" style="margin-bottom:10px; border-radius:10px; background:linear-gradient(180deg, #1b2735 0%, #2d4465 45%, #4a6b8f 100%); border: 2px solid #8fb3db;">
+  <defs>
+    <linearGradient id="warriorBlade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f6fbff"/>
+      <stop offset="100%" stop-color="#8da9c5"/>
+    </linearGradient>
+    <linearGradient id="warriorShield" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e74c3c"/>
+      <stop offset="100%" stop-color="#f39c12"/>
+    </linearGradient>
+  </defs>
+  <circle cx="40" cy="42" r="20" fill="#f1c40f" opacity="0.2"/>
+  <circle cx="164" cy="34" r="16" fill="#5dade2" opacity="0.25"/>
+  <path d="M95 20 L110 20 L120 115 L102 185 L88 185 L80 115 Z" fill="url(#warriorBlade)" stroke="#dce8f2" stroke-width="3"/>
+  <rect x="89" y="178" width="22" height="14" rx="3" fill="#7f4d1b"/>
+  <rect x="82" y="112" width="36" height="12" rx="4" fill="#b07d46" stroke="#d4a46a" stroke-width="2"/>
+  <path d="M36 82 L70 66 L112 82 L112 130 L70 170 L36 130 Z" fill="url(#warriorShield)" stroke="#f7d794" stroke-width="3"/>
+  <path d="M70 84 L84 102 L70 120 L56 102 Z" fill="#fdf2b1"/>
+  <path d="M126 60 L176 60 L188 74 L126 74 Z" fill="#c3d8ec" stroke="#e5eef7" stroke-width="2"/>
+  <path d="M132 74 L182 74 L170 98 L120 98 Z" fill="#7f8c8d" opacity="0.9"/>
 </svg>`,
         mage: `
-<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="120" style="margin-bottom:10px; border-radius:8px; background:linear-gradient(to bottom, #2980b9, #8e44ad); border: 2px solid #9b59b6;">
-  <path d="M48 20 Q50 10 52 20 L55 85 L45 85 Z" fill="#8e44ad" stroke="#9b59b6" stroke-width="2"/>
-  <circle cx="50" cy="15" r="8" fill="#f1c40f" opacity="0.8">
-    <animate attributeName="r" values="7;9;7" dur="2s" repeatCount="indefinite"/>
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="100%" height="200" style="margin-bottom:10px; border-radius:10px; background:radial-gradient(circle at 50% 25%, #5ee7ff 0%, #5b4ec7 40%, #2f1a61 100%); border: 2px solid #a68dff;">
+  <defs>
+    <linearGradient id="mageRobe" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8e44ff"/>
+      <stop offset="100%" stop-color="#3b1f88"/>
+    </linearGradient>
+  </defs>
+  <path d="M100 26 L128 60 L72 60 Z" fill="#5dade2" stroke="#ccecff" stroke-width="3"/>
+  <path d="M68 60 L132 60 L148 170 L52 170 Z" fill="url(#mageRobe)" stroke="#bba7ff" stroke-width="3"/>
+  <path d="M84 84 L116 84 L122 142 L78 142 Z" fill="#5630b4" opacity="0.7"/>
+  <rect x="94" y="34" width="12" height="120" rx="6" fill="#d8b45d" stroke="#f4de94" stroke-width="2"/>
+  <circle cx="100" cy="28" r="18" fill="#f1c40f" opacity="0.85">
+    <animate attributeName="r" values="16;22;16" dur="2.4s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="50" cy="15" r="4" fill="#fff" />
-  <path d="M40 85 Q50 90 60 85 L55 95 L45 95 Z" fill="#e67e22"/>
-  <path d="M10 50 Q50 20 90 50" fill="none" stroke="#3498db" stroke-width="2" opacity="0.6">
-    <animate attributeName="stroke-width" values="1;3;1" dur="1.5s" repeatCount="indefinite"/>
+  <circle cx="100" cy="28" r="8" fill="#fff9c4"/>
+  <path d="M28 120 Q64 78 100 120 T172 120" fill="none" stroke="#5dade2" stroke-width="4" opacity="0.8">
+    <animate attributeName="d" values="M28 120 Q64 78 100 120 T172 120;M28 116 Q64 70 100 116 T172 116;M28 120 Q64 78 100 120 T172 120" dur="2s" repeatCount="indefinite"/>
   </path>
+  <circle cx="52" cy="72" r="6" fill="#8be9ff" opacity="0.8"/>
+  <circle cx="148" cy="88" r="5" fill="#d6c8ff" opacity="0.85"/>
 </svg>`,
         rogue: `
-<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="120" style="margin-bottom:10px; border-radius:8px; background:linear-gradient(to bottom, #111, #333); border: 2px solid #555;">
-  <path d="M48 20 L52 20 L55 70 L45 70 Z" fill="#7f8c8d" stroke="#bdc3c7" stroke-width="1"/>
-  <path d="M45 70 L55 70 L55 90 L45 90 Z" fill="#555"/>
-  <path d="M30 40 L45 35 L45 45 Z" fill="#c0392b"/>
-  <path d="M70 40 L55 35 L55 45 Z" fill="#c0392b"/>
-  <circle cx="50" cy="50" r="2" fill="#e74c3c" opacity="0.8">
-    <animate attributeName="r" values="1;3;1" dur="0.5s" repeatCount="indefinite"/>
-  </circle>
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="100%" height="200" style="margin-bottom:10px; border-radius:10px; background:linear-gradient(180deg, #0f0f14 0%, #1f1c2f 55%, #2d273f 100%); border: 2px solid #6d5f86;">
+  <defs>
+    <linearGradient id="rogueSteel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dce4ef"/>
+      <stop offset="100%" stop-color="#728299"/>
+    </linearGradient>
+  </defs>
+  <path d="M100 34 L142 68 L132 150 L68 150 L58 68 Z" fill="#2a2439" stroke="#8774a5" stroke-width="3"/>
+  <path d="M75 70 Q100 50 125 70 Q112 92 100 100 Q88 92 75 70 Z" fill="#111"/>
+  <path d="M86 84 L98 84 L92 94 Z" fill="#ff5c7a"/>
+  <path d="M102 84 L114 84 L108 94 Z" fill="#ff5c7a"/>
+  <path d="M96 96 L104 96 L102 102 L98 102 Z" fill="#d0d7df"/>
+  <path d="M46 44 L96 74 L88 88 L30 62 Z" fill="url(#rogueSteel)" stroke="#d7e1ec" stroke-width="2"/>
+  <path d="M154 44 L170 62 L112 88 L104 74 Z" fill="url(#rogueSteel)" stroke="#d7e1ec" stroke-width="2"/>
+  <path d="M58 150 L82 150 L74 182 L56 182 Z" fill="#181520"/>
+  <path d="M118 150 L142 150 L144 182 L126 182 Z" fill="#181520"/>
+  <circle cx="100" cy="58" r="38" fill="none" stroke="#8a7db3" opacity="0.3" stroke-width="2"/>
 </svg>`,
         cleric: `
-<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="120" style="margin-bottom:10px; border-radius:8px; background:linear-gradient(to bottom, #f1c40f, #e67e22); border: 2px solid #d35400;">
-  <rect x="45" y="20" width="10" height="60" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1"/>
-  <rect x="30" y="35" width="40" height="10" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1"/>
-  <circle cx="50" cy="40" r="15" fill="none" stroke="#f39c12" stroke-width="3" opacity="0.7">
-    <animate attributeName="r" values="12;18;12" dur="3s" repeatCount="indefinite"/>
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="100%" height="200" style="margin-bottom:10px; border-radius:10px; background:linear-gradient(180deg, #fff5cc 0%, #ffd36b 45%, #f39c12 100%); border: 2px solid #e0a12a;">
+  <defs>
+    <linearGradient id="clericGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff6dc"/>
+      <stop offset="100%" stop-color="#f5deb3"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="74" r="52" fill="none" stroke="#fff2b3" stroke-width="10" opacity="0.65">
+    <animate attributeName="r" values="46;58;46" dur="3.4s" repeatCount="indefinite"/>
   </circle>
-  <path d="M40 80 L60 80 L55 90 L45 90 Z" fill="#f39c12"/>
+  <path d="M76 42 L124 42 L138 170 L62 170 Z" fill="url(#clericGold)" stroke="#f9e7ba" stroke-width="3"/>
+  <rect x="94" y="26" width="12" height="96" rx="4" fill="#ecf0f1" stroke="#ffffff" stroke-width="2"/>
+  <rect x="70" y="52" width="60" height="12" rx="4" fill="#ecf0f1" stroke="#ffffff" stroke-width="2"/>
+  <path d="M68 130 Q100 110 132 130 L124 168 L76 168 Z" fill="#ffe39a" opacity="0.85"/>
+  <path d="M92 76 L108 76 L108 92 L124 92 L124 108 L108 108 L108 124 L92 124 L92 108 L76 108 L76 92 L92 92 Z" fill="#f1c40f" stroke="#fff1a8" stroke-width="2"/>
+  <circle cx="56" cy="44" r="7" fill="#fff9d8"/>
+  <circle cx="146" cy="54" r="6" fill="#fff9d8"/>
 </svg>`
       }[def.id] || '';
       return `
