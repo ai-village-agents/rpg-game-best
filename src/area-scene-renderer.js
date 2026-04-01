@@ -2,18 +2,6 @@
 import { DEFAULT_WORLD_DATA, getRoomExits, getCurrentRoom, getExitPreviews } from './map.js';
 import { getNPCsInRoom } from './npc-dialog.js';
 
-const ROOM_LABELS = {
-  nw: 'The Whispering Glade',
-  n: 'The Shimmer Trail',
-  ne: 'Crystalspine Heights',
-  w: 'Traders Rift',
-  center: 'Millbrook Crossing',
-  e: 'Lumingrass Meadows',
-  sw: 'The Miregloom',
-  s: 'Pilgrim Road',
-  se: 'Tideglass Harbor',
-};
-
 const ALL_DIRECTIONS = ['north', 'south', 'west', 'east'];
 
 function esc(value) {
@@ -121,8 +109,11 @@ function renderGenericSceneElements(state) {
   ].join('');
 }
 
-function renderSceneElements(roomId) {
-  switch (roomId) {
+function renderSceneElements(roomId, state) {
+  const roomName = state?.worldData?.rooms?.[roomId]?.name;
+  if (!roomName) return '';
+  switch (roomName) {
+    case 'The Whispering Glade':
     case 'nw':
       return [
         '<div class="area-scene-element tree" style="left: 10%; bottom: 48px;"></div>',
@@ -132,14 +123,14 @@ function renderSceneElements(roomId) {
         '<div class="area-scene-element tree" style="left: 82%; bottom: 50px;"></div>',
         '<div class="area-scene-element mist" style="left: 0; bottom: 22px; width: 100%;"></div>',
       ].join('');
-    case 'n':
+    case 'The Shimmer Trail':
       return [
         '<div class="area-scene-element mountain" style="left: 6%; bottom: 50px;"></div>',
         '<div class="area-scene-element mountain" style="left: 32%; bottom: 46px;"></div>',
         '<div class="area-scene-element mountain" style="left: 60%; bottom: 52px;"></div>',
         '<div class="area-scene-element ridge" style="left: 0; bottom: 26px; width: 100%;"></div>',
       ].join('');
-    case 'ne':
+    case 'Crystalspine Heights':
       return [
         '<div class="area-scene-element rock" style="left: 16%; bottom: 44px;"></div>',
         '<div class="area-scene-element rock" style="left: 38%; bottom: 50px;"></div>',
@@ -147,14 +138,14 @@ function renderSceneElements(roomId) {
         '<div class="area-scene-element rock" style="left: 78%; bottom: 54px;"></div>',
         '<div class="area-scene-element cliff" style="left: 0; bottom: 28px; width: 100%;"></div>',
       ].join('');
-    case 'w':
+    case 'Traders Rift':
       return [
         '<div class="area-scene-element signpost" style="left: 22%; bottom: 48px;"></div>',
         '<div class="area-scene-element trail" style="left: 0; bottom: 18px; width: 100%;"></div>',
         '<div class="area-scene-element trail" style="left: 0; bottom: 34px; width: 100%; opacity: 0.6;"></div>',
       ].join('');
     
-    case 'center':
+    case 'Millbrook Crossing':
       return [
         // Ground and paths
         '<div class="area-scene-element path-circle" style="left: 30%; bottom: 20px; width: 40%; height: 30px;"></div>',
@@ -195,7 +186,7 @@ function renderSceneElements(roomId) {
         '<div class="area-scene-element v-crate" style="left: 62%; bottom: 38px;"></div>',
       ].join('');
 
-    case 'e':
+    case 'Lumingrass Meadows':
       return [
         '<div class="area-scene-element wheat" style="left: 10%; bottom: 38px;"></div>',
         '<div class="area-scene-element wheat" style="left: 26%; bottom: 40px;"></div>',
@@ -204,7 +195,7 @@ function renderSceneElements(roomId) {
         '<div class="area-scene-element wheat" style="left: 78%; bottom: 38px;"></div>',
         '<div class="area-scene-element field" style="left: 0; bottom: 18px; width: 100%;"></div>',
       ].join('');
-    case 'sw':
+    case 'The Miregloom':
       return [
         '<div class="area-scene-element cattail" style="left: 12%; bottom: 38px;"></div>',
         '<div class="area-scene-element cattail" style="left: 30%; bottom: 42px;"></div>',
@@ -212,13 +203,13 @@ function renderSceneElements(roomId) {
         '<div class="area-scene-element cattail" style="left: 72%; bottom: 40px;"></div>',
         '<div class="area-scene-element swamp-water" style="left: 0; bottom: 16px; width: 100%;"></div>',
       ].join('');
-    case 's':
+    case 'Pilgrim Road':
       return [
         '<div class="area-scene-element road" style="left: 0; bottom: 20px; width: 100%;"></div>',
         '<div class="area-scene-element road-line" style="left: 8%; bottom: 46px; width: 84%;"></div>',
         '<div class="area-scene-element road-line" style="left: 12%; bottom: 30px; width: 76%; opacity: 0.7;"></div>',
       ].join('');
-    case 'se':
+    case 'Tideglass Harbor':
       return [
         '<div class="area-scene-element dock" style="left: 10%; bottom: 28px; width: 80%;"></div>',
         '<div class="area-scene-element wave" style="left: 0; bottom: 12px; width: 100%;"></div>',
@@ -262,7 +253,7 @@ export function renderAreaScene(state) {
   const exits = getRoomExits(state.world, state.worldData);
   const exitPreviews = getExitPreviews(state.world, state.worldData);
   const label = state?.worldData?.rooms?.[roomId]?.name ?? 'Unknown Region';
-  const sceneElements = renderSceneElements(roomId) || renderGenericSceneElements(state);
+  const sceneElements = renderSceneElements(roomId, state) || renderGenericSceneElements(state);
   const npcs = renderNpcIcons(roomId);
   const cues = renderExitCues(exitPreviews);
   const locks = renderExitLocks(exits);
@@ -270,7 +261,7 @@ export function renderAreaScene(state) {
   const playerStyle = getPlayerPositionStyles(state);
 
   return `
-    <div class="area-scene" data-room="${roomId}">
+    <div class="area-scene" data-room="${roomId}" data-room-name="${esc(label)}">
       ${sceneElements}
       ${collisionOverlay}
       ${cues}
@@ -287,7 +278,7 @@ export function getAreaSceneStyles() {
     /* New Millbrook Crossing Styles */
     .area-scene { background: linear-gradient(180deg, #445 0%, #334 55%, #223 100%); }
 
-    .area-scene[data-room="center"] {
+    .area-scene[data-room-name="Millbrook Crossing"] {
       background:
         radial-gradient(circle at 50% 24%, rgba(255, 247, 188, 0.35) 0%, rgba(255, 247, 188, 0) 44%),
         linear-gradient(180deg, #66b2ee 0%, #b8e1ff 45%, #e9cf9c 45%, #c89358 100%);
@@ -768,41 +759,41 @@ export function getAreaSceneStyles() {
       }
     }
 
-    .area-scene[data-room="nw"] {
+    .area-scene[data-room-name="The Whispering Glade"] {
       background: linear-gradient(180deg, #2f6b2f 0%, #4f8f44 55%, #6aa356 100%);
     }
 
-    .area-scene[data-room="n"] {
+    .area-scene[data-room-name="The Shimmer Trail"] {
       background: linear-gradient(180deg, #6e7a8a 0%, #93a2b3 55%, #c1c6cf 100%);
     }
 
-    .area-scene[data-room="ne"] {
+    .area-scene[data-room-name="Crystalspine Heights"] {
       background: linear-gradient(180deg, #b6733c 0%, #c98b58 55%, #d8ad7a 100%);
     }
 
-    .area-scene[data-room="w"] {
+    .area-scene[data-room-name="Traders Rift"] {
       background: linear-gradient(180deg, #c9a447 0%, #d6ba63 55%, #e0c97d 100%);
     }
 
-    .area-scene[data-room="center"] {
+    .area-scene[data-room-name="Millbrook Crossing"] {
       background:
         radial-gradient(circle at 50% 24%, rgba(255, 247, 188, 0.35) 0%, rgba(255, 247, 188, 0) 44%),
         linear-gradient(180deg, #66b2ee 0%, #b8e1ff 45%, #e9cf9c 45%, #c89358 100%);
     }
 
-    .area-scene[data-room="e"] {
+    .area-scene[data-room-name="Lumingrass Meadows"] {
       background: linear-gradient(180deg, #8bbf5c 0%, #a4cf74 55%, #b9da8a 100%);
     }
 
-    .area-scene[data-room="sw"] {
+    .area-scene[data-room-name="The Miregloom"] {
       background: linear-gradient(180deg, #2e4f3f 0%, #3d5f53 55%, #5f4a67 100%);
     }
 
-    .area-scene[data-room="s"] {
+    .area-scene[data-room-name="Pilgrim Road"] {
       background: linear-gradient(180deg, #7a5b3b 0%, #8c6a4a 55%, #9c7c5d 100%);
     }
 
-    .area-scene[data-room="se"] {
+    .area-scene[data-room-name="Tideglass Harbor"] {
       background: linear-gradient(180deg, #2a6aa7 0%, #3f82bf 55%, #6fb1e6 100%);
     }
 
