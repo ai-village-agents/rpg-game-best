@@ -111,16 +111,6 @@ function renderExitCues(exitPreviews) {
     .join('');
 }
 
-function renderGenericSceneElements(state) {
-  // A generic fallback environment for procedurally generated rooms
-  // Could be based on biome data eventually, for now just scatter some elements
-  return [
-    '<div class="area-scene-element tree" style="left: 15%; bottom: 40px; opacity: 0.6;"></div>',
-    '<div class="area-scene-element tree" style="left: 75%; bottom: 35px; opacity: 0.8;"></div>',
-    '<div class="area-scene-element rock" style="left: 45%; bottom: 25px; opacity: 0.5;"></div>'
-  ].join('');
-}
-
 function renderSceneElements(roomId) {
   switch (roomId) {
     case 'nw':
@@ -153,48 +143,22 @@ function renderSceneElements(roomId) {
         '<div class="area-scene-element trail" style="left: 0; bottom: 18px; width: 100%;"></div>',
         '<div class="area-scene-element trail" style="left: 0; bottom: 34px; width: 100%; opacity: 0.6;"></div>',
       ].join('');
-    
     case 'center':
       return [
-        // Ground and paths
-        '<div class="area-scene-element path-circle" style="left: 30%; bottom: 20px; width: 40%; height: 30px;"></div>',
-        '<div class="area-scene-element path-line" style="left: 45%; bottom: 0; width: 10%; height: 25px;"></div>',
-        
-        // Background buildings
-        '<div class="area-scene-element v-building house-small" style="left: 8%; bottom: 60px;"></div>',
-        '<div class="area-scene-element v-building house-small" style="left: 78%; bottom: 65px;"></div>',
-        
-        // Main buildings
-        // Inn (left)
-        '<div class="area-scene-element v-building inn" style="left: 12%; bottom: 42px;">' +
-          '<div class="v-door"></div><div class="v-window w-left"></div><div class="v-window w-right"></div>' +
-          '<div class="v-sign">🍺</div>' +
-        '</div>',
-        
-        // Shop (right)
-        '<div class="area-scene-element v-building shop" style="left: 65%; bottom: 45px;">' +
-          '<div class="v-door"></div><div class="v-window w-left"></div><div class="v-window w-right"></div>' +
-          '<div class="v-sign">💰</div>' +
-        '</div>',
-        
-        // Village Elder House (center-back)
-        '<div class="area-scene-element v-building elder" style="left: 38%; bottom: 58px;">' +
-          '<div class="v-door"></div><div class="v-window w-left"></div><div class="v-window w-right"></div>' +
-          '<div class="v-chimney"></div>' +
-        '</div>',
-        
-        // Fountain in center
-        '<div class="area-scene-element v-fountain" style="left: 42%; bottom: 22px;">' +
-          '<div class="v-water-spout"></div>' +
-          '<div class="v-water-pool"></div>' +
-        '</div>',
-        
-        // Decor
-        '<div class="area-scene-element v-barrel" style="left: 28%; bottom: 38px;"></div>',
-        '<div class="area-scene-element v-barrel" style="left: 31%; bottom: 35px;"></div>',
-        '<div class="area-scene-element v-crate" style="left: 62%; bottom: 38px;"></div>',
+        '<div class="area-scene-element v-plaza" style="left: 0; bottom: 12px; width: 100%;"></div>',
+        '<div class="area-scene-element v-square-ring" style="left: 31%; bottom: 18px;"></div>',
+        '<div class="area-scene-element v-path-north" style="left: 47%; bottom: 64px;"></div>',
+        '<div class="area-scene-element v-path-west" style="left: 19%; bottom: 30px;"></div>',
+        '<div class="area-scene-element v-path-east" style="left: 67%; bottom: 30px;"></div>',
+        '<div class="area-scene-element v-building elder" style="left: 38%; bottom: 80px;"><div class="v-sign">ELDER</div><div class="v-window w-left"></div><div class="v-window w-center"></div><div class="v-window w-right"></div><div class="v-door"></div></div>',
+        '<div class="area-scene-element v-building inn" style="left: 8%; bottom: 56px;"><div class="v-sign">INN</div><div class="v-window w-left"></div><div class="v-window w-right"></div><div class="v-door"></div></div>',
+        '<div class="area-scene-element v-building shop" style="left: 66%; bottom: 56px;"><div class="v-sign">SHOP</div><div class="v-window w-left"></div><div class="v-window w-right"></div><div class="v-door"></div><div class="v-awning"></div></div>',
+        '<div class="area-scene-element v-fountain" style="left: 44%; bottom: 28px;"><div class="v-water-core"></div></div>',
+        '<div class="area-scene-element v-planter" style="left: 29%; bottom: 28px;"></div>',
+        '<div class="area-scene-element v-planter" style="left: 62%; bottom: 28px;"></div>',
+        '<div class="area-scene-element v-lantern" style="left: 22%; bottom: 49px;"></div>',
+        '<div class="area-scene-element v-lantern" style="left: 75%; bottom: 49px;"></div>',
       ].join('');
-
     case 'e':
       return [
         '<div class="area-scene-element wheat" style="left: 10%; bottom: 38px;"></div>',
@@ -256,13 +220,15 @@ function renderCollisionOverlay(state) {
 export function renderAreaScene(state) {
   if (state?.phase !== 'exploration') return '';
 
-  const roomId = state?.world?.roomId;
+  const roomRow = state?.world?.roomRow;
+  const roomCol = state?.world?.roomCol;
+  const roomId = COORD_TO_ROOM[`${roomRow},${roomCol}`];
   if (!roomId) return '';
 
   const exits = getRoomExits(state.world, state.worldData);
   const exitPreviews = getExitPreviews(state.world, state.worldData);
-  const label = ROOM_LABELS[roomId] ?? state?.worldData?.rooms?.[roomId]?.name ?? 'Unknown Region';
-  const sceneElements = renderSceneElements(roomId) || renderGenericSceneElements(state);
+  const label = ROOM_LABELS[roomId] ?? 'Unknown';
+  const sceneElements = renderSceneElements(roomId);
   const npcs = renderNpcIcons(roomId);
   const cues = renderExitCues(exitPreviews);
   const locks = renderExitLocks(exits);
@@ -285,8 +251,6 @@ export function renderAreaScene(state) {
 export function getAreaSceneStyles() {
   return `
     /* New Millbrook Crossing Styles */
-    .area-scene { background: linear-gradient(180deg, #445 0%, #334 55%, #223 100%); }
-
     .area-scene[data-room="center"] {
       background:
         radial-gradient(circle at 50% 24%, rgba(255, 247, 188, 0.35) 0%, rgba(255, 247, 188, 0) 44%),

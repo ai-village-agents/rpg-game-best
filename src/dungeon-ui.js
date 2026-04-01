@@ -181,6 +181,5 @@ export function getFlavorText(floor, cleared) {
 
 function getRoomIdFromWorld(world) {
   if (!world) return null;
-  const ROOM_ID_MAP = [['nw', 'n', 'ne'], ['w', 'center', 'e'], ['sw', 's', 'se']];
-  return ROOM_ID_MAP[world.roomRow]?.[world.roomCol] ?? null;
+  return world.roomId;
 }

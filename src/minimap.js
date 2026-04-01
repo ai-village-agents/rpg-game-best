@@ -1,45 +1,12 @@
 /**
  * Exploration Minimap UI
  *
- * Renders a 3×3 grid showing player position, visited rooms, and danger zones.
- * Tracks visited rooms via a Set encoded as an array in game state (for serialization).
+ * Renders a 3x3 grid showing player position, visited rooms, and danger zones.
+ * Dynamically generated based on the current room ID 'r_row_col'.
  */
 
-// The 3×3 room ID map matches DEFAULT_WORLD_DATA.rooms layout
-export const MINIMAP_ROOM_ID_MAP = [
-  ['nw', 'n',      'ne'],
-  ['w',  'center', 'e' ],
-  ['sw', 's',      'se'],
-];
+import { DEFAULT_WORLD_DATA } from './map.js';
 
-// Room names for display
-export const ROOM_NAMES = {
-  nw:     'The Whispering Glade',
-  n:      'The Shimmer Trail',
-  ne:     'Crystalspine Heights',
-  w:      'Traders Rift',
-  center: 'Millbrook Crossing',
-  e:      'Lumingrass Meadows',
-  sw:     'The Miregloom',
-  s:      'Pilgrim Road',
-  se:     'Tideglass Harbor',
-};
-
-// Danger level per room (0 = safe, 1 = low, 2 = medium, 3 = high)
-// Based on encounter probability and enemy difficulty
-export const ROOM_DANGER_LEVEL = {
-  center: 0,  // Millbrook Crossing — safe hub
-  n:      1,  // The Shimmer Trail — low danger
-  w:      1,  // Traders Rift — low danger
-  s:      1,  // Pilgrim Road — low danger
-  e:      2,  // Lumingrass Meadows — medium danger
-  nw:     2,  // The Whispering Glade — medium danger
-  ne:     2,  // Crystalspine Heights — medium danger
-  sw:     3,  // The Miregloom — high danger
-  se:     3,  // Tideglass Harbor — high danger
-};
-
-// Danger level labels for tooltip/display
 export const DANGER_LABELS = {
   0: 'Safe',
   1: 'Low risk',
@@ -47,7 +14,6 @@ export const DANGER_LABELS = {
   3: 'Very dangerous',
 };
 
-// Danger level icons
 export const DANGER_ICONS = {
   0: '🏡',
   1: '⚠️',
@@ -55,135 +21,79 @@ export const DANGER_ICONS = {
   3: '☠️',
 };
 
-/**
- * Get the room ID for a given grid position.
- * @param {number} row - 0..2
- * @param {number} col - 0..2
- * @returns {string|null}
- */
-export function getRoomId(row, col) {
-  return MINIMAP_ROOM_ID_MAP[row]?.[col] ?? null;
+export function getRoomDangerLevel(roomId) {
+  if (!roomId) return 0;
+  // Based on name or ID, simple heuristic
+  if (roomId === 'r_5_5') return 0; // Millbrook Crossing center
+  const idHash = Array.from(roomId).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return (idHash % 3) + 1; // 1 to 3
 }
 
-/**
- * Get the current room ID from world state.
- * @param {object} worldState - { roomRow, roomCol }
- * @returns {string|null}
- */
 export function getCurrentRoomId(worldState) {
   if (!worldState) return null;
   const { roomRow, roomCol } = worldState;
   if (roomRow == null || roomCol == null) return null;
-  return getRoomId(roomRow, roomCol);
+  return `r_${roomRow}_${roomCol}`;
 }
 
-/**
- * Get the danger level for a room.
- * @param {string} roomId
- * @returns {number} 0..3
- */
-export function getRoomDangerLevel(roomId) {
-  if (!roomId) return 0;
-  return ROOM_DANGER_LEVEL[roomId] ?? 1;
+export function initVisitedRooms(startRow = 5, startCol = 5) {
+  return [`r_${startRow}_${startCol}`];
 }
 
-/**
- * Get the danger label for a room.
- * @param {string} roomId
- * @returns {string}
- */
-export function getRoomDangerLabel(roomId) {
-  const level = getRoomDangerLevel(roomId);
-  return DANGER_LABELS[level] ?? 'Unknown';
-}
-
-/**
- * Get the danger icon for a room.
- * @param {string} roomId
- * @returns {string}
- */
-export function getRoomDangerIcon(roomId) {
-  const level = getRoomDangerLevel(roomId);
-  return DANGER_ICONS[level] ?? '?';
-}
-
-/**
- * Initialize visited rooms tracking. Returns a fresh set encoded as an array.
- * Call this when starting a new game; the starting room is pre-marked visited.
- * @param {number} startRow - initial roomRow (default 1 = center)
- * @param {number} startCol - initial roomCol (default 1 = center)
- * @returns {string[]} Array of visited room IDs
- */
-export function initVisitedRooms(startRow = 1, startCol = 1) {
-  const startId = getRoomId(startRow, startCol);
-  return startId ? [startId] : [];
-}
-
-/**
- * Mark a room as visited. Returns updated visited rooms array (no duplicates).
- * @param {string[]} visitedRooms - current visited rooms array
- * @param {number} row
- * @param {number} col
- * @returns {string[]}
- */
 export function markRoomVisited(visitedRooms, row, col) {
-  const roomId = getRoomId(row, col);
-  if (!roomId) return visitedRooms;
+  const roomId = `r_${row}_${col}`;
   const visited = Array.isArray(visitedRooms) ? visitedRooms : [];
   if (visited.includes(roomId)) return visited;
   return [...visited, roomId];
 }
 
-/**
- * Check if a room has been visited.
- * @param {string[]} visitedRooms
- * @param {string} roomId
- * @returns {boolean}
- */
 export function isRoomVisited(visitedRooms, roomId) {
   if (!Array.isArray(visitedRooms)) return false;
   return visitedRooms.includes(roomId);
 }
 
-/**
- * Get the cell type for a minimap cell.
- * @param {string} roomId
- * @param {string} currentRoomId
- * @param {string[]} visitedRooms
- * @returns {'current'|'visited'|'unvisited'}
- */
 export function getMinimapCellType(roomId, currentRoomId, visitedRooms) {
+  if (!roomId) return 'unvisited'; // No room here
   if (roomId === currentRoomId) return 'current';
   if (isRoomVisited(visitedRooms, roomId)) return 'visited';
   return 'unvisited';
 }
 
-/**
- * Build a minimap data structure for rendering.
- * @param {object} worldState - { roomRow, roomCol }
- * @param {string[]} visitedRooms - array of visited room IDs
- * @returns {object[]} Array of cell data objects for all 9 rooms
- */
 export function buildMinimapData(worldState, visitedRooms) {
   const currentRoomId = getCurrentRoomId(worldState);
   const cells = [];
+  
+  let centerRow = worldState?.roomRow ?? 5;
+  let centerCol = worldState?.roomCol ?? 5;
 
-  for (let row = 0; row < 3; row++) {
-    for (let col = 0; col < 3; col++) {
-      const roomId = getRoomId(row, col);
-      const cellType = getMinimapCellType(roomId, currentRoomId, visitedRooms);
-      const danger = getRoomDangerLevel(roomId);
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) {
+      const row = centerRow - 1 + r;
+      const col = centerCol - 1 + c;
+      const roomId = `r_${row}_${col}`;
+      const roomObj = DEFAULT_WORLD_DATA.rooms[row]?.[col];
+      const roomName = roomObj ? roomObj.name : 'Out of Bounds';
+      
+      let cellType = 'unvisited';
+      let danger = 0;
+      
+      if (roomObj) {
+         cellType = getMinimapCellType(roomId, currentRoomId, visitedRooms);
+         danger = getRoomDangerLevel(roomId);
+      }
+
       cells.push({
         row,
         col,
         roomId,
-        roomName: ROOM_NAMES[roomId] ?? 'Unknown',
-        cellType,
+        roomName,
+        cellType: roomObj ? cellType : 'unvisited-void',
         danger,
         dangerLabel: DANGER_LABELS[danger] ?? 'Unknown',
         dangerIcon: DANGER_ICONS[danger] ?? '?',
         isCurrent: cellType === 'current',
         isVisited: cellType === 'visited' || cellType === 'current',
+        isValid: !!roomObj
       });
     }
   }
@@ -191,11 +101,6 @@ export function buildMinimapData(worldState, visitedRooms) {
   return cells;
 }
 
-/**
- * Escape HTML special characters.
- * @param {string} s
- * @returns {string}
- */
 function esc(s) {
   return String(s)
     .replaceAll('&', '&amp;')
@@ -205,10 +110,6 @@ function esc(s) {
     .replaceAll("'", '&#39;');
 }
 
-/**
- * Render the CSS styles for the minimap (call once, inject into <style> tag).
- * @returns {string} CSS string
- */
 export function getMinimapStyles() {
   return `
 .minimap-card {
@@ -253,6 +154,11 @@ export function getMinimapStyles() {
   background: var(--bg);
   color: var(--border);
 }
+.minimap-cell.unvisited-void {
+  border-color: transparent;
+  background: transparent;
+  color: transparent;
+}
 .minimap-cell-abbr {
   font-size: 9px;
   font-weight: bold;
@@ -268,12 +174,18 @@ export function getMinimapStyles() {
 .minimap-cell.current .minimap-cell-abbr {
   color: var(--accent);
 }
+.minimap-cell.unvisited-void .minimap-cell-abbr {
+  display: none;
+}
 .minimap-danger-icon {
   font-size: 11px;
   line-height: 1;
 }
 .minimap-cell.unvisited .minimap-danger-icon {
   opacity: 0;
+}
+.minimap-cell.unvisited-void .minimap-danger-icon {
+  display: none;
 }
 .minimap-player {
   display: none;
@@ -317,29 +229,30 @@ export function getMinimapStyles() {
 `;
 }
 
-/**
- * Render the minimap as an HTML string.
- * @param {object} worldState - { roomRow, roomCol }
- * @param {string[]} visitedRooms - array of visited room IDs
- * @returns {string} HTML string for the minimap card
- */
 export function renderMinimap(worldState, visitedRooms) {
   if (!worldState) return '';
 
   const cells = buildMinimapData(worldState, visitedRooms);
   const currentRoomId = getCurrentRoomId(worldState);
   const currentRoom = cells.find(c => c.isCurrent);
-  const visitedCount = cells.filter(c => c.isVisited).length;
+  const visitedCount = Array.isArray(visitedRooms) ? visitedRooms.length : 0;
+  const totalRooms = 100; // 10x10 map
 
-  // Build grid rows (3×3)
   let gridHtml = '';
   for (let row = 0; row < 3; row++) {
     for (let col = 0; col < 3; col++) {
       const cell = cells[row * 3 + col];
+      
+      if (!cell.isValid) {
+        gridHtml += `<div class="minimap-cell unvisited-void"></div>`;
+        continue;
+      }
+
       const abbr = cell.roomName.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase();
       const tooltip = cell.cellType === 'unvisited'
         ? 'Unexplored'
         : `${esc(cell.roomName)} — ${esc(cell.dangerLabel)}`;
+      
       gridHtml += `
         <div class="minimap-cell ${esc(cell.cellType)}"
              title="${tooltip}"
@@ -368,7 +281,7 @@ export function renderMinimap(worldState, visitedRooms) {
 
   return `
     <div class="card minimap-card">
-      <h2>Minimap <small style="font-size:11px;color:var(--dim-text);">(${visitedCount}/100)</small></h2>
+      <h2>Minimap <small style="font-size:11px;color:var(--dim-text);">(${visitedCount}/${totalRooms})</small></h2>
       <div class="minimap-grid">${gridHtml}</div>
       <div class="minimap-room-info">${currentRoomInfo}</div>
       ${legendHtml}

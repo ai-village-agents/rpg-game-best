@@ -23,22 +23,6 @@ import { isEnemyAttacksFirst } from '../world-events.js';
 import { pushLog } from '../state.js';
 import { createEncounterShopState } from '../shop.js';
 
-// Map from (row, col) to room ID
-const ROOM_GRID = [
-  ['nw', 'n', 'ne'],
-  ['w', 'center', 'e'],
-  ['sw', 's', 'se'],
-];
-
-/**
- * Get room ID from row/col coordinates
- */
-function getRoomIdFromCoords(roomRow, roomCol) {
-  if (roomRow >= 0 && roomRow < 3 && roomCol >= 0 && roomCol < 3) {
-    return ROOM_GRID[roomRow][roomCol];
-  }
-  return 'center';
-}
 
 /**
  * Map world room IDs to encounter location types
@@ -55,7 +39,8 @@ function mapRoomToLocationType(roomId) {
     's': LOCATION_TYPE.FOREST,
     'se': LOCATION_TYPE.DUNGEON,
   };
-  return mappings[roomId] || LOCATION_TYPE.ROAD;
+  if (roomId === 'r_5_5') return LOCATION_TYPE.TOWN;
+  return mappings[roomId] || LOCATION_TYPE.FOREST;
 }
 
 /**
@@ -63,13 +48,7 @@ function mapRoomToLocationType(roomId) {
  * Supports both coordinate-based (roomRow/roomCol) and direct (currentRoom) lookups
  */
 function getCurrentRoomId(state) {
-  // Direct room ID takes priority if set
-  if (state.world?.currentRoom) {
-    return state.world.currentRoom;
-  }
-  const roomRow = state.world?.roomRow ?? 1;
-  const roomCol = state.world?.roomCol ?? 1;
-  return getRoomIdFromCoords(roomRow, roomCol);
+  return state.world?.roomId || 'center';
 }
 
 /**

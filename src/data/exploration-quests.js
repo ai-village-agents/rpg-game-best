@@ -4,6 +4,8 @@
  * Part of Story/Dialog Module expansion
  */
 
+import { QUESTS } from './quests.js';
+
 const EXPLORATION_QUESTS = {
   // Village Exploration Tutorial
   explore_village: {
@@ -386,18 +388,23 @@ const EXPLORATION_QUESTS = {
 
 // Helper to get all exploration quests
 function getExplorationQuests() {
-  return { ...EXPLORATION_QUESTS };
+  return { ...EXPLORATION_QUESTS, ...QUESTS };
 }
 
 // Get quest by ID
 function getExplorationQuest(questId) {
-  return EXPLORATION_QUESTS[questId] || null;
+  return EXPLORATION_QUESTS[questId] || QUESTS[questId] || null;
 }
 
 // Get quests that can start in a specific room
-function getQuestsForRoom(roomId) {
+function getQuestsForRoom(roomId) { console.log("getQuestsForRoom called with roomId:", roomId);
   const quests = [];
-  for (const [id, quest] of Object.entries(EXPLORATION_QUESTS)) {
+  const allQuests = { ...EXPLORATION_QUESTS, ...QUESTS };
+  for (const [id, quest] of Object.entries(allQuests)) {
+    if (quest.startLocation === roomId) {
+      quests.push(quest);
+      continue;
+    }
     const firstStage = quest.stages[0];
     if (firstStage && firstStage.objectives) {
       const startsHere = firstStage.objectives.some(
@@ -414,7 +421,8 @@ function getQuestsForRoom(roomId) {
 // Get all rooms mentioned in exploration objectives across all quests
 function getQuestLocations() {
   const locations = new Set();
-  for (const quest of Object.values(EXPLORATION_QUESTS)) {
+  const allQuests = { ...EXPLORATION_QUESTS, ...QUESTS };
+  for (const quest of Object.values(allQuests)) {
     for (const stage of quest.stages) {
       for (const obj of stage.objectives || []) {
         if (obj.type === 'EXPLORE' && obj.locationId) {

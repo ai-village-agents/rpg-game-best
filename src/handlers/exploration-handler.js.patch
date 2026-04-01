@@ -1,0 +1,13 @@
+--- src/handlers/exploration-handler.js
++++ src/handlers/exploration-handler.js
+@@ -25,9 +25,7 @@
+ 
+-const ROOM_ID_MAP = [['nw', 'n', 'ne'], ['w', 'center', 'e'], ['sw', 's', 'se']];
+-
+ function getRoomId(worldState) {
+   if (!worldState) return null;
+-  return ROOM_ID_MAP[worldState.roomRow]?.[worldState.roomCol] ?? null;
++  return worldState.roomId || null;
+ }
+ 
+ function getRoomDescription(worldState) {

@@ -196,16 +196,35 @@ export function getAmbientEventByCoords(roomRow, roomCol) {
  * @returns {string} HTML string for the atmosphere panel
  */
 export function renderAtmospherePanel(state) {
+  const roomId = state?.world?.roomId;
+  
+  // If we have dynamic world data, construct generic atmosphere based on biome or coordinates
+  if (roomId && roomId.startsWith('r_')) {
+    const biome = state?.worldData?.rooms?.[roomId]?.name || 'Unknown Region';
+    // Provide a generic, fallback procedural atmosphere
+    return (
+      `<div class="atmosphere-panel" style="background:rgba(50,50,50,0.2);border-left:3px solid #666;padding:10px 14px;margin:6px 0;border-radius:6px;">` +
+        `<div style="font-size:1.1em;margin-bottom:4px;">` +
+          `<span style="margin-right:6px;">📍</span>` +
+          `<strong>${escapeHtml(biome)}</strong>` +
+        `</div>` +
+        `<div style="color:var(--muted);font-size:0.9em;font-style:italic;margin-bottom:6px;">` +
+          `You are traveling through the ${escapeHtml(biome)}.` +
+        `</div>` +
+      `</div>`
+    );
+  }
+
   const roomRow = state?.world?.roomRow ?? 1;
   const roomCol = state?.world?.roomCol ?? 1;
-  const roomId = COORD_TO_ROOM[`${roomRow},${roomCol}`];
-  const data = LOCATION_DATA[roomId];
+  const legacyId = COORD_TO_ROOM[`${roomRow},${roomCol}`];
+  const data = LOCATION_DATA[legacyId];
 
   if (!data) {
     return '<div class="atmosphere-panel"><em>An unremarkable area.</em></div>';
   }
 
-  const ambient = getAmbientEvent(roomId);
+  const ambient = getAmbientEvent(legacyId);
 
   return (
     `<div class="atmosphere-panel" style="` +

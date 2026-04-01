@@ -7,6 +7,7 @@ export const QUESTS = {
   // Main Quest Line
   main_quest_1: {
     id: 'main_quest_1',
+    startLocation: 'r_5_5',
     name: 'The Goblin Menace',
     description: 'Craglorn Scrappers have been raiding the lumingrass farms near Millbrook Crossing. The Village Elder has asked you to deal with them.',
     type: 'MAIN',
@@ -109,6 +110,7 @@ export const QUESTS = {
 
   main_quest_2: {
     id: 'main_quest_2',
+    startLocation: 'r_5_5',
     name: 'Shadows in the South',
     description: 'The Village Elder is concerned about the dark magic the goblin chief was using. He asked you to speak with Guard Captain Rolf about recent reports from the south.',
     type: 'MAIN',
@@ -212,6 +214,7 @@ export const QUESTS = {
 
   main_quest_3: {
     id: 'main_quest_3',
+    startLocation: 'r_5_5',
     name: 'The Crystal Corruption',
     description: 'Captain Rolf suggests taking the recovered cultist artifacts to Mage Elindra at the Mage Tower in town for analysis.',
     type: 'MAIN',
@@ -318,6 +321,7 @@ export const QUESTS = {
   // Side Quest - Item Collection
   side_herb_gathering: {
     id: 'side_herb_gathering',
+    startLocation: 'r_5_5',
     name: 'Herbal Remedies',
     description: 'The village healer needs rare herbs to create healing potions.',
     type: 'SIDE',
@@ -377,6 +381,7 @@ export const QUESTS = {
   // Side Quest - Combat Focused
   side_cave_clearing: {
     id: 'side_cave_clearing',
+    startLocation: 'r_5_5',
     name: 'The Darkened Cave',
     description: 'Strange creatures have been seen near the old cave. Clear them out.',
     type: 'SIDE',
@@ -450,6 +455,7 @@ export const QUESTS = {
   // Escort Quest
   side_escort_merchant: {
     id: 'side_escort_merchant',
+    startLocation: 'r_5_5',
     name: 'Safe Passage',
     description: 'A traveling merchant needs protection on the road to the next town.',
     type: 'SIDE',
@@ -513,6 +519,7 @@ export const QUESTS = {
   // The Missing Merchant
   side_missing_merchant: {
     id: 'side_missing_merchant',
+    startLocation: 'r_5_5',
     name: 'The Missing Merchant',
     description: 'A merchant went missing on the north road. The innkeeper is worried and asks you to investigate.',
     type: 'SIDE',
@@ -592,6 +599,7 @@ export const QUESTS = {
   // The Lost Cartographer
   side_lost_cartographer: {
     id: 'side_lost_cartographer',
+    startLocation: 'r_5_5',
     name: 'The Lost Cartographer',
     description: 'A mapmaker has lost his journal while exploring the wilds. Help him recover it by searching key locations.',
     type: 'SIDE',
@@ -668,6 +676,7 @@ export const QUESTS = {
   // The Ancient Tome
   side_ancient_tome: {
     id: 'side_ancient_tome',
+    startLocation: 'r_5_5',
     name: 'The Ancient Tome',
     description: 'The hermit sage has heard of an ancient tome hidden in the ruins. He asks you to retrieve it from the dark cultist guarding it.',
     type: 'SIDE',
@@ -747,6 +756,7 @@ export const QUESTS = {
   // Repeatable Daily Quest
   daily_training: {
     id: 'daily_training',
+    startLocation: 'r_5_5',
     name: 'Combat Training',
     description: 'Train with the village guard to improve your skills.',
     type: 'DAILY',

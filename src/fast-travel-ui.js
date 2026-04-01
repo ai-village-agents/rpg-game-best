@@ -5,7 +5,7 @@
  */
 
 import { getUnlockedFastTravelDestinations, canUseFastTravel } from './fast-travel.js';
-import { DANGER_ICONS, MINIMAP_ROOM_ID_MAP } from './minimap.js';
+import { DANGER_ICONS } from './minimap.js';
 
 /**
  * Render the fast travel button for the exploration UI.
@@ -29,7 +29,7 @@ export function renderFastTravelButton(state) {
  */
 export function renderFastTravelModal(state) {
   const destinations = getUnlockedFastTravelDestinations(state.visitedRooms);
-  const currentRoom = MINIMAP_ROOM_ID_MAP[state.world?.roomRow]?.[state.world?.roomCol];
+  const currentRoom = state?.world?.roomId;
   
   if (destinations.length === 0) {
     return `

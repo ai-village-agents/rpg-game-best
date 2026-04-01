@@ -5,7 +5,8 @@
  * Must have visited a room at least once before fast travel is unlocked.
  */
 
-import { MINIMAP_ROOM_ID_MAP, ROOM_NAMES, ROOM_DANGER_LEVEL, DANGER_LABELS } from './minimap.js';
+import { DANGER_LABELS, getRoomDangerLevel } from './minimap.js';
+import { DEFAULT_WORLD_DATA } from './map.js';
 
 /**
  * Get all rooms that the player has visited and can fast travel to.
@@ -25,8 +26,8 @@ export function getUnlockedFastTravelDestinations(visitedRooms) {
     const coords = getRoomCoordinates(roomId);
     if (!coords) continue;
 
-    const name = ROOM_NAMES[roomId] || roomId;
-    const dangerLevel = ROOM_DANGER_LEVEL[roomId] ?? 1;
+    const name = DEFAULT_WORLD_DATA.rooms?.[roomId]?.name || roomId;
+    const dangerLevel = DEFAULT_WORLD_DATA.rooms?.[roomId]?.dangerLevel ?? 1;
     const dangerLabel = DANGER_LABELS[dangerLevel] || 'Unknown';
 
     destinations.push({
@@ -68,12 +69,9 @@ export function isRoomUnlockedForFastTravel(visitedRooms, roomId) {
  * @returns {{ row: number, col: number } | null}
  */
 export function getRoomCoordinates(roomId) {
-  for (let row = 0; row < MINIMAP_ROOM_ID_MAP.length; row++) {
-    for (let col = 0; col < MINIMAP_ROOM_ID_MAP[row].length; col++) {
-      if (MINIMAP_ROOM_ID_MAP[row][col] === roomId) {
-        return { row, col };
-      }
-    }
+  if (roomId.startsWith('r_')) {
+    const parts = roomId.split('_');
+    return { row: parseInt(parts[1], 10), col: parseInt(parts[2], 10) };
   }
   return null;
 }
@@ -95,13 +93,14 @@ export function executeFastTravel(worldState, destinationRoomId) {
     };
   }
   
-  const roomName = ROOM_NAMES[destinationRoomId] || destinationRoomId;
+  const roomName = DEFAULT_WORLD_DATA.rooms?.[destinationRoomId]?.name || destinationRoomId;
   
   // Place player in center of the room
   const newWorldState = {
     ...worldState,
     roomRow: coords.row,
     roomCol: coords.col,
+    roomId: destinationRoomId,
     x: 4,  // Center of 8-wide room
     y: 3,  // Center of 6-tall room
   };
