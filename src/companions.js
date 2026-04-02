@@ -5,13 +5,13 @@ import { getCurrentRoomId } from './minimap.js';
 
 // Map NPC building locations to their room-grid IDs
 const LOCATION_TO_ROOM = {
-  village_square: 'center',
-  rusty_anchor_inn: 'center',
-  blacksmith_shop: 'center',
-  healer_hut: 'center',
-  barracks: 'center',
-  alchemy_shop: 'center',
-  mage_tower: 'ne',
+  village_square: 'r_5_5',
+  rusty_anchor_inn: 'r_5_5',
+  blacksmith_shop: 'r_5_5',
+  healer_hut: 'r_5_5',
+  barracks: 'r_5_5',
+  alchemy_shop: 'r_5_5',
+  mage_tower: 'r_4_6',
 };
 
 function getCompanionList(state) {

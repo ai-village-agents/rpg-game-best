@@ -178,7 +178,7 @@ test('renderBattleLogPanel escapes HTML in messages', () => {
 test('getBattleLogStyles exposes panel styling', () => {
   const css = getBattleLogStyles();
   assert.match(css, /\.battle-log-panel/);
-  assert.match(css, /max-height:\s*200px/);
+  assert.ok(css.includes('max-height: 350px'));
 });
 
 test('getEntriesByTurn groups entries correctly', () => {

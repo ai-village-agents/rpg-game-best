@@ -47,10 +47,10 @@ function assertEqual(actual, expected, msg) {
 
 function roomToWorld(roomId) {
   const coords = {
-    center: { roomRow: 1, roomCol: 1 },
-    ne: { roomRow: 0, roomCol: 2 },
+    center: { roomId: 'r_5_5', roomRow: 5, roomCol: 5 },
+    ne: { roomId: 'r_4_6', roomRow: 4, roomCol: 6 },
   };
-  return coords[roomId] ?? { roomRow: 1, roomCol: 1 };
+  return coords[roomId] ?? { roomId: 'r_5_5', roomRow: 5, roomCol: 5 };
 }
 
 function freshState(overrides = {}) {

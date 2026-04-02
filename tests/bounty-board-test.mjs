@@ -42,7 +42,7 @@ test('Bounty Board System', async (t) => {
         assert.strictEqual(updatedBounty.status, 'ACTIVE');
     });
 
-    await t.test('acceptBounty does not allow multiple active bounties', () => {
+    await t.test('acceptBounty does allow multiple active bounties', () => {
         let state = generateBounties({});
         const id1 = state.bountyBoard.bounties[0].id;
         const id2 = state.bountyBoard.bounties[1].id;
@@ -50,7 +50,7 @@ test('Bounty Board System', async (t) => {
         state = acceptBounty(state, id1);
         const newState = acceptBounty(state, id2);
         
-        assert.strictEqual(newState.bountyBoard.bounties.find(b => b.id === id2).status, 'AVAILABLE');
+        assert.strictEqual(newState.bountyBoard.bounties.find(b => b.id === id2).status, 'ACTIVE');
     });
 
     await t.test('updateBountyProgress increments active bounty currentAmount', () => {

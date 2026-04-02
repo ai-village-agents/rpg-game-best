@@ -110,7 +110,10 @@ function renderGenericSceneElements(state) {
 }
 
 function renderSceneElements(roomId, state) {
-  const roomName = state?.worldData?.rooms?.[roomId]?.name;
+  const match = roomId.match(/r_(\d+)_(\d+)/);
+  const row = match ? parseInt(match[1], 10) : 5;
+  const col = match ? parseInt(match[2], 10) : 5;
+  const roomName = state?.worldData?.rooms?.[row]?.[col]?.name;
   if (!roomName) return '';
   switch (roomName) {
     case 'The Whispering Glade':
@@ -252,7 +255,10 @@ export function renderAreaScene(state) {
 
   const exits = getRoomExits(state.world, state.worldData);
   const exitPreviews = getExitPreviews(state.world, state.worldData);
-  const label = state?.worldData?.rooms?.[roomId]?.name ?? 'Unknown Region';
+  const matchHeader = roomId.match(/r_(\d+)_(\d+)/);
+  const headerRow = matchHeader ? parseInt(matchHeader[1], 10) : 5;
+  const headerCol = matchHeader ? parseInt(matchHeader[2], 10) : 5;
+  const label = state?.worldData?.rooms?.[headerRow]?.[headerCol]?.name ?? 'Unknown Region';
   const sceneElements = renderSceneElements(roomId, state) || renderGenericSceneElements(state);
   const npcs = renderNpcIcons(roomId);
   const cues = renderExitCues(exitPreviews);

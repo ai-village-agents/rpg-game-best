@@ -198,8 +198,15 @@ export function renderAtmospherePanel(state) {
   const activeRoomId = roomId || `r_${roomRow}_${roomCol}`;
   
   let biome = 'Unknown Region';
-  if (state?.worldData?.rooms && state.worldData.rooms[activeRoomId]) {
-    biome = state.worldData.rooms[activeRoomId].name;
+  if (state?.worldData?.rooms && activeRoomId) {
+    const match = activeRoomId.match(/r_(\d+)_(\d+)/);
+    if (match) {
+      const row = parseInt(match[1], 10);
+      const col = parseInt(match[2], 10);
+      if (state.worldData.rooms[row]?.[col]) {
+        biome = state.worldData.rooms[row][col].name;
+      }
+    }
   }
 
   return (

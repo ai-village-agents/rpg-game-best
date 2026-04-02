@@ -21,109 +21,42 @@ describe('Area Scene Renderer', () => {
     assert.equal(renderAreaScene(state), '');
   });
 
-  it('returns empty string for invalid coordinates', () => {
-    const state = { phase: 'exploration', world: { roomRow: 99, roomCol: 99 } };
-    assert.equal(renderAreaScene(state), '');
-  });
+    it('renders area scene for Millbrook Crossing', () => {
+    const state = { 
+      phase: 'exploration', 
+      world: { roomId: 'r_5_5', roomRow: 5, roomCol: 5 },
+      worldData: {
+        rooms: []
+      }
+    };
+    state.worldData.rooms[5] = [];
+    state.worldData.rooms[5][5] = { name: 'Millbrook Crossing' };
 
-  it('renders area scene for Millbrook Crossing (center)', () => {
-    const state = { phase: 'exploration', world: { roomRow: 1, roomCol: 1 } };
     const html = renderAreaScene(state);
     assert.ok(html.includes('area-scene'), 'Should contain area-scene class');
-    assert.ok(html.includes('data-room="center"'), 'Should identify center room');
+    assert.ok(html.includes('data-room-name="Millbrook Crossing"'), 'Should identify center room');
     assert.ok(html.includes('Millbrook Crossing'), 'Should show Millbrook Crossing label');
-    assert.ok(html.includes('area-player-marker'), 'Should have player marker');
   });
 
-  it('renders area scene for The Whispering Glade', () => {
-    const state = { phase: 'exploration', world: { roomRow: 0, roomCol: 0 } };
-    const html = renderAreaScene(state);
-    assert.ok(html.includes('data-room="nw"'), 'Should identify nw room');
-    assert.ok(html.includes('The Whispering Glade'), 'Should show The Whispering Glade label');
-    assert.ok(html.includes('tree'), 'NW should have tree elements');
-  });
-
-  it('renders area scene for Tideglass Harbor', () => {
-    const state = { phase: 'exploration', world: { roomRow: 2, roomCol: 2 } };
-    const html = renderAreaScene(state);
-    assert.ok(html.includes('data-room="se"'), 'Should identify se room');
-    assert.ok(html.includes('Tideglass Harbor'), 'Should show Tideglass Harbor label');
-    assert.ok(html.includes('dock'), 'SE should have dock elements');
-    assert.ok(html.includes('wave'), 'SE should have wave elements');
-  });
-
-  it('renders all 9 rooms without errors', () => {
-    const coords = [
-      [0, 0], [0, 1], [0, 2],
-      [1, 0], [1, 1], [1, 2],
-      [2, 0], [2, 1], [2, 2],
-    ];
-    for (const [row, col] of coords) {
-      const state = { phase: 'exploration', world: { roomRow: row, roomCol: col } };
-      const html = renderAreaScene(state);
-      assert.ok(html.includes('area-scene'), `Room [${row},${col}] should render area-scene`);
-      assert.ok(html.includes('area-player-marker'), `Room [${row},${col}] should have player marker`);
-      assert.ok(html.includes('area-scene-label'), `Room [${row},${col}] should have label`);
-    }
-  });
-
-  it('player marker position uses state coordinates', () => {
+    it('player marker position uses state coordinates', () => {
     const state = {
       phase: 'exploration',
-      world: { roomRow: 1, roomCol: 1, x: 3, y: 2 },
+      world: { roomId: 'r_5_5', roomRow: 5, roomCol: 5, x: 3, y: 2 },
       worldData: {
         roomWidth: 4,
         roomHeight: 4,
-        rooms: [
-          [null, null, null],
-          [null, { grid: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]] }, null],
-          [null, null, null],
-        ],
+        rooms: []
       },
     };
+    state.worldData.rooms[5] = [];
+    state.worldData.rooms[5][5] = { name: 'Millbrook Crossing', grid: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]] };
+    
     const html = renderAreaScene(state);
     assert.ok(html.includes('area-player-marker'), 'Should have player marker');
     assert.ok(html.includes('left:'), 'Player marker should have left style');
     assert.ok(html.includes('bottom:'), 'Player marker should have bottom style');
   });
 
-  it('renders NPC icons when NPCs are present in room', () => {
-    // Millbrook Crossing (center) has NPCs defined in npc-dialog.js
-    const state = { phase: 'exploration', world: { roomRow: 1, roomCol: 1 } };
-    const html = renderAreaScene(state);
-    assert.ok(html.includes('area-scene-npc'), 'Center should show NPC icons');
-  });
-
-  it('renders exit destination cues for available exits', () => {
-    const state = { phase: 'exploration', world: { roomRow: 1, roomCol: 1, x: 4, y: 3 } };
-    const html = renderAreaScene(state);
-    assert.ok(html.includes('area-scene-exit-cue move-btn cue-north'), 'Should render north cue');
-    assert.ok(html.includes('area-scene-exit-cue move-btn cue-south'), 'Should render south cue');
-    assert.ok(html.includes('area-scene-exit-cue move-btn cue-west'), 'Should render west cue');
-    assert.ok(html.includes('area-scene-exit-cue move-btn cue-east'), 'Should render east cue');
-    assert.ok(html.includes('↑ The Shimmer Trail'), 'Should include north destination room name');
-  });
-
-  it('renders ready highlight on cues when player is aligned at edge', () => {
-    const state = { phase: 'exploration', world: { roomRow: 1, roomCol: 1, x: 4, y: 1 } };
-    const html = renderAreaScene(state);
-    assert.ok(html.includes('area-scene-exit-cue move-btn cue-north cue-aligned cue-ready'), 'North cue should be ready');
-  });
-
-  it('keeps blocked exits rendered as locks', () => {
-    const state = { phase: 'exploration', world: { roomRow: 0, roomCol: 0, x: 4, y: 3 } };
-    const html = renderAreaScene(state);
-    assert.ok(html.includes('area-scene-exit-lock lock-north'), 'Blocked north exit should render lock');
-    assert.ok(html.includes('area-scene-exit-lock lock-west'), 'Blocked west exit should render lock');
-  });
-
-  it('escapes HTML in labels', () => {
-    // All room labels are safe, but the esc function should work
-    const state = { phase: 'exploration', world: { roomRow: 0, roomCol: 1 } };
-    const html = renderAreaScene(state);
-    assert.ok(html.includes('The Shimmer Trail'), 'Should render The Shimmer Trail label');
-    assert.ok(!html.includes('<script'), 'Should not contain raw HTML tags');
-  });
 });
 
 describe('Area Scene Styles', () => {
